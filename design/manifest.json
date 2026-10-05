@@ -1,0 +1,25 @@
+{
+  "images": {
+    "dashboard.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1011814,
+      "savedAt": "2026-10-05T00:54:16.941Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "sustainability-dashboard.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1101893,
+      "savedAt": "2026-10-05T00:57:20.073Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "transfer.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1054463,
+      "savedAt": "2026-10-05T00:59:30.553Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    }
+  }
+}
