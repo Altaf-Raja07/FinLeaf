@@ -61,9 +61,9 @@ export function Wordmark({ compact = false }: { compact?: boolean }) {
   return (
     <Link href="/dashboard" className="flex items-center gap-2" aria-label="FinLeaf home">
       <span className="text-primary">
-        <LeafIcon size={26} />
+        <LeafIcon size={29} />
       </span>
-      {!compact && <span className="text-[21px] font-bold tracking-tight">FinLeaf</span>}
+      {!compact && <span className="text-[23px] font-bold tracking-tight">FinLeaf</span>}
     </Link>
   );
 }
@@ -95,7 +95,7 @@ export function AppShell({
       <div className="flex">
         {/* --- Desktop sidebar (hidden below 1024px) ---------------------- */}
         <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col border-r border-border bg-surface lg:flex">
-          <div className="px-5 py-5">
+          <div className="px-6 py-6">
             <Wordmark />
           </div>
 
@@ -109,13 +109,13 @@ export function AppShell({
                     <Link
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-[15px] font-medium transition-colors ${
+                      className={`flex items-center gap-3.5 rounded-md px-3.5 py-3.5 text-[16px] font-medium transition-colors ${
                         active
                           ? "bg-primary-soft text-primary"
                           : "text-foreground hover:bg-sunken"
                       }`}
                     >
-                      <Icon size={19} />
+                      <Icon size={21} />
                       {item.label}
                     </Link>
                   </li>
@@ -131,12 +131,12 @@ export function AppShell({
             >
               <span
                 aria-hidden="true"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[13px] font-semibold text-primary"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-[14px] font-semibold text-primary"
               >
                 {initials}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-semibold">{userName}</span>
+                <span className="block truncate text-[15px] font-semibold">{userName}</span>
                 <span className="block text-[13px] text-muted">View profile</span>
               </span>
               <ChevronRight size={16} />
@@ -218,12 +218,12 @@ export function PageHeader({
   alerts?: number;
 }) {
   return (
-    <div className="mb-5 flex items-start justify-between gap-4">
+    <div className="mb-6 flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-[22px] leading-7 font-bold tracking-tight md:text-[26px] md:leading-8">
+        <h1 className="text-[25px] leading-8 font-bold tracking-tight md:text-[30px] md:leading-9">
           {title}
         </h1>
-        {subtitle && <p className="mt-1 text-[14px] text-muted md:text-[15px]">{subtitle}</p>}
+        {subtitle && <p className="mt-1.5 text-[15px] text-muted md:text-[16px]">{subtitle}</p>}
       </div>
       {action ?? (
         <Link

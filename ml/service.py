@@ -89,23 +89,27 @@ FEATURE_LABELS = {
 # value for that feature, scaled for legibility and clamped so one factor cannot
 # run away with the whole score. The probability is still reported alongside,
 # as an honest model output, but it is not what the gauge displays.
-NEUTRAL_SCORE = 45
+NEUTRAL_SCORE = 35
 
 # Per-feature display scale, applied to coefficient x raw feature value.
-# Tuned so a strong but not perfect record lands in the 60-75 band, matching the
-# range a real user would recognise as meaningful progress.
+# Tuned so the scale actually discriminates. With a neutral baseline of 35 and a
+# 14-point cap per factor, the attainable range is 35 (no history at all) to 105
+# (every factor maxed), clamped to 100. A strong, established user lands in the
+# low-to-mid 80s and a genuine 100 stays out of reach, which matters: a behavioural
+# score for someone with no credit history should never look like a perfect
+# credit approval.
 CONTRIBUTION_SCALE = {
-    "savings_regularity": 30.0,
-    "bill_on_time_ratio": 30.0,
-    "transaction_consistency": 22.0,
-    "account_age_months": 24.0,
-    "family_group_activity": 16.0,
+    "savings_regularity": 20.0,
+    "bill_on_time_ratio": 20.0,
+    "transaction_consistency": 16.0,
+    "account_age_months": 16.0,
+    "family_group_activity": 12.0,
 }
 
 # No single factor may move the score by more than this many points in either
 # direction, which keeps the breakdown plausible and prevents one strong habit
 # from looking like a guarantee.
-CONTRIBUTION_CAP = 22
+CONTRIBUTION_CAP = 14
 
 BAND_STOPS = [(40, "Getting started"), (70, "Steady"), (100, "Strong")]
 

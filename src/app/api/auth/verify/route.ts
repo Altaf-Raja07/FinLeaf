@@ -4,12 +4,17 @@ import { queryOne } from "@/lib/db";
 import { checkDemoOtp, createSession, SESSION_COOKIE } from "@/lib/auth";
 import { handler } from "@/lib/api";
 import { normalisePhone } from "@/lib/phone";
+import { redirectUrl } from "@/lib/redirect";
 
 /**
  * Step 2 of sign-in: verify the demo OTP and open a session.
  *
  * The cookie is httpOnly and SameSite=Lax, so it cannot be read from JavaScript
  * and is not attached to cross-site form posts.
+ *
+ * The post-sign-in redirect is built from the request's own origin. Building it
+ * from the request URL keeps the Location on the same host that set the cookie,
+ * so the session survives the hop.
  */
 
 export async function POST(request: Request) {
@@ -19,13 +24,9 @@ export async function POST(request: Request) {
     const otp = String(form.get("otp") ?? "").trim();
 
     const failTo = (step: string, message: string) =>
-      NextResponse.redirect(
-        new URL(
-          `/login?step=${step}&phone=${encodeURIComponent(phone)}&error=${encodeURIComponent(message)}`,
-          request.url
-        ),
-        { status: 303 }
-      );
+      NextResponse.redirect(redirectUrl(request.url, "/login", { step, phone, error: message }), {
+        status: 303,
+      });
 
     if (!/^\d{6}$/.test(otp)) {
       return failTo("otp", "Enter the six-digit code.");
@@ -49,6 +50,6 @@ export async function POST(request: Request) {
       maxAge: Number(process.env.SESSION_TTL_DAYS ?? 7) * 86_400,
     });
 
-    return NextResponse.redirect(new URL("/dashboard", request.url), { status: 303 });
+    return NextResponse.redirect(redirectUrl(request.url, "/dashboard"), { status: 303 });
   })();
 }

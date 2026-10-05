@@ -149,6 +149,8 @@ async function main() {
     }
 
     const rng = makeRng(SEED);
+    // Counter for the deterministic bill-punctuality pattern.
+    let billIndex = 0;
     await client.query("BEGIN");
 
     // --- users ------------------------------------------------------------
@@ -156,8 +158,8 @@ async function main() {
     for (const person of PEOPLE) {
       const { hash, salt, params } = hashPassword(DEMO_PASSWORD);
       const { rows } = await client.query(
-        `INSERT INTO users (phone, full_name, language, password_hash, password_salt, password_params, kyc_reference, is_demo)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)
+        `INSERT INTO users (phone, full_name, language, password_hash, password_salt, password_params, kyc_reference, is_demo, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE, $8)
          RETURNING id`,
         [
           person.phone,
@@ -167,6 +169,10 @@ async function main() {
           salt,
           params,
           `DEMO-${person.phone.slice(-4)}`,
+          // Backdate signup so account tenure is a realistic feature value.
+          // Tenure is one of the five scoring inputs, so a user created "now"
+          // would read as brand new on every reseed and never score realistically.
+          new Date(Date.now() - 17 * 30 * 86_400_000),
         ]
       );
       userIds.push(rows[0].id);
@@ -258,6 +264,18 @@ async function main() {
       { category: "fuel", min: 80000, max: 160000, perWeek: 0.06 },
     ];
 
+    // Punctuality pattern for the demo user's bills.
+    //
+    // Deterministic rather than random: bills alternate in a fixed pattern so a
+    // fresh seed always produces the same mix of early and late payments. That
+    // guarantees the trust-score screen has something truthful to show (on-time
+    // bill payment is a visible factor) instead of depending on a coin flip that
+    // could leave every bill late and read as a bug.
+    //
+    // Positions 4 and 9 in each cycle are late, so roughly 2 in 10 bills are
+    // overdue: a reliable payer who has recently slipped.
+    const isLateBill = (index) => index % 10 === 3 || index % 10 === 8;
+
     for (let day = 150; day >= 0; day--) {
       const at = new Date(now - day * 86_400_000);
       at.setHours(9 + Math.floor(rng() * 10), Math.floor(rng() * 60), 0, 0);
@@ -288,6 +306,23 @@ async function main() {
         const amount = Math.round(rule.min + rng() * (rule.max - rule.min));
         const options = MERCHANTS[rule.category];
         const merchant = options[Math.floor(rng() * options.length)];
+
+        // Bills get a due date so on-time payment is a real measurement rather
+        // than a guess. Most are paid before the due date; a minority are late,
+        // which is what the trust score is supposed to respond to.
+        let dueAt = null;
+        if (rule.category === "bills" || rule.category === "recharge") {
+          const onTime = !isLateBill(billIndex);
+          billIndex += 1;
+          // The due date sits AFTER the payment when the bill was paid early,
+          // and BEFORE it when it was paid late. Getting this backwards would
+          // mark every punctual payment as late.
+          const offsetDays = onTime
+            ? Math.floor(rng() * 6) + 1 // due 1-6 days after payment: paid early
+            : -(Math.floor(rng() * 9) + 1); // due 1-9 days before payment: paid late
+          dueAt = new Date(at.getTime() + offsetDays * 86_400_000);
+        }
+
         await insertTransaction({
           client,
           accountId: accountIds[0],
@@ -297,6 +332,7 @@ async function main() {
           category: rule.category,
           merchant,
           at,
+          dueAt,
         });
         totalPaise -= amount;
         inserted += 1;
@@ -384,12 +420,36 @@ async function main() {
     }
 
     // --- savings goals ------------------------------------------------------
-    await client.query(
-      `INSERT INTO savings_goals (user_id, title, target_amount, saved_amount, weekly_amount) VALUES
-       ($1, 'School fees for Meena', 1000000, 680000, 26000),
-       ($1, 'New bicycle',        300000, 102000, 10000)`,
+    // Goals are inserted first so the contributions below can reference them.
+    const goalRows = await client.query(
+      `INSERT INTO savings_goals (user_id, title, target_amount, saved_amount, weekly_amount)
+       VALUES ($1, 'School fees for Meena', 1000000, 680000, 26000),
+              ($1, 'New bicycle',           300000, 102000, 10000)
+       RETURNING id, title, saved_amount`,
       [userIds[0]]
     );
+
+    // Weekly contributions, so "savings regularity" measures real behaviour
+    // rather than a saved_amount nothing else backs up. The school-fees goal has
+    // the longer history, which is what makes it the stronger habit in the
+    // trust-score breakdown.
+    const goalByTitle = new Map(goalRows.rows.map((row) => [row.title, row]));
+    let contributionCount = 0;
+    for (const [title, weeks] of [
+      ["School fees for Meena", 22],
+      ["New bicycle", 9],
+    ]) {
+      const goal = goalByTitle.get(title);
+      const perWeek = Math.round(Number(goal.saved_amount) / weeks);
+      for (let week = weeks; week >= 1; week--) {
+        await client.query(
+          `INSERT INTO goal_contributions (goal_id, amount, created_at) VALUES ($1, $2, $3)`,
+          [goal.id, perWeek, new Date(now - week * 7 * 86_400_000)]
+        );
+        contributionCount += 1;
+      }
+    }
+    console.log(`[seed] ${contributionCount} goal contributions across 2 goals`);
 
     // --- loans --------------------------------------------------------------
     await client.query(
@@ -469,12 +529,12 @@ async function main() {
  * The balance is not touched here: the seed sets account balances once at the
  * end from the running total, which keeps the seeding order irrelevant.
  */
-async function insertTransaction({ client, accountId, userId, direction, amountPaise, category, merchant, at }) {
+async function insertTransaction({ client, accountId, userId, direction, amountPaise, category, merchant, at, dueAt = null }) {
   const { rows } = await client.query(
-    `INSERT INTO transactions (account_id, user_id, direction, amount, category, merchant, created_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO transactions (account_id, user_id, direction, amount, category, merchant, created_at, due_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING id`,
-    [accountId, userId, direction, amountPaise, category, merchant, at]
+    [accountId, userId, direction, amountPaise, category, merchant, at, dueAt]
   );
   const transactionId = rows[0].id;
 

@@ -65,52 +65,82 @@ export default async function DashboardPage() {
       ) : (
         <>
           {/* --- Balance and scores ------------------------------------- */}
-          <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr_1fr]">
+          <div className="grid gap-4 lg:grid-cols-[1.55fr_1fr_1fr]">
             <Card className="p-5">
               <div className="flex items-center gap-2">
                 <span className="text-[15px] font-semibold">Total balance</span>
                 <Pill tone="neutral">Estimated</Pill>
                 <ChevronRight size={18} className="ml-auto text-muted" />
               </div>
-              <p className="fl-num mt-3 text-[34px] leading-none font-semibold tracking-tight md:text-[40px]">
+              <p className="fl-num mt-4 text-[38px] leading-none font-semibold tracking-tight md:text-[46px]">
                 {formatMoney(data.totalBalance, { sign: "never" })}
               </p>
-              <p className="mt-3 text-[14px] text-muted">
+              <p className="mt-4 text-[15px] text-muted">
                 across {data.accountCount} {data.accountCount === 1 ? "account" : "accounts"}
               </p>
+
+              {/* On mobile the two scores sit side by side inside the balance
+                  card, as the mobile reference shows. From tablet up they become
+                  separate cards in the row below. */}
+              <div className="mt-6 grid grid-cols-2 gap-4 border-t border-border pt-5 lg:hidden">
+                {data.trustScore ? (
+                  <ScoreGauge
+                    value={data.trustScore.score}
+                    label="Trust score"
+                    band={data.trustScore.band}
+                    tone="trust"
+                    size={104}
+                  />
+                ) : (
+                  <TrustScorePending />
+                )}
+                <div className="flex flex-col items-center">
+                  <ScoreGauge
+                    value={data.sustainability.score}
+                    label="Sustainability"
+                    tone="leaf"
+                    size={104}
+                  />
+                  <p className="mt-1 text-center text-[12px] text-muted">
+                    {data.monthEmissions} kg CO2e
+                  </p>
+                </div>
+              </div>
             </Card>
 
-            <Card className="flex items-center justify-center p-5">
+            {/* Tablet and up: the scores get their own cards in the stat row. */}
+            <Card className="hidden items-center justify-center p-5 lg:flex">
               {data.trustScore ? (
                 <ScoreGauge
                   value={data.trustScore.score}
                   label="Trust score"
                   band={data.trustScore.band}
                   tone="trust"
+                  size={104}
                 />
               ) : (
                 <TrustScorePending />
               )}
             </Card>
 
-            <Card className="flex flex-col items-center justify-center gap-1 p-5">
+            <Card className="hidden flex-col items-center justify-center gap-1 p-5 lg:flex">
               <ScoreGauge
                 value={data.sustainability.score}
                 label="Sustainability score"
                 tone="leaf"
+                size={104}
               />
               <p className="mt-1 text-center text-[13px] text-muted">
                 This month{" "}
                 <span className="fl-num font-medium text-foreground">{data.monthEmissions} kg CO2e</span>
               </p>
-              {/* Say so when the month is partial, otherwise a five-day total
-                  reads as a collapse compared with a complete month. */}
               {data.monthComplete ? null : (
                 <p className="text-center text-[12px] text-muted">
                   day {data.dayOfMonth} of {data.daysInMonth}
                 </p>
               )}
             </Card>
+
           </div>
 
           {/* --- Quick actions ------------------------------------------- */}
@@ -172,23 +202,6 @@ export default async function DashboardPage() {
             </Card>
           </div>
 
-          {/* --- Green points strip -------------------------------------- */}
-          <Card className="mt-4 flex items-center gap-3 px-5 py-4">
-            <span className="text-leaf">
-              <LeafIcon size={22} />
-            </span>
-            <p className="flex-1 text-[14px]">
-              You have{" "}
-              <span className="fl-num font-semibold">{data.greenPoints.balance.toLocaleString("en-IN")}</span>{" "}
-              green points
-              {data.greenPoints.redeemed > 0 && (
-                <span className="text-muted"> ({data.greenPoints.redeemed.toLocaleString("en-IN")} redeemed)</span>
-              )}
-            </p>
-            <Link href="/sustainability/rewards" className="text-[14px] font-medium text-primary">
-              Use points
-            </Link>
-          </Card>
         </>
       )}
     </AppShell>
@@ -201,10 +214,12 @@ function QuickAction({ href, icon, label }: { href: string; icon: React.ReactNod
   return (
     <Link
       href={href}
-      className="flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-md border border-border px-3 py-4 text-center transition-colors hover:bg-sunken"
+      className="flex min-h-[104px] flex-col items-center justify-center gap-2.5 rounded-md border border-border px-3 py-4 text-center transition-colors hover:bg-sunken"
     >
-      <span className="text-primary">{icon}</span>
-      <span className="text-[14px] font-semibold">{label}</span>
+      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-primary">
+        {icon}
+      </span>
+      <span className="text-[15px] font-semibold">{label}</span>
     </Link>
   );
 }
@@ -224,12 +239,12 @@ const CATEGORY_TONE: Record<string, "primary" | "leaf" | "trust" | "amber" | "ne
 function TransactionListItem({ row }: { row: TransactionRow }) {
   const credit = row.direction === "credit";
   return (
-    <li className="flex items-center gap-3 border-b border-border py-3 last:border-b-0">
+    <li className="flex items-center gap-3.5 border-b border-border py-3.5 last:border-b-0">
       <IconTile tone={CATEGORY_TONE[row.category] ?? "neutral"}>
         <CategoryIcon category={row.category} size={18} />
       </IconTile>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[14.5px] font-semibold">{row.merchant}</span>
+        <span className="block truncate text-[15.5px] font-semibold">{row.merchant}</span>
         <span className="block truncate text-[13px] text-muted">
           {titleCase(row.category)} · {relativeDate(row.createdAt)}
         </span>

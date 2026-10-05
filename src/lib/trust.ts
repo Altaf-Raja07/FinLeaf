@@ -20,8 +20,8 @@ import {
  *     not a hand-written list of plausible-sounding reasons.
  */
 
-export const NEUTRAL_SCORE = 45;
-const CONTRIBUTION_CAP = 22;
+export const NEUTRAL_SCORE = 35;
+const CONTRIBUTION_CAP = 14;
 
 /**
  * Fallback coefficients, used only when the ML service is unreachable.
@@ -46,12 +46,14 @@ const FEATURE_LABELS: Record<keyof TrustFeatures, string> = {
   family_group_activity: "Family group activity",
 };
 
+// Kept in step with CONTRIBUTION_SCALE in ml/service.py so the fallback and the
+// real model present the same scale.
 const FEATURE_SCALES: Record<keyof TrustFeatures, number> = {
-  savings_regularity: 30,
-  bill_on_time_ratio: 30,
-  transaction_consistency: 22,
-  account_age_months: 24,
-  family_group_activity: 16,
+  savings_regularity: 20,
+  bill_on_time_ratio: 20,
+  transaction_consistency: 16,
+  account_age_months: 16,
+  family_group_activity: 12,
 };
 
 const BANDS: Array<[number, string]> = [
@@ -70,7 +72,12 @@ export function bandFor(score: number): string {
 /**
  * Derive behavioural features from a user's real records.
  *
- * Each is normalised to 0..1 so the model's coefficients apply directly.
+ * Each feature is normalised to 0..1 so the model's coefficients apply directly.
+ * Kept as plain SQL in a template literal rather than inline in the function so
+ * the shape of each expression stays readable.
+ *
+ * No protected attribute appears here: only transaction activity, account tenure,
+ * and family-group engagement.
  */
 export async function extractFeatures(userId: number): Promise<TrustFeatures> {
   const rows = await query<{
@@ -83,71 +90,93 @@ export async function extractFeatures(userId: number): Promise<TrustFeatures> {
     `
     WITH activity AS (
       SELECT
-        -- Regularity of saving: how consistent goal contributions are, by the
-        -- share of goals with more than one contribution.
-        (
-          SELECT COALESCE(AVG(contributions_per_goal), 0) / 5.0
-            FROM (
-              SELECT COUNT(*) AS contributions_per_goal
-                FROM goal_contributions gc
-                JOIN savings_goals sg ON sg.id = gc.goal_id
-               WHERE sg.user_id = $1
-                 AND gc.created_at > now() - interval '180 days'
-               GROUP BY gc.goal_id
-            ) per_goal
-        )::double precision AS savings_regularity,
+        -- Regularity of saving: average contributions per goal over 180 days.
+        -- Ceiling is 20 per goal, roughly weekly saving for five months. A lower
+        -- ceiling would saturate this feature and hide real differences between
+        -- savers.
+        LEAST(
+          1.0,
+          (
+            SELECT COALESCE(AVG(per_goal.contributions), 0) / 20.0
+              FROM (
+                SELECT COUNT(*) AS contributions
+                  FROM goal_contributions gc
+                  JOIN savings_goals sg ON sg.id = gc.goal_id
+                 WHERE sg.user_id = $1
+                   AND gc.created_at > now() - interval '180 days'
+                 GROUP BY gc.goal_id
+              ) AS per_goal
+          )::double precision
+        ) AS savings_regularity,
 
-        -- On-time share of bills in the last 90 days. Without a real due-date
-        -- source we approximate: paid within 5 days of the period edge counts as
-        -- on time, which is the behaviour we are trying to reward.
+        -- Share of bills paid on or before their due date.
+        --
+        -- Measured against transactions.due_at, which is a real simulated due
+        -- date rather than an inference. An earlier version compared the payment
+        -- with "now", which measured recency instead of punctuality and scored a
+        -- user who had simply not paid anything recently as badly late.
         (
           SELECT COALESCE(
-            AVG(CASE WHEN EXTRACT(DAY FROM now() - t.created_at) <= 5 THEN 1.0 ELSE 0.0 END), 0
-          )
+                   AVG(CASE WHEN t.created_at <= t.due_at THEN 1.0 ELSE 0.0 END),
+                   0
+                 )
             FROM transactions t
            WHERE t.user_id = $1
              AND t.direction = 'debit'
-             AND t.category IN ('bills', 'recharge')
-             AND t.created_at > now() - interval '90 days'
+             AND t.due_at IS NOT NULL
+             AND t.created_at > now() - interval '180 days'
         )::double precision AS bill_on_time_ratio,
 
-        -- Consistency: transactions per active week, saturating at 3/week.
+        -- Consistency: transactions per week over 90 days. Ceiling is 8 per
+        -- week, which is frequent but not continuous.
         LEAST(
           1.0,
           (
-            SELECT COUNT(*) FROM transactions t
+            SELECT COUNT(*)
+              FROM transactions t
              WHERE t.user_id = $1
                AND t.created_at > now() - interval '90 days'
-          )::double precision
-          / GREATEST(
-            1.0,
-            (EXTRACT(EPOCH FROM (now() - LEAST(now(), now() - interval '90 days'))) / 604800.0)
-          )
-          / 3.0
+          )::double precision / 12.857142857 / 8.0
         ) AS transaction_consistency,
 
-        -- Tenure, saturating at 4 years (48 months).
+        -- Tenure in months, ceiling 48 (four years).
         LEAST(
           1.0,
           (
-            SELECT EXTRACT(EPOCH FROM (now() - MIN(u.created_at))) / 86400.0 / 30.0
-              FROM users u WHERE u.id = $1
+            SELECT EXTRACT(EPOCH FROM (now() - u.created_at)) / 86400.0 / 30.0
+              FROM users u
+             WHERE u.id = $1
           )::double precision / 48.0
         ) AS account_age_months,
 
-        -- Engagement with family groups: active members and recent group activity.
-        LEAST(
-          1.0,
-          (
-            SELECT (
-              (SELECT COUNT(*) FROM family_members fm WHERE fm.user_id = $1)::double precision / 4.0
-              + (SELECT COUNT(*) FROM family_members fm
-                   JOIN transactions t ON t.user_id = fm.user_id
-                  WHERE fm.user_id = $1
-                    AND t.created_at > now() - interval '90 days')::double precision / 20.0
-            ) / 2.0
-          ) AS family_group_activity
-        )
+        -- Family-group engagement: membership and recent activity by those
+        -- members, averaged. Ceilings are a six-person household and 60 recent
+        -- member transactions, so an active group does not instantly max this.
+        (
+          SELECT (
+            (
+              SELECT COUNT(*)
+                FROM family_members fm
+               WHERE fm.user_id = $1
+            )::double precision / 6.0
+            +
+            (
+              SELECT COUNT(*)
+                FROM family_members fm
+                JOIN transactions t ON t.user_id = fm.user_id
+               WHERE fm.user_id = $1
+                 AND t.created_at > now() - interval '90 days'
+            )::double precision / 60.0
+          ) / 2.0
+        ) AS family_group_activity
+    )
+    SELECT
+      savings_regularity,
+      bill_on_time_ratio,
+      transaction_consistency,
+      account_age_months,
+      family_group_activity
+    FROM activity
     `,
     [userId]
   );

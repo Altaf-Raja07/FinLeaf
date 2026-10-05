@@ -96,31 +96,35 @@ export function BarChart({
 }) {
   if (data.length === 0) return null;
   const max = Math.max(...data.map((d) => d.value), 1);
-  // Room for the value label above each bar and the month label below.
-  const chartHeight = height - 34;
+  // Reserve space above the plot for the value labels and below for the month
+  // labels. Without the top band, a label on a full-height bar is clipped.
+  const labelBand = 22;
+  const axisBand = 26;
+  const plotHeight = Math.max(40, height - labelBand - axisBand);
 
   const summary = `${unit} by month: ${data
     .map((d) => `${d.label} ${d.value}`)
     .join(", ")}.`;
 
+  const slot = 84;
+  const barWidth = 34;
+
   return (
     <div>
       <svg
-        viewBox={`0 0 ${data.length * 52} ${height}`}
+        viewBox={`0 0 ${data.length * slot} ${height}`}
         className="w-full"
-        style={{ maxHeight: height }}
         role="img"
         aria-label={summary}
-        preserveAspectRatio="none"
       >
-        {/* Gridlines at 0, half, and full. */}
-        {[0, 0.5, 1].map((fraction) => {
-          const y = chartHeight - fraction * chartHeight + 6;
+        {/* Gridlines at the halfway point and at the axis. */}
+        {[0.5, 1].map((fraction) => {
+          const y = labelBand + plotHeight - fraction * plotHeight;
           return (
             <line
               key={fraction}
               x1="0"
-              x2={data.length * 52}
+              x2={data.length * slot}
               y1={y}
               y2={y}
               stroke="var(--fl-border)"
@@ -130,17 +134,18 @@ export function BarChart({
         })}
 
         {data.map((point, index) => {
-          const barHeight = Math.max(3, (point.value / max) * chartHeight);
-          const x = index * 52 + 16;
-          const y = chartHeight + 6 - barHeight;
+          const barHeight = Math.max(3, (point.value / max) * plotHeight);
+          const x = index * slot + (slot - barWidth) / 2;
+          const y = labelBand + plotHeight - barHeight;
           return (
             <g key={point.label}>
               <text
-                x={x + 8}
-                y={y - 6}
+                x={x + barWidth / 2}
+                y={y - 7}
                 textAnchor="middle"
-                fontSize="11"
+                fontSize="13"
                 className="fl-num"
+                fontWeight={point.highlight ? 600 : 400}
                 fill="var(--fl-text-muted)"
               >
                 {point.value}
@@ -148,16 +153,17 @@ export function BarChart({
               <rect
                 x={x}
                 y={y}
-                width="16"
+                width={barWidth}
                 height={barHeight}
-                rx="3"
+                rx="4"
                 fill={point.highlight ? "var(--fl-primary)" : "#cfe3d8"}
               />
               <text
-                x={x + 8}
-                y={chartHeight + 24}
+                x={x + barWidth / 2}
+                y={labelBand + plotHeight + 18}
                 textAnchor="middle"
-                fontSize="11"
+                fontSize="12"
+                fontWeight={point.highlight ? 600 : 400}
                 fill="var(--fl-text-muted)"
               >
                 {point.label}

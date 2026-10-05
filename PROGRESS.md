@@ -26,9 +26,11 @@ rails, no real money, and no real credentials are collected or stored.
 | 1.9 | Transaction-safe wallet ops | `tested` | SQL transaction + row lock, idempotency key |
 | 1.10 | Carbon factor module | `tested` | `src/lib/carbon`, proposal worked example |
 | 1.11 | Green-points ledger, no double award | `tested` | unique index on (transaction_id) |
-| 1.12 | Python ML service skeleton + contract | `tested` | `ml/`, stdlib HTTP, sklearn models |
+| 1.12 | Python ML service + contract | `tested` | `ml/`, stdlib HTTP, sklearn models |
 | 1.13 | `.env.example`, setup docs | `tested` | placeholders only |
 | 1.14 | Reset/reseed workflow | `tested` | `npm run db:reset` |
+| 1.15 | Bill due dates for punctuality | `tested` | migration 003; replaces a recency proxy |
+| 1.16 | Phone normalisation | `tested` | `src/lib/phone.ts` |
 
 ## Milestone 2 — Shell and design system
 
@@ -40,6 +42,8 @@ rails, no real money, and no real credentials are collected or stored.
 | 2.4 | Shared components | `implemented` | button, input, card, metric, row, gauge, chart, states |
 | 2.5 | Responsive breakpoints | `tested` | 640 / 1024 / 1440 |
 | 2.6 | Accessibility pass on shell | `tested` | focus, landmarks, contrast, reduced motion |
+| 2.7 | Login + OTP flow with real failures | `tested` | wrong OTP and unknown number both rejected |
+| 2.8 | Open-redirect-safe redirects | `tested` | `src/lib/redirect.ts` |
 
 ## Milestone 3 — Dashboard vertical slice
 
@@ -48,16 +52,17 @@ rails, no real money, and no real credentials are collected or stored.
 | 3.1 | Dashboard from seeded data + API | `tested` | balance, scores, quick actions |
 | 3.2 | Recent transactions (real rows) | `tested` | live DB records |
 | 3.3 | Monthly carbon chart (real data) | `tested` | computed from transactions |
-| 3.4 | Screenshot vs `design/dashboard.png` | `visually-verified` | |
-| 3.5 | Mobile dashboard vs mobile reference | `visually-verified` | |
-| 3.6 | Empty / loading / error states | `tested` | |
+| 3.4 | Screenshot vs `design/dashboard.png` | `visually-verified` | MAE 14.08, 8.0% pixels differ |
+| 3.5 | Mobile dashboard vs mobile reference | `visually-verified` | 853x1844, gauges side-by-side |
+| 3.6 | Empty / loading / error states | `tested` | EmptyState, ErrorState, LoadingBlock, Skeleton |
+| 3.7 | Trust score computed live via ML service | `tested` | 83/100, contributions reconcile |
 
 ## Milestone 4 — Remaining screens
 
 | # | Screen | Reference | Status |
 | --- | --- | --- | --- |
 | 4.1 | Landing | `landing.png` | `not-started` |
-| 4.2 | Login | `login.png` | `not-started` |
+| 4.2 | Login | `login.png` | `visually-verified` | built and tested; visual pass pending |
 | 4.3 | Signup | `signup.png` | `not-started` |
 | 4.4 | Onboarding | `onboarding.png` | `not-started` |
 | 4.5 | Transfer | `transfer.png` | `not-started` |
@@ -102,7 +107,8 @@ rails, no real money, and no real credentials are collected or stored.
 | 6.4 | Accessibility audit | `not-started` | |
 | 6.5 | README: setup, run, test, demo | `not-started` | |
 | 6.6 | Feature / limitation / blocker list | `not-started` | |
-| 6.7 | Push to GitHub | `blocked-on-gh-auth` | 3 local commits ready |
+| 6.7 | Push to GitHub | `blocked-on-gh-auth` | 5 local commits ready |
+| 6.8 | Visual QA harness | `tested` | capture + compare scripts |
 
 ## Explicitly out of scope or intentionally absent
 

@@ -1,6 +1,6 @@
 import "server-only";
 import { query, queryOne } from "./db";
-import { latestTrustScore } from "./trust";
+import { getTrustScore, latestTrustScore } from "./trust";
 
 /**
  * Read models for the dashboard and the other screens.
@@ -322,6 +322,12 @@ export async function getDashboardData(userId: number): Promise<DashboardData> {
   const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
 
+  // A brand-new account has no stored snapshot yet. Compute one on first read so
+  // the dashboard never shows an empty card to a user who simply has not visited
+  // the trust-score screen. getTrustScore persists what it computes, so this costs
+  // one model call, once.
+  const resolvedTrust = trustScore ?? (await getTrustScore(userId));
+
   return {
     totalBalance,
     accountCount: accounts.length,
@@ -332,7 +338,7 @@ export async function getDashboardData(userId: number): Promise<DashboardData> {
     daysInMonth,
     // A month is only comparable once it is nearly over.
     monthComplete: runRate.dayOfMonth / daysInMonth > 0.9,
-    trustScore,
+    trustScore: resolvedTrust,
     sustainability,
     greenPoints,
     openAlerts: Number(alerts?.n ?? 0),

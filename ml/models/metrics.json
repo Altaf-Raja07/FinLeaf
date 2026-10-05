@@ -1,6 +1,6 @@
 {
   "model_version": "logreg-v1+iforest-v1",
-  "trained_at": "2026-10-05T02:03:52.238161+00:00",
+  "trained_at": "2026-10-05T02:54:49.235064+00:00",
   "trust_score": {
     "accuracy": 0.8613,
     "precision": 0.8825,

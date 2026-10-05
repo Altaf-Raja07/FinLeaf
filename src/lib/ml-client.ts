@@ -96,7 +96,26 @@ export async function requestTrustScore(
 ): Promise<Omit<TrustScoreResult, "source"> | null> {
   const payload = await post<Omit<TrustScoreResult, "source">>("/trust-score", { features });
   if (!payload || typeof payload.score !== "number") return null;
-  return payload;
+
+  // The service also returns fields we do not surface (probability, intercept,
+  // cap). Drop them rather than letting them leak into the typed shape, and fail
+  // loudly if a field we do depend on is missing, instead of persisting
+  // "undefined" as if it were a model version.
+  const { score, band, contributions, basis } = payload;
+  if (typeof band !== "string" || !Array.isArray(contributions) || typeof basis !== "string") {
+    return null;
+  }
+
+  // The service speaks snake_case; the app speaks camelCase. Map explicitly rather
+  // than casting, so a renamed field on either side fails here instead of
+  // silently persisting "undefined" as a model version.
+  const modelVersion = (payload as Record<string, unknown>).model_version;
+  if (typeof modelVersion !== "string" || modelVersion.length === 0) {
+    console.warn("[ml-client] trust-score response had no model_version; using fallback");
+    return null;
+  }
+
+  return { score, band, contributions, modelVersion, basis };
 }
 
 export interface AnomalyInput {
