@@ -52,6 +52,14 @@ export interface AnomalyAlert {
 
 export interface AnomalyResult {
   alerts: AnomalyAlert[];
+  /** The model's fitted decision boundary; exposed so a flag is explainable. */
+  threshold: number;
+  /** Contamination rate the model was fitted with, i.e. expected flag rate. */
+  contamination: number;
+  flagged: number;
+  submitted: number;
+  modelVersion: string;
+  note: string;
   source: "ml-service" | "fallback";
 }
 
@@ -130,5 +138,34 @@ export async function requestAnomalyScores(
 ): Promise<Omit<AnomalyResult, "source"> | null> {
   const payload = await post<Omit<AnomalyResult, "source">>("/anomaly-score", { transactions });
   if (!payload || !Array.isArray(payload.alerts)) return null;
-  return payload;
+
+  // Map the snake_case service response explicitly rather than casting, so a
+  // renamed field fails here instead of writing a null into the database.
+  const raw = payload as unknown as Record<string, unknown>;
+  if (typeof raw.model_version !== "string") {
+    console.warn("[ml-client] anomaly response had no model_version");
+    return null;
+  }
+
+  // Alert fields are snake_case on the wire too. Normalise here rather than at
+  // each call site, so a renamed field cannot write a null into a NOT NULL
+  // column somewhere further down.
+  const alerts: AnomalyAlert[] = payload.alerts.map((a) => {
+    const row = a as unknown as Record<string, unknown>;
+    return {
+      reference: String(row.reference ?? ""),
+      anomalyScore: typeof row.anomaly_score === "number" ? row.anomaly_score : 0,
+      reasons: Array.isArray(row.reasons) ? row.reasons.map(String) : [],
+    };
+  });
+
+  return {
+    alerts,
+    threshold: typeof raw.threshold === "number" ? raw.threshold : 0,
+    contamination: typeof raw.contamination === "number" ? raw.contamination : 0,
+    flagged: typeof raw.flagged === "number" ? raw.flagged : payload.alerts.length,
+    submitted: typeof raw.submitted === "number" ? raw.submitted : transactions.length,
+    modelVersion: raw.model_version,
+    note: typeof raw.note === "string" ? raw.note : "",
+  };
 }

@@ -164,6 +164,22 @@ export function Input({
   );
 }
 
+export function Textarea({
+  invalid,
+  className = "",
+  ...rest
+}: { invalid?: boolean } & React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <textarea
+      aria-invalid={invalid || undefined}
+      className={`w-full rounded-sm border bg-surface px-3 py-2.5 text-[15px] ${
+        invalid ? "border-danger" : "border-border-strong"
+      } ${className}`}
+      {...rest}
+    />
+  );
+}
+
 export function Select({
   invalid,
   className = "",

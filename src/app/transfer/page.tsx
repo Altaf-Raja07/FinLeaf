@@ -7,7 +7,6 @@ import { formatMoney } from "@/lib/money";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, Notice } from "@/components/ui";
 import { TransferForm } from "@/components/transfer-form";
-import { ChevronRight } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
 

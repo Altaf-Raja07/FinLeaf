@@ -215,8 +215,14 @@ export async function recordDebit(
     category: CarbonCategory;
     merchant: string;
     note?: string;
+    /**
+     * Optional idempotency key. When supplied it is stored on the transaction
+     * behind a unique index, so a repeated submit of the same operation is
+     * rejected by the database rather than depending on the caller to check.
+     */
+    idempotencyKey?: string;
   }
-): Promise<{ transactionId: number; co2eKg: number; points: number; balanceAfter: number }> {
+): Promise<{ transactionId: number; co2eKg: number; points: number; balanceAfter: number; duplicate: boolean }> {
   const account = await lockAccount(client, input.accountId, input.userId);
   if (account.balance < input.amountPaise) {
     throw new InsufficientFundsError(account.balance);
@@ -230,10 +236,19 @@ export async function recordDebit(
   const balanceAfter = Number((debited.rows[0] as { balance: string }).balance);
 
   const inserted = await client.query<{ id: number }>(
-    `INSERT INTO transactions (account_id, user_id, direction, amount, category, merchant, note)
-     VALUES ($1, $2, 'debit', $3, $4, $5, $6)
+    `INSERT INTO transactions
+       (account_id, user_id, direction, amount, category, merchant, note, idempotency_key)
+     VALUES ($1, $2, 'debit', $3, $4, $5, $6, $7)
      RETURNING id`,
-    [account.id, input.userId, input.amountPaise, input.category, input.merchant, input.note ?? null]
+    [
+      account.id,
+      input.userId,
+      input.amountPaise,
+      input.category,
+      input.merchant,
+      input.note ?? null,
+      input.idempotencyKey ?? null,
+    ]
   );
   const transactionId = inserted.rows[0].id;
 
@@ -259,7 +274,7 @@ export async function recordDebit(
     );
   }
 
-  return { transactionId, co2eKg: estimate.co2eKg, points, balanceAfter };
+  return { transactionId, co2eKg: estimate.co2eKg, points, balanceAfter, duplicate: false };
 }
 
 /** Total balance across every account a user owns. */

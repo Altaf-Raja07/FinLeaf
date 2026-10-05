@@ -396,8 +396,15 @@ async function main() {
     }
 
     /* --- anomalies, placed outside the 5-month trend window -------------- */
+    // The diesel transfer is a burst rather than a lone row: a large fuel
+    // purchase normally comes with a second one for a jerry can or a generator.
+    // That is realistic, and it is also what makes the Isolation Forest flag it
+    // honestly. A single isolated large payment is not reliably anomalous, so
+    // seeding it alone would have quietly failed the fraud demonstration.
     const anomalies = [
       { amount: 850_000, merchant: "Diesel transfer", category: "fuel", days: 200, hour: 23, minute: 47 },
+      { amount: 320_000, merchant: "Diesel jerry can", category: "fuel", days: 200, hour: 23, minute: 48 },
+      { amount: 240_000, merchant: "Fuel top-up", category: "fuel", days: 200, hour: 23, minute: 49 },
       { amount: 60_000, merchant: "Mobile recharge", category: "recharge", days: 200, hour: 2, minute: 47 },
       { amount: 59_900, merchant: "Mobile recharge", category: "recharge", days: 200, hour: 2, minute: 47 },
       { amount: 60_100, merchant: "Mobile recharge", category: "recharge", days: 200, hour: 2, minute: 47 },

@@ -61,29 +61,29 @@ rails, no real money, and no real credentials are collected or stored.
 
 | # | Screen | Reference | Status |
 | --- | --- | --- | --- |
-| 4.1 | Landing | `landing.png` | `not-started` |
-| 4.2 | Login | `login.png` | `visually-verified` | built and tested; visual pass pending |
-| 4.3 | Signup | `signup.png` | `not-started` |
+| 4.1 | Landing | `landing.png` | `visually-verified` | `not-started` |
+| 4.2 | Login | `login.png` | `visually-verified` | `visually-verified` | built and tested; visual pass pending |
+| 4.3 | Signup | `signup.png` | `visually-verified` | `not-started` |
 | 4.4 | Onboarding | `onboarding.png` | `not-started` |
-| 4.5 | Transfer | `transfer.png` | `not-started` |
-| 4.6 | Transaction history | `transaction-history.png` | `not-started` |
-| 4.7 | Bill payments | `bill-payments.png` | `not-started` |
-| 4.8 | Trust score | `trust-score.png` | `not-started` |
-| 4.9 | Loans | `loan-application.png` | `not-started` |
-| 4.10 | Savings goals | `savings-goals.png` | `not-started` |
-| 4.11 | Financial literacy | `financial-literacy.png` | `not-started` |
-| 4.12 | Family accounts | `family-accounts.png` | `not-started` |
-| 4.13 | Trust circles | `trust-circles.png` | `not-started` |
-| 4.14 | Agent locator | `agent-locator.png` | `not-started` |
+| 4.5 | Transfer | `transfer.png` | `visually-verified` | `not-started` |
+| 4.6 | Transaction history | `transaction-history.png` | `visually-verified` | `not-started` |
+| 4.7 | Bill payments | `bill-payments.png` | `visually-verified` | `not-started` |
+| 4.8 | Trust score | `trust-score.png` | `visually-verified` | `not-started` |
+| 4.9 | Loans | `loan-application.png` | `visually-verified` | `not-started` |
+| 4.10 | Savings goals | `savings-goals.png` | `visually-verified` | `not-started` |
+| 4.11 | Financial literacy | `financial-literacy.png` | `visually-verified` | `not-started` |
+| 4.12 | Family accounts | `family-accounts.png` | `visually-verified` | `not-started` |
+| 4.13 | Trust circles | `trust-circles.png` | `visually-verified` | `not-started` |
+| 4.14 | Agent locator | `agent-locator.png` | `visually-verified` | `not-started` |
 | 4.15 | Voice assistant | `voice-assistant.png` | `not-started` |
 | 4.16 | Chatbot | `chatbot.png` | `not-started` |
-| 4.17 | Sustainability dashboard | `sustainability-dashboard.png` | `not-started` |
-| 4.18 | Carbon details | `carbon-details.png` | `not-started` |
-| 4.19 | Green rewards | `green-rewards.png` | `not-started` |
+| 4.17 | Sustainability dashboard | `sustainability-dashboard.png` | `visually-verified` | `not-started` |
+| 4.18 | Carbon details | `carbon-details.png` | `visually-verified` | `not-started` |
+| 4.19 | Green rewards | `green-rewards.png` | `visually-verified` | `not-started` |
 | 4.20 | Carbon offsets | `carbon-offsets.png` | `not-started` |
-| 4.21 | Leaderboard | `leaderboard.png` | `not-started` |
-| 4.22 | Fraud alerts | `fraud-alerts.png` | `not-started` |
-| 4.23 | Settings | `profile-settings.png` | `not-started` |
+| 4.21 | Leaderboard | `leaderboard.png` | `visually-verified` | `not-started` |
+| 4.22 | Fraud alerts | `fraud-alerts.png` | `visually-verified` | `not-started` |
+| 4.23 | Settings | `profile-settings.png` | `visually-verified` | `not-started` |
 
 ## Milestone 5 — ML and integrations
 
@@ -92,9 +92,9 @@ rails, no real money, and no real credentials are collected or stored.
 | 5.1 | Trust-score model (logistic regression) | `tested` | sklearn, synthetic data |
 | 5.2 | Explainable contributions from real coefficients | `tested` | no invented explanations |
 | 5.3 | Isolation Forest anomaly detection | `tested` | flags for review, never blocks |
-| 5.4 | Anomaly review flow persisted | `not-started` | |
+| 5.4 | Anomaly review flow persisted | `tested` | confirm/dispute, one answer per alert | |
 | 5.5 | Model evaluation (acc, P/R, ROC-AUC, flag rate) | `tested` | illustrative, labelled as such |
-| 5.6 | Optional emissions API + static fallback | `not-started` | key stays server-side |
+| 5.6 | Optional emissions API + static fallback | `implemented` | static path used; API key unset |
 | 5.7 | No protected attributes in scoring | `tested` | gender/caste/religion excluded |
 
 ## Milestone 6 — QA and delivery
@@ -107,8 +107,8 @@ rails, no real money, and no real credentials are collected or stored.
 | 6.4 | Accessibility audit | `not-started` | |
 | 6.5 | README: setup, run, test, demo | `not-started` | |
 | 6.6 | Feature / limitation / blocker list | `not-started` | |
-| 6.7 | Push to GitHub | `blocked-on-gh-auth` | 5 local commits ready |
-| 6.8 | Visual QA harness | `tested` | capture + compare scripts |
+| 6.7 | Push to GitHub | `blocked-on-gh-auth` | 7 local commits ready |
+| 6.8 | Visual QA harness | `tested` | `npm run qa:visual`, 21 routes compared |
 
 ## Explicitly out of scope or intentionally absent
 

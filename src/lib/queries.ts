@@ -59,7 +59,14 @@ export async function getTotalBalance(userId: number): Promise<number> {
 
 export async function getTransactions(
   userId: number,
-  options: { limit?: number; offset?: number; category?: string; search?: string; from?: string; to?: string } = {}
+  options: {
+    limit?: number;
+    offset?: number;
+    category?: string;
+    search?: string;
+    /** Look back this many days. Computed by the database, not by JS `Date`. */
+    withinDays?: number;
+  } = {}
 ): Promise<{ rows: TransactionRow[]; total: number }> {
   const limit = Math.min(options.limit ?? 50, 200);
   const offset = options.offset ?? 0;
@@ -77,13 +84,13 @@ export async function getTransactions(
     where.push(`(t.merchant ILIKE $${next} OR COALESCE(t.note, '') ILIKE $${next})`);
     next++;
   }
-  if (options.from) {
-    values.push(options.from);
-    where.push(`t.created_at >= $${next++}`);
-  }
-  if (options.to) {
-    values.push(options.to);
-    where.push(`t.created_at < $${next++}`);
+  if (options.withinDays !== undefined) {
+    // A relative window is resolved by PostgreSQL rather than by computing a
+    // timestamp in JavaScript. Two reasons: `new Date()` in a component body is
+    // an impure render (flagged by the React Compiler), and the database clock is
+    // the one the rows were written against.
+    values.push(options.withinDays);
+    where.push(`t.created_at > now() - make_interval(days => $${next++})`);
   }
 
   const rows = await query<{

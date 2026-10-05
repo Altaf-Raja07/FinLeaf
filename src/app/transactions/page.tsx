@@ -5,7 +5,7 @@ import { getTransactions, type TransactionRow } from "@/lib/queries";
 import { getUsedCategories } from "@/lib/screens";
 import { formatMoney } from "@/lib/money";
 import { AppShell, PageHeader } from "@/components/app-shell";
-import { Card, EmptyState, IconTile, Pill } from "@/components/ui";
+import { Card, EmptyState, IconTile } from "@/components/ui";
 import { CategoryIcon } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
@@ -60,17 +60,13 @@ export default async function TransactionsPage({
 
   const range = AMOUNT_RANGES.find((r) => r.value === amountKey) ?? AMOUNT_RANGES[0];
   const dateRange = DATE_RANGES.find((r) => r.value === when) ?? DATE_RANGES[0];
-  const from = dateRange.days
-    ? new Date(Date.now() - dateRange.days * 86_400_000).toISOString()
-    : undefined;
 
   const [{ rows, total }, categories] = await Promise.all([
     getTransactions(user.id, {
       limit: 100,
       search: search || undefined,
       category,
-      from,
-      to: undefined,
+      withinDays: dateRange.days ?? undefined,
     }),
     getUsedCategories(user.id),
   ]);
