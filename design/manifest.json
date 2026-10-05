@@ -3,8 +3,8 @@
     "dashboard.png": {
       "width": 1586,
       "height": 992,
-      "bytes": 1011814,
-      "savedAt": "2026-10-05T00:54:16.941Z",
+      "bytes": 996148,
+      "savedAt": "2026-10-05T01:12:39.610Z",
       "source": "ChatGPT image generation via authenticated browser session"
     },
     "sustainability-dashboard.png": {
@@ -19,6 +19,97 @@
       "height": 992,
       "bytes": 1054463,
       "savedAt": "2026-10-05T00:59:30.553Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "transaction-history.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1007217,
+      "savedAt": "2026-10-05T01:01:21.537Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "trust-score.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1032991,
+      "savedAt": "2026-10-05T01:14:04.442Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "carbon-details.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1070685,
+      "savedAt": "2026-10-05T01:04:00.708Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "green-rewards.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1067782,
+      "savedAt": "2026-10-05T01:05:18.732Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "leaderboard.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1041273,
+      "savedAt": "2026-10-05T01:06:39.606Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "carbon-offsets.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1271650,
+      "savedAt": "2026-10-05T01:07:53.659Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "landing.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1355424,
+      "savedAt": "2026-10-05T01:11:12.642Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "login.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 910991,
+      "savedAt": "2026-10-05T01:15:26.033Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "signup.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 914575,
+      "savedAt": "2026-10-05T01:16:41.248Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "onboarding.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 930119,
+      "savedAt": "2026-10-05T01:18:16.500Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "bill-payments.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1002074,
+      "savedAt": "2026-10-05T01:19:42.069Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "loan-application.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1031978,
+      "savedAt": "2026-10-05T01:21:06.712Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "savings-goals.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1061226,
+      "savedAt": "2026-10-05T01:22:37.444Z",
       "source": "ChatGPT image generation via authenticated browser session"
     }
   }
