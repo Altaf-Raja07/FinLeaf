@@ -1,0 +1,44 @@
+# FinLeaf local development database.
+#
+# PostgreSQL 16 for structured financial records. This is a local demo instance:
+# it holds simulated data only, never real banking details.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finleaf-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-finleaf}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finleaf_local_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-finleaf}
+    ports:
+      # Host port 55432 to avoid clashing with any system PostgreSQL.
+      - "${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - finleaf-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-finleaf} -d ${POSTGRES_DB:-finleaf}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # The Python ML service (trust score + anomaly detection).
+  # Kept as a separate service so models can be retrained without touching the API.
+  ml:
+    image: python:3.12-slim
+    container_name: finleaf-ml
+    working_dir: /srv/ml
+    profiles: ["ml"]
+    environment:
+      ML_PORT: "8000"
+    volumes:
+      - ./ml:/srv/ml
+    command: >
+      bash -lc "pip install --no-cache-dir -q -r requirements.txt &&
+               python scripts/train.py --quiet &&
+               python service.py"
+    ports:
+      - "${ML_PORT:-8000}:8000"
+
+volumes:
+  finleaf-pgdata:

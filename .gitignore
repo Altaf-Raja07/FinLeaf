@@ -34,6 +34,7 @@ ml/.venv/
 
 # temporary design-pipeline files
 .design-*.cjs
+.design-job.rendered.cjs
 scripts/*.rendered.cjs
 
 # typescript

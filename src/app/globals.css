@@ -1,26 +1,151 @@
 @import "tailwindcss";
 
+/**
+ * FinLeaf design tokens.
+ *
+ * These mirror design/design-system.md, which is the normative document. Every
+ * value here has a comment naming the section it comes from, so the two can be
+ * checked against each other.
+ */
+
+/* --- 2. Colour ---------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --fl-bg: #f7f7f4;
+  --fl-surface: #ffffff;
+  --fl-surface-sunken: #f0f0ec;
+  --fl-border: #e2e2dc;
+  --fl-border-strong: #c9c9c0;
+  --fl-text: #1a1c19;
+  --fl-text-muted: #5c615a;
+  --fl-primary: #12694a;
+  --fl-primary-hover: #0d5238;
+  --fl-primary-soft: #e6f2ec;
+  --fl-leaf: #3f9e6b;
+  --fl-leaf-soft: #e8f4ec;
+  --fl-amber: #9a5b00;
+  --fl-amber-soft: #fdf1de;
+  --fl-danger: #a32020;
+  --fl-danger-soft: #fbeaea;
+  --fl-trust: #1f5fa8;
+  --fl-trust-soft: #e8eff9;
+
+  /* --- 3. Typography --------------------------------------------------- */
+  --fl-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --fl-font-num: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* --- 4. Spacing, radii, elevation ------------------------------------ */
+  --fl-r-sm: 8px;
+  --fl-r-md: 12px;
+  --fl-r-lg: 16px;
+  --fl-r-full: 999px;
+  --fl-shadow: 0 1px 2px rgba(16, 24, 16, 0.06), 0 8px 24px rgba(16, 24, 16, 0.08);
+
+  /* --- 5. Layout -------------------------------------------------------- */
+  --fl-sidebar: 248px;
+  --fl-content-max: 1200px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--fl-bg);
+  --color-foreground: var(--fl-text);
+  --color-surface: var(--fl-surface);
+  --color-sunken: var(--fl-surface-sunken);
+  --color-border: var(--fl-border);
+  --color-border-strong: var(--fl-border-strong);
+  --color-muted: var(--fl-text-muted);
+  --color-primary: var(--fl-primary);
+  --color-primary-hover: var(--fl-primary-hover);
+  --color-primary-soft: var(--fl-primary-soft);
+  --color-leaf: var(--fl-leaf);
+  --color-leaf-soft: var(--fl-leaf-soft);
+  --color-amber: var(--fl-amber);
+  --color-amber-soft: var(--fl-amber-soft);
+  --color-danger: var(--fl-danger);
+  --color-danger-soft: var(--fl-danger-soft);
+  --color-trust: var(--fl-trust);
+  --color-trust-soft: var(--fl-trust-soft);
+
+  --font-sans: var(--fl-font);
+  --font-num: var(--fl-font-num);
+
+  --radius-sm: var(--fl-r-sm);
+  --radius-md: var(--fl-r-md);
+  --radius-lg: var(--fl-r-lg);
+
+  --shadow-float: var(--fl-shadow);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--fl-border);
+}
+
+html {
+  background: var(--fl-bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fl-bg);
+  color: var(--fl-text);
+  font-family: var(--fl-font);
+  /* 15.5px base rather than 14px: the target user often reads a phone at arm's
+     length in daylight. See design-system.md section 3. */
+  font-size: 15.5px;
+  line-height: 1.48;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Numbers align in columns and do not jitter when they update. */
+.fl-num {
+  font-family: var(--fl-font-num);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* --- 6/9. Accessibility ------------------------------------------------- */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--fl-primary);
+  outline-offset: 2px;
+  border-radius: var(--fl-r-sm);
+}
+
+/* Skip link: off-screen until focused, then pinned to the top-left. */
+.fl-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 12px 16px;
+  background: var(--fl-primary);
+  color: #fff;
+  border-radius: 0 0 var(--fl-r-md) 0;
+  font-weight: 600;
+}
+.fl-skip-link:focus {
+  left: 0;
+}
+
+/* 150-220ms for state changes only. Collapsed under reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.fl-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

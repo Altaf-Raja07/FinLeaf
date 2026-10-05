@@ -12,6 +12,14 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+
+    // Build/tooling scripts are plain CommonJS run directly by node, so
+    // require() is correct there and the TS rule does not apply.
+    "scripts/**",
+
+    // Python virtualenv and generated model artifacts are not source.
+    "ml/.venv/**",
+    "ml/**/__pycache__/**",
   ]),
 ]);
 

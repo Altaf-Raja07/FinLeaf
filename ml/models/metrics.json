@@ -1,0 +1,23 @@
+{
+  "model_version": "logreg-v1+iforest-v1",
+  "trained_at": "2026-10-05T02:03:52.238161+00:00",
+  "trust_score": {
+    "accuracy": 0.8613,
+    "precision": 0.8825,
+    "recall": 0.8784,
+    "roc_auc": 0.9386,
+    "training_rows": 3000,
+    "test_rows": 750,
+    "positive_rate_in_test": 0.5813,
+    "note": "Illustrative only: trained on synthetic behaviour, not on real customers, so these numbers do not indicate real creditworthiness."
+  },
+  "anomaly_detection": {
+    "flag_rate": 0.0401,
+    "precision": 0.96,
+    "recall": 1.0,
+    "injected_anomalies": 96,
+    "caught_injected_anomalies": 96,
+    "normal_rows_flagged": 4,
+    "note": "Unsupervised, so these describe behaviour on synthetic data only."
+  }
+}
