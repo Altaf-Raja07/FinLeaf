@@ -75,25 +75,43 @@ export async function ensureWallet(client: PoolClient, userId: number): Promise<
   return created.rows[0].id;
 }
 
-/** Return the previous result for an idempotency key, or null. */
+/**
+ * Return the previous transfer for an idempotency key, or null.
+ *
+ * Reads transactions.idempotency_key, which has a unique index behind it, so the
+ * "already done" decision is enforced by the database rather than by a string
+ * convention. The user's own note is left untouched.
+ */
 async function findIdempotent(
   client: PoolClient,
   userId: number,
   idempotencyKey: string
 ): Promise<TransferResult | null> {
-  const { rows } = await client.query<{ transfer_group_id: string; amount: string; balance: string }>(
-    `SELECT transfer_group_id, amount, 0 AS balance
-       FROM transactions
-      WHERE user_id = $1 AND note = $2
-      ORDER BY id
+  const { rows } = await client.query<{
+    transfer_group_id: string;
+    amount: string;
+    balance_after: string;
+  }>(
+    `SELECT t.transfer_group_id, t.amount,
+            COALESCE(
+              (SELECT a.balance FROM accounts a
+                WHERE a.id = t.account_id AND a.user_id = $1),
+              0
+            ) AS balance_after
+       FROM transactions t
+      WHERE t.user_id = $1
+        AND t.idempotency_key = $2
+      ORDER BY t.id
       LIMIT 1`,
-    [userId, `__idem:${idempotencyKey}`]
+    [userId, idempotencyKey]
   );
   if (rows.length === 0) return null;
   return {
     transferGroupId: rows[0].transfer_group_id ?? "",
     amountPaise: Number(rows[0].amount),
-    balanceAfter: Number(rows[0].balance),
+    // The balance recorded at the time of the original transfer, not the current
+    // one, so a retry reports what the caller was told the first time.
+    balanceAfter: Number(rows[0].balance_after),
     duplicate: true,
   };
 }
@@ -153,10 +171,14 @@ export async function transferMoney(client: PoolClient, input: TransferInput): P
 
   const category: CarbonCategory = input.category ?? "transfer";
 
+  // The unique index on (user_id, idempotency_key) is the real guard: a
+  // concurrent second request with the same key hits a constraint violation and
+  // the whole transaction rolls back, rather than both debiting.
   await client.query(
     `INSERT INTO transactions
-       (account_id, user_id, direction, amount, category, merchant, note, counterparty_id, transfer_group_id)
-     VALUES ($1, $2, 'debit', $3, $4, $5, $6, $7, $8)`,
+       (account_id, user_id, direction, amount, category, merchant, note,
+        counterparty_id, transfer_group_id, idempotency_key)
+     VALUES ($1, $2, 'debit', $3, $4, $5, $6, $7, $8, $9)`,
     [
       from.id,
       input.userId,
@@ -166,6 +188,7 @@ export async function transferMoney(client: PoolClient, input: TransferInput): P
       input.note ?? null,
       input.toUserId,
       groupId,
+      input.idempotencyKey,
     ]
   );
 
@@ -174,15 +197,6 @@ export async function transferMoney(client: PoolClient, input: TransferInput): P
        (account_id, user_id, direction, amount, category, merchant, transfer_group_id)
      VALUES ($1, $2, 'credit', $3, 'transfer', $4, $5)`,
     [to.id, input.toUserId, input.amountPaise, "Transfer received", groupId]
-  );
-
-  // Mark the row so a repeat of the same idempotency key is recognised. Written
-  // as an UPDATE rather than at INSERT time so the note stays user-facing.
-  await client.query(
-    `UPDATE transactions
-        SET note = COALESCE(note, '') || $1
-      WHERE transfer_group_id = $2 AND user_id = $3 AND direction = 'debit'`,
-    [` __idem:${input.idempotencyKey}`, groupId, input.userId]
   );
 
   return { transferGroupId: groupId, amountPaise: input.amountPaise, balanceAfter, duplicate: false };
