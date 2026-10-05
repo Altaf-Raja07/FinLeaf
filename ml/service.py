@@ -111,7 +111,7 @@ CONTRIBUTION_SCALE = {
 # from looking like a guarantee.
 CONTRIBUTION_CAP = 14
 
-BAND_STOPS = [(40, "Getting started"), (70, "Steady"), (100, "Strong")]
+BAND_STOPS = [(45, "Getting started"), (78, "Steady"), (101, "Strong")]
 
 _lock = threading.Lock()
 _models: dict[str, object] = {}

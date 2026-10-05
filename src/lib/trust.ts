@@ -56,9 +56,12 @@ const FEATURE_SCALES: Record<keyof TrustFeatures, number> = {
   family_group_activity: 12,
 };
 
+// Calibrated to the attainable range (neutral 35 + 5 factors x 14, clamped to
+// 100). "Strong" is reserved for a genuinely near-maximal record rather than
+// every established account.
 const BANDS: Array<[number, string]> = [
-  [40, "Getting started"],
-  [70, "Steady"],
+  [45, "Getting started"],
+  [78, "Steady"],
   [101, "Strong"],
 ];
 
