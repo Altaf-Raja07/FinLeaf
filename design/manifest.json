@@ -111,6 +111,69 @@
       "bytes": 1061226,
       "savedAt": "2026-10-05T01:22:37.444Z",
       "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "financial-literacy.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1164339,
+      "savedAt": "2026-10-05T01:29:42.599Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "family-accounts.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1046777,
+      "savedAt": "2026-10-05T01:31:08.506Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "trust-circles.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1050664,
+      "savedAt": "2026-10-05T01:32:28.898Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "agent-locator.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1150822,
+      "savedAt": "2026-10-05T01:33:45.021Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "voice-assistant.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1005837,
+      "savedAt": "2026-10-05T01:35:17.998Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "chatbot.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1070153,
+      "savedAt": "2026-10-05T01:36:44.658Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "fraud-alerts.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1024196,
+      "savedAt": "2026-10-05T01:38:29.639Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "profile-settings.png": {
+      "width": 1586,
+      "height": 992,
+      "bytes": 1053560,
+      "savedAt": "2026-10-05T01:39:46.871Z",
+      "source": "ChatGPT image generation via authenticated browser session"
+    },
+    "mobile-dashboard.png": {
+      "width": 853,
+      "height": 1844,
+      "bytes": 968310,
+      "savedAt": "2026-10-05T01:41:05.322Z",
+      "source": "ChatGPT image generation via authenticated browser session"
     }
   }
 }
