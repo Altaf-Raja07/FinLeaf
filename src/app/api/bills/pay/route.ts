@@ -4,7 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { withTransaction } from "@/lib/db";
 import { handler, parseBody, ApiError } from "@/lib/api";
 import { ensureWallet, recordDebit } from "@/lib/wallet";
-import { isCarbonCategory, type CarbonCategory } from "@/lib/carbon";
+import type { CarbonCategory } from "@/lib/carbon";
 
 /**
  * Simulated bill payment or recharge.

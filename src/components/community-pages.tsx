@@ -6,7 +6,7 @@ import { getTransactions } from "@/lib/queries";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, IconTile, Notice, Pill } from "@/components/ui";
 import { CategoryIcon, CheckIcon, GlobeIcon, LockIcon, MapPinIcon, PhoneIcon, UserIcon } from "@/components/icons";
-import { Asset, LESSON_ASSET, EmptyStateArt } from "@/components/illustration";
+import { Asset, LESSON_ASSET } from "@/components/illustration";
 
 export const dynamic = "force-dynamic";
 

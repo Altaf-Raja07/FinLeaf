@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
 import { Wordmark } from "@/components/app-shell";
-import { Button, Card, Notice } from "@/components/ui";
-import { BookIcon, LeafIcon, MicIcon, PiggyIcon, ShieldIcon, TargetIcon } from "@/components/icons";
+import { Card, Notice } from "@/components/ui";
+import { BookIcon, LeafIcon, MicIcon, ShieldIcon, TargetIcon } from "@/components/icons";
 import { Asset } from "@/components/illustration";
 
 /**

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { withTransaction } from "@/lib/db";
-import { handler, parseBody, ApiError, InsufficientFundsError } from "@/lib/api";
+import { handler, parseBody, ApiError } from "@/lib/api";
 import { ensureWallet, recordDebit } from "@/lib/wallet";
 
 /**

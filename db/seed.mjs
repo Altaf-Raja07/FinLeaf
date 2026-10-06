@@ -52,8 +52,6 @@ const GREEN_POINTS = { travel: 12, groceries: 8, recharge: 4, bills: 6, health: 
 const TARGET_TOTAL_BALANCE = 1_245_000; // ₹12,450.00
 const TARGET_WALLET = 995_000; //          ₹9,950.00
 const TARGET_SAVINGS = 250_000; //         ₹2,500.00
-const TARGET_POINTS_AWARDED = 1_700;
-const TARGET_POINTS_REDEEMED = 460;
 
 function makeRng(seed) {
   let a = seed >>> 0;

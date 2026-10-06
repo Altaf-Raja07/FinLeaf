@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
-import { query, withTransaction } from "@/lib/db";
-import { handler, parseBody, ApiError, InsufficientFundsError } from "@/lib/api";
-import { ensureWallet } from "@/lib/wallet";
+import { withTransaction } from "@/lib/db";
+import { handler, parseBody, ApiError } from "@/lib/api";
 
 /** Create a savings goal. */
 

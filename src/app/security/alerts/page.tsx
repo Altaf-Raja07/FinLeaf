@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { getAnomalyAlerts } from "@/lib/screens";
-import { formatMoney } from "@/lib/money";
+
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, IconTile, Notice, Pill } from "@/components/ui";
 import { AlertReview } from "@/components/alert-review";

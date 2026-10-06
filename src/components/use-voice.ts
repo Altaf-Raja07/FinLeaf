@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /**
  * Voice capture and command handling, via the browser Web Speech API.
@@ -26,9 +26,26 @@ export type VoiceState =
   | "no-speech"
   | "error";
 
-interface SpeechResult {
-  transcript: string;
-  isFinal: boolean;
+/** No external store to subscribe to: the capability cannot change at runtime. */
+function subscribeToNothing(): () => void {
+  return () => {};
+}
+
+/** The browser's real capability. */
+function getSpeechSnapshot(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+  );
+}
+
+/**
+ * What the server rendered. Always false, because the server has no window to
+ * inspect. Returning a constant is what keeps hydration deterministic; the client
+ * corrects to the true value immediately after mount.
+ */
+function getServerSpeechSnapshot(): boolean {
+  return false;
 }
 
 export interface VoiceAnswer {
@@ -45,25 +62,20 @@ export function useVoice() {
   const answersRef = useRef<VoiceAnswer[]>([]);
 
   /**
-   * Capability detection must not happen during render.
+   * Capability detection via useSyncExternalStore, not during render and not via
+   * an effect.
    *
    * Reading `window` in the render body made the server render "Speech is not
-   * available in this browser" while the client rendered "Works in English,
-   * Hindi, and Kannada" for the same component. React threw a hydration mismatch
-   * and regenerated the whole tree on the client.
+   * available in this browser" while the browser rendered "Works in English,
+   * Hindi, and Kannada" for the same component, and React threw a hydration
+   * mismatch. Moving the check into an effect fixed that but triggered a
+   * cascading render, which is what the lint rule objects to.
    *
-   * `null` means "not determined yet". The first client render must produce the
-   * same output as the server, so the check runs in an effect and the UI shows a
-   * neutral state until it resolves.
+   * useSyncExternalStore is built for exactly this: an external source (here, the
+   * browser's API surface) read during render, with a separate server snapshot so
+   * the first client render is guaranteed to match the server's HTML.
    */
-  const [supported, setSupported] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setSupported(
-      "SpeechRecognition" in window ||
-        "webkitSpeechRecognition" in window
-    );
-  }, []);
+  const supported = useSyncExternalStore(subscribeToNothing, getSpeechSnapshot, getServerSpeechSnapshot);
 
   // Close any open recognition stream on unmount, so navigating away does not
   // leave the microphone hot.

@@ -3,7 +3,7 @@ import { getSessionUser } from "@/lib/auth";
 import { getGreenPoints } from "@/lib/queries";
 import { getOffsetProjects, getRewards } from "@/lib/screens";
 import { AppShell, PageHeader } from "@/components/app-shell";
-import { Card, EmptyState, Notice, Pill } from "@/components/ui";
+import { Card, EmptyState, Pill } from "@/components/ui";
 import { RedeemButton, OffsetFundButton } from "@/components/reward-controls";
 import { EmptyStateArt } from "@/components/illustration";
 

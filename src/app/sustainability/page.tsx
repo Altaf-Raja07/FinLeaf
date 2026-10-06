@@ -10,7 +10,7 @@ import {
 } from "@/lib/queries";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, Notice, Pill } from "@/components/ui";
-import { BarChart, HorizontalBars, LineChart, ScoreGauge } from "@/components/gauge";
+import { HorizontalBars, LineChart, ScoreGauge } from "@/components/gauge";
 import { ChevronRight, LeafIcon } from "@/components/icons";
 
 export const dynamic = "force-dynamic";

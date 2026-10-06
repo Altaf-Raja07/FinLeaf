@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
-import { withTransaction, queryOne } from "@/lib/db";
+import { withTransaction } from "@/lib/db";
 import { transferMoney } from "@/lib/wallet";
 import { handler, parseBody, ApiError } from "@/lib/api";
 
