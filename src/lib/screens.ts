@@ -1,6 +1,10 @@
 import "server-only";
 import { query, queryOne } from "./db";
 
+// Re-exported so screens can import data access and the loan rule from one place,
+// while the rule itself stays free of database imports and remains testable.
+export { eligibleLoanAmount, type LoanEligibility } from "./loans";
+
 /**
  * Queries for the screens beyond the dashboard.
  *
@@ -80,38 +84,6 @@ export async function getLoans(userId: number): Promise<LoanRow[]> {
     createdAt: r.created_at.toISOString(),
     decidedAt: r.decided_at ? r.decided_at.toISOString() : null,
   }));
-}
-
-/** Loan limit derived from the trust score. All amounts are PAISE. */
-export interface LoanEligibility {
-  limitPaise: number;
-  instalments: number;
-  instalmentPaise: number;
-}
-
-/**
- * Loan eligibility from the trust score.
- *
- * The bands are documented constants of the prototype, not a lending decision.
- * Capacity rises with the score because that is the proposal's whole premise:
- * behaviour substitutes for a credit history. Nothing here constitutes credit
- * approval, and the UI says so.
- *
- * Amounts are in paise to match every other money value in the app. Returning
- * rupees here was a real bug: the API compared paise against rupees and rejected
- * every application as far above the limit.
- */
-export function eligibleLoanAmount(trustScore: number): LoanEligibility {
-  const MAX_LOAN_RUPEES = 50_000;
-  const rawRupees = (trustScore / 100) * MAX_LOAN_RUPEES;
-  // Round to the nearest 500 rupees for a figure a lender would actually quote.
-  const limitRupees = Math.round(rawRupees / 500) * 500;
-  const instalments = 6;
-  return {
-    limitPaise: limitRupees * 100,
-    instalments,
-    instalmentPaise: Math.round((limitRupees / instalments) * 100),
-  };
 }
 
 export interface LessonRow {

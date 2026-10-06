@@ -39,6 +39,8 @@ export const ROUTE_REFERENCES = {
   "/sustainability/compare": "leaderboard",
   "/security/alerts": "fraud-alerts",
   "/settings": "profile-settings",
+  "/voice": "voice-assistant",
+  "/chatbot": "chatbot",
 };
 
 async function main() {

@@ -326,7 +326,11 @@ export async function getDashboardData(userId: number): Promise<DashboardData> {
       ),
     ]);
 
-  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+  // A family group's shared money is not the user's spendable balance. Excluding
+  // it here keeps the dashboard total equal to what the voice assistant and the
+  // accounts page quote, which is what makes those numbers trustworthy.
+  const ownAccounts = accounts.filter((a) => a.kind !== "group");
+  const totalBalance = ownAccounts.reduce((sum, a) => sum + a.balance, 0);
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
 
   // A brand-new account has no stored snapshot yet. Compute one on first read so
@@ -337,7 +341,7 @@ export async function getDashboardData(userId: number): Promise<DashboardData> {
 
   return {
     totalBalance,
-    accountCount: accounts.length,
+    accountCount: ownAccounts.length,
     recent: recent.rows,
     monthly,
     monthEmissions: runRate.kg,

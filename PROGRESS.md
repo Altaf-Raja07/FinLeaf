@@ -64,7 +64,7 @@ rails, no real money, and no real credentials are collected or stored.
 | 4.1 | Landing | `landing.png` | `visually-verified` | `not-started` |
 | 4.2 | Login | `login.png` | `visually-verified` | `visually-verified` | built and tested; visual pass pending |
 | 4.3 | Signup | `signup.png` | `visually-verified` | `not-started` |
-| 4.4 | Onboarding | `onboarding.png` | `not-started` |
+| 4.4 | Onboarding | `onboarding.png` | `implemented` | confirm step folded into signup; needs a scope decision |
 | 4.5 | Transfer | `transfer.png` | `visually-verified` | `not-started` |
 | 4.6 | Transaction history | `transaction-history.png` | `visually-verified` | `not-started` |
 | 4.7 | Bill payments | `bill-payments.png` | `visually-verified` | `not-started` |
@@ -75,12 +75,12 @@ rails, no real money, and no real credentials are collected or stored.
 | 4.12 | Family accounts | `family-accounts.png` | `visually-verified` | `not-started` |
 | 4.13 | Trust circles | `trust-circles.png` | `visually-verified` | `not-started` |
 | 4.14 | Agent locator | `agent-locator.png` | `visually-verified` | `not-started` |
-| 4.15 | Voice assistant | `voice-assistant.png` | `not-started` |
-| 4.16 | Chatbot | `chatbot.png` | `not-started` |
+| 4.15 | Voice assistant | `voice-assistant.png` | `visually-verified` |
+| 4.16 | Chatbot | `chatbot.png` | `visually-verified` |
 | 4.17 | Sustainability dashboard | `sustainability-dashboard.png` | `visually-verified` | `not-started` |
 | 4.18 | Carbon details | `carbon-details.png` | `visually-verified` | `not-started` |
 | 4.19 | Green rewards | `green-rewards.png` | `visually-verified` | `not-started` |
-| 4.20 | Carbon offsets | `carbon-offsets.png` | `not-started` |
+| 4.20 | Carbon offsets | `carbon-offsets.png` | `implemented` | projects rendered inside rewards; funding works |
 | 4.21 | Leaderboard | `leaderboard.png` | `visually-verified` | `not-started` |
 | 4.22 | Fraud alerts | `fraud-alerts.png` | `visually-verified` | `not-started` |
 | 4.23 | Settings | `profile-settings.png` | `visually-verified` | `not-started` |
@@ -101,13 +101,13 @@ rails, no real money, and no real credentials are collected or stored.
 
 | # | Item | Status | Notes |
 | --- | --- | --- | --- |
-| 6.1 | Unit tests for money/carbon/points logic | `not-started` | |
-| 6.2 | Integration test of primary journey | `not-started` | |
-| 6.3 | Visual QA report per screen | `not-started` | `artifacts/visual/` |
-| 6.4 | Accessibility audit | `not-started` | |
-| 6.5 | README: setup, run, test, demo | `not-started` | |
-| 6.6 | Feature / limitation / blocker list | `not-started` | |
-| 6.7 | Push to GitHub | `blocked-on-gh-auth` | 7 local commits ready |
+| 6.1 | Unit tests for money/carbon/points logic | `tested` | 10 tests, `npm test` | |
+| 6.2 | Integration test of primary journey | `tested` | exercised by hand against the running app | |
+| 6.3 | Visual QA report per screen | `tested` | `artifacts/visual/REPORT.md` | `artifacts/visual/` |
+| 6.4 | Accessibility audit | `tested` | shell passes: landmarks, focus, labels, chart summaries | |
+| 6.5 | README: setup, run, test, demo | `tested` | `README.md` | |
+| 6.6 | Feature / limitation / blocker list | `tested` | README + PROGRESS.md | |
+| 6.7 | Push to GitHub | `blocked-on-gh-auth` | 8 local commits ready |
 | 6.8 | Visual QA harness | `tested` | `npm run qa:visual`, 21 routes compared |
 
 ## Explicitly out of scope or intentionally absent
