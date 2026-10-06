@@ -41,6 +41,9 @@ export function VoicePanel() {
             name="voice-assistant"
             width={400}
             height={312}
+            // Above the fold and the largest element on the page, so it must not
+            // be lazy: it is the LCP element and deferring it delays first paint.
+            priority
             sizes="190px"
             className="h-auto w-full"
           />
@@ -48,7 +51,7 @@ export function VoicePanel() {
         <button
           type="button"
           onClick={voice.state === "listening" ? voice.stop : voice.start}
-          disabled={busy || (!voice.supported && voice.state === "unsupported")}
+          disabled={busy || voice.supported === null}
           aria-pressed={voice.state === "listening"}
           aria-label={voice.state === "listening" ? "Stop listening" : "Start voice input"}
           className={`flex h-24 w-24 items-center justify-center rounded-full transition-colors ${
@@ -66,9 +69,11 @@ export function VoicePanel() {
           {voice.state === "listening" ? "Listening…" : "Tap to speak"}
         </p>
         <p className="text-[13px] text-muted">
-          {voice.supported
-            ? "Works in English, Hindi, and Kannada"
-            : "Speech is not available in this browser"}
+          {voice.supported === null
+            ? "Checking whether this browser supports speech"
+            : voice.supported
+              ? "Works in English, Hindi, and Kannada"
+              : "Speech is not available in this browser"}
         </p>
 
         {voice.transcript && (

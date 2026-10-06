@@ -104,7 +104,8 @@ rails, no real money, and no real credentials are collected or stored.
 | 6.1 | Unit tests for money/carbon/points logic | `tested` | 10 tests, `npm test` | |
 | 6.2 | Integration test of primary journey | `tested` | exercised by hand against the running app | |
 | 6.3 | Visual QA report per screen | `tested` | `artifacts/visual/REPORT.md` | `artifacts/visual/` |
-| 6.4 | Accessibility audit | `tested` | shell passes: landmarks, focus, labels, chart summaries | |
+| 6.4 | Accessibility audit | `tested` | shell passes: landmarks, focus, labels, chart summaries |
+| 6.9 | Browser smoke test across all routes | `tested` | `npm run smoke`, 23 routes, 0 problems | |
 | 6.5 | README: setup, run, test, demo | `tested` | `README.md` | |
 | 6.6 | Feature / limitation / blocker list | `tested` | README + PROGRESS.md | |
 | 6.7 | Push to GitHub | `blocked-on-gh-auth` | 8 local commits ready |

@@ -192,6 +192,9 @@ export async function AgentsPage() {
             name="agent-kiosk"
             width={1120}
             height={747}
+            // Above the fold and the largest element on the page, so it must not
+            // be lazy: it is the LCP element and deferring it delays first paint.
+            priority
             sizes="(min-width: 1024px) 60vw, 100vw"
             className="w-full"
           />
@@ -251,6 +254,11 @@ export async function LearnPage() {
                   name={LESSON_ASSET[lesson.slug]}
                   width={640}
                   height={320}
+                  // All three lesson cards sit in the first viewport, and the
+                  // browser picks one as the LCP element. They are 7-8 KB each,
+                  // so eager-loading all three is cheaper than the flash of a
+                  // placeholder.
+                  priority
                   sizes="(min-width: 768px) 30vw, 92vw"
                   className="h-full w-full object-cover"
                 />

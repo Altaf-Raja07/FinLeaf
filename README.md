@@ -55,8 +55,10 @@ npm run lint           # eslint
 npm run db:status      # which migrations have been applied
 npm run db:reseed      # wipe demo data and reload it (deterministic)
 npm run ml:check       # 33 assertions on the models
+npm run smoke          # load every route in a browser, fail on any console/page error
 npm run qa:visual      # screenshot every route and diff it against design/
 npm run test           # unit tests for money, carbon and points logic
+npm run assets:build   # re-optimise illustrations into WebP
 ```
 
 ---

@@ -44,9 +44,26 @@ export function useVoice() {
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const answersRef = useRef<VoiceAnswer[]>([]);
 
-  const supported =
-    typeof window !== "undefined" &&
-    ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
+  /**
+   * Capability detection must not happen during render.
+   *
+   * Reading `window` in the render body made the server render "Speech is not
+   * available in this browser" while the client rendered "Works in English,
+   * Hindi, and Kannada" for the same component. React threw a hydration mismatch
+   * and regenerated the whole tree on the client.
+   *
+   * `null` means "not determined yet". The first client render must produce the
+   * same output as the server, so the check runs in an effect and the UI shows a
+   * neutral state until it resolves.
+   */
+  const [supported, setSupported] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setSupported(
+      "SpeechRecognition" in window ||
+        "webkitSpeechRecognition" in window
+    );
+  }, []);
 
   // Close any open recognition stream on unmount, so navigating away does not
   // leave the microphone hot.
@@ -94,10 +111,11 @@ export function useVoice() {
   }, [busy]);
 
   const start = useCallback(() => {
-    if (!supported) {
+    if (supported === false) {
       setState("unsupported");
       return;
     }
+    if (supported === null) return; // capability not determined yet
 
     const Ctor =
       (window as unknown as { SpeechRecognition?: SpeechRecognitionCtor }).SpeechRecognition ??

@@ -23,7 +23,9 @@
     "db:psql": "psql postgres://finleaf:finleaf_local_dev@127.0.0.1:55432/finleaf",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/",
     "qa:visual": "node scripts/visual-qa.mjs",
-    "qa:visual:mobile": "node scripts/visual-qa.mjs --mobile"
+    "qa:visual:mobile": "node scripts/visual-qa.mjs --mobile",
+    "smoke": "node scripts/smoke.mjs",
+    "assets:build": "node scripts/optimise-assets.mjs"
   },
   "dependencies": {
     "@types/pg": "^8.23.1",
