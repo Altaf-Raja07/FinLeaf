@@ -6,6 +6,7 @@ import { formatMoney } from "@/lib/money";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState } from "@/components/ui";
 import { ContributeButton, CreateGoalForm } from "@/components/goal-controls";
+import { EmptyStateArt } from "@/components/illustration";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,7 @@ export default async function GoalsPage() {
           <EmptyState
             title="No goals yet"
             body="A goal turns an amount into a weekly habit. Start with something small."
+            art={<EmptyStateArt name="empty-goals" />}
             action={<CreateGoalForm />}
           />
         </Card>

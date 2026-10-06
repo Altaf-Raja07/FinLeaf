@@ -5,6 +5,7 @@ import { getOffsetProjects, getRewards } from "@/lib/screens";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, Notice, Pill } from "@/components/ui";
 import { RedeemButton, OffsetFundButton } from "@/components/reward-controls";
+import { EmptyStateArt } from "@/components/illustration";
 
 export const dynamic = "force-dynamic";
 
@@ -105,7 +106,13 @@ async function LinkToOffsets() {
   const points = await getGreenPoints(user.id);
 
   if (projects.length === 0) {
-    return <EmptyState title="No projects available" body="Offset projects will appear here." />;
+    return (
+      <EmptyState
+        title="No projects available"
+        body="Offset projects will appear here."
+        art={<EmptyStateArt name="empty-rewards" />}
+      />
+    );
   }
 
   return (

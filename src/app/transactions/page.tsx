@@ -7,6 +7,7 @@ import { formatMoney } from "@/lib/money";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, IconTile } from "@/components/ui";
 import { CategoryIcon } from "@/components/icons";
+import { EmptyStateArt } from "@/components/illustration";
 
 export const dynamic = "force-dynamic";
 
@@ -189,6 +190,7 @@ export default async function TransactionsPage({
                 ? "Try widening the date range or clearing the amount filter."
                 : "Your payments and transfers will appear here once you start using the account."
             }
+            art={<EmptyStateArt name="empty-transactions" />}
             action={
               isFiltered ? (
                 <Link

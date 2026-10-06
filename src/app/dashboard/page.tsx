@@ -9,6 +9,7 @@ import {
 import { formatMoney } from "@/lib/money";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { BarChart, ScoreGauge } from "@/components/gauge";
+import { EmptyStateArt } from "@/components/illustration";
 import { Card, EmptyState, ErrorState, IconTile, Pill, Skeleton } from "@/components/ui";
 import {
   BillIcon,
@@ -52,6 +53,7 @@ export default async function DashboardPage() {
           <EmptyState
             title="No activity yet"
             body="Once you receive money or pay a bill, your balance and transactions will appear here."
+            art={<EmptyStateArt name="empty-transactions" />}
             action={
               <Link
                 href="/bills"
@@ -168,6 +170,7 @@ export default async function DashboardPage() {
                 <EmptyState
                   title="Nothing here yet"
                   body="Your most recent payments and transfers will show up here."
+                  art={<EmptyStateArt name="empty-transactions" />}
                 />
               ) : (
                 <ul className="flex flex-col">

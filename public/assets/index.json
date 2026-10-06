@@ -1,0 +1,55 @@
+{
+  "quality": 78,
+  "assets": [
+    {
+      "key": "agent-kiosk",
+      "webp": "assets/agent-kiosk.webp",
+      "source": "assets/agent-kiosk.png"
+    },
+    {
+      "key": "auth-welcome",
+      "webp": "assets/auth-welcome.webp",
+      "source": "assets/auth-welcome.png"
+    },
+    {
+      "key": "empty-goals",
+      "webp": "assets/empty-goals.webp",
+      "source": "assets/empty-goals.png"
+    },
+    {
+      "key": "empty-rewards",
+      "webp": "assets/empty-rewards.webp",
+      "source": "assets/empty-rewards.png"
+    },
+    {
+      "key": "empty-transactions",
+      "webp": "assets/empty-transactions.webp",
+      "source": "assets/empty-transactions.png"
+    },
+    {
+      "key": "hero-illustration",
+      "webp": "assets/hero-illustration.webp",
+      "source": "assets/hero-illustration.png"
+    },
+    {
+      "key": "lesson-on-time-bills",
+      "webp": "assets/lesson-on-time-bills.webp",
+      "source": "assets/lesson-on-time-bills.png"
+    },
+    {
+      "key": "lesson-savings-safe",
+      "webp": "assets/lesson-savings-safe.webp",
+      "source": "assets/lesson-savings-safe.png"
+    },
+    {
+      "key": "lesson-trust-score",
+      "webp": "assets/lesson-trust-score.webp",
+      "source": "assets/lesson-trust-score.png"
+    },
+    {
+      "key": "voice-assistant",
+      "webp": "assets/voice-assistant.webp",
+      "source": "assets/voice-assistant.png"
+    }
+  ]
+}

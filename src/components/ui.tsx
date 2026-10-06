@@ -308,27 +308,38 @@ export function LoadingBlock({ rows = 3, label = "Loading" }: { rows?: number; l
   );
 }
 
-/** Empty state: says what is missing and offers the next action. */
+/**
+ * Empty state: says what is missing and offers the next action.
+ *
+ * Takes an optional illustration, because a blank panel is the moment a first-time
+ * user is most likely to give up. When none is supplied it falls back to a
+ * neutral glyph, which is the right choice only when an illustration would be
+ * decorative rather than reassuring.
+ */
 export function EmptyState({
   title,
   body,
   action,
+  art,
 }: {
   title: string;
   body: string;
   action?: ReactNode;
+  art?: ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center gap-2 px-5 py-12 text-center">
-      <span
-        aria-hidden="true"
-        className="mb-1 inline-flex h-11 w-11 items-center justify-center rounded-full bg-sunken text-muted"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="2.5" y="4" width="15" height="12" rx="2" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M2.5 8h15" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
-      </span>
+      {art ?? (
+        <span
+          aria-hidden="true"
+          className="mb-1 inline-flex h-11 w-11 items-center justify-center rounded-full bg-sunken text-muted"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="2.5" y="4" width="15" height="12" rx="2" stroke="currentColor" strokeWidth="1.4" />
+            <path d="M2.5 8h15" stroke="currentColor" strokeWidth="1.4" />
+          </svg>
+        </span>
+      )}
       <p className="text-[15px] font-semibold">{title}</p>
       <p className="max-w-sm text-[13px] text-muted">{body}</p>
       {action && <div className="mt-2">{action}</div>}

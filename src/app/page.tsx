@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/auth";
 import { Wordmark } from "@/components/app-shell";
 import { Button, Card, Notice } from "@/components/ui";
 import { BookIcon, LeafIcon, MicIcon, PiggyIcon, ShieldIcon, TargetIcon } from "@/components/icons";
+import { Asset } from "@/components/illustration";
 
 /**
  * Public landing page.
@@ -76,7 +77,11 @@ export default async function LandingPage() {
       <main id="main">
         {/* Hero */}
         <section className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 sm:py-20">
-          <div className="max-w-2xl">
+          {/* Illustration sits beside the copy on wide screens and below it on
+              narrow ones. It is priority-loaded because it is the largest content
+              element above the fold. */}
+          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr]">
+            <div className="max-w-2xl">
             <h1 className="text-[32px] leading-[1.12] font-bold tracking-tight sm:text-[44px]">
               Banking that reaches everyone, and that&apos;s good for the planet
             </h1>
@@ -99,6 +104,16 @@ export default async function LandingPage() {
                 See how it works
               </Link>
             </div>
+            </div>
+
+            <Asset
+              name="hero-illustration"
+              width={1280}
+              height={853}
+              priority
+              sizes="(min-width: 1024px) 46vw, 100vw"
+              className="w-full rounded-lg border border-border"
+            />
           </div>
         </section>
 

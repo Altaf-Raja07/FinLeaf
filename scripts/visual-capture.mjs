@@ -100,7 +100,13 @@ async function main() {
   });
   page.on("pageerror", (err) => consoleErrors.push(String(err)));
 
-  await signIn(page);
+  // Public routes must be captured signed out: /login and /signup redirect an
+  // authenticated visitor to the dashboard, so signing in first would silently
+  // screenshot the wrong page.
+  const captureSignedOut = process.argv.includes("--public");
+  if (!captureSignedOut) {
+    await signIn(page);
+  }
 
   await page.goto(`${BASE_URL}${route}`, { waitUntil: "networkidle" });
   // Let fonts settle and any chart animation finish before capturing.

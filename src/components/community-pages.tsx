@@ -6,6 +6,7 @@ import { getTransactions } from "@/lib/queries";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, IconTile, Notice, Pill } from "@/components/ui";
 import { CategoryIcon, CheckIcon, GlobeIcon, LockIcon, MapPinIcon, PhoneIcon, UserIcon } from "@/components/icons";
+import { Asset, LESSON_ASSET, EmptyStateArt } from "@/components/illustration";
 
 export const dynamic = "force-dynamic";
 
@@ -184,35 +185,16 @@ export async function AgentsPage() {
       <PageHeader title="Nearby agents and kiosks" subtitle="Cash deposit and withdrawal points near you" />
 
       <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
-        {/* Illustrated map. Deliberately a local SVG rather than an embedded map
-            widget: no third-party request, and no dependency on a tile key. */}
-        <Card className="relative min-h-[320px] overflow-hidden">
-          <svg viewBox="0 0 600 400" className="h-full w-full" role="img" aria-label="Illustrated map showing five agent locations in a small town">
-            <rect width="600" height="400" fill="#efece3" />
-            <rect x="40" y="40" width="180" height="120" fill="#dbe8dc" />
-            <path d="M0 220 H600" stroke="#ffffff" strokeWidth="22" />
-            <path d="M300 0 V400" stroke="#ffffff" strokeWidth="18" />
-            <path d="M0 60 L600 340" stroke="#ffffff" strokeWidth="10" opacity="0.7" />
-            <path d="M0 340 L600 60" stroke="#ffffff" strokeWidth="10" opacity="0.7" />
-            {[
-              { x: 150, y: 150 },
-              { x: 320, y: 110 },
-              { x: 420, y: 250 },
-              { x: 210, y: 300 },
-              { x: 500, y: 150 },
-            ].map((m, i) => (
-              <g key={i}>
-                <circle cx={m.x} cy={m.y} r="17" fill="var(--fl-primary)" />
-                <text x={m.x} y={m.y + 5} textAnchor="middle" fontSize="15" fill="#fff" fontWeight="700">
-                  ₹
-                </text>
-              </g>
-            ))}
-          </svg>
-          <div className="absolute top-3 right-3 flex flex-col overflow-hidden rounded-md border border-border bg-surface">
-            <span className="flex h-9 w-9 items-center justify-center border-b border-border text-[17px]">+</span>
-            <span className="flex h-9 w-9 items-center justify-center text-[17px]">−</span>
-          </div>
+        {/* Generated illustration rather than an embedded map widget: no tile
+            provider, no API key, and no third-party request. */}
+        <Card className="overflow-hidden">
+          <Asset
+            name="agent-kiosk"
+            width={1120}
+            height={747}
+            sizes="(min-width: 1024px) 60vw, 100vw"
+            className="w-full"
+          />
         </Card>
 
         <Card className="p-5">
@@ -260,10 +242,20 @@ export async function LearnPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {lessons.map((lesson) => (
           <Card key={lesson.id} className="flex flex-col p-5">
-            <span
-              aria-hidden="true"
-              className="mb-4 block h-20 rounded-md bg-gradient-to-br from-primary-soft to-leaf-soft"
-            />
+            {/* Real generated illustration. A gradient placeholder was here
+                before, which is exactly the substitution design-system.md
+                section 7 forbids. */}
+            {LESSON_ASSET[lesson.slug] && (
+              <div className="mb-4 h-20 overflow-hidden rounded-md border border-border">
+                <Asset
+                  name={LESSON_ASSET[lesson.slug]}
+                  width={640}
+                  height={320}
+                  sizes="(min-width: 768px) 30vw, 92vw"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
             <h2 className="text-[16px] font-semibold">{lesson.title}</h2>
             <p className="mt-1 text-[13px] text-muted">{lesson.minutes} min read</p>
             <div className="mt-3">

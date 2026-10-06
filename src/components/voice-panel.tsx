@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useVoice } from "./use-voice";
 import { Button, Input, Notice } from "@/components/ui";
 import { MicIcon } from "@/components/icons";
+import { Asset } from "@/components/illustration";
 
 /**
  * Voice panel.
@@ -33,13 +34,24 @@ export function VoicePanel() {
   return (
     <div className="p-5">
       <div className="flex flex-col items-center gap-2 text-center">
+        {/* Explains the feature in one glance for a user who has not used voice
+            input before, which is most of the intended audience. */}
+        <div className="mb-1 w-[190px]">
+          <Asset
+            name="voice-assistant"
+            width={400}
+            height={312}
+            sizes="190px"
+            className="h-auto w-full"
+          />
+        </div>
         <button
           type="button"
           onClick={voice.state === "listening" ? voice.stop : voice.start}
           disabled={busy || (!voice.supported && voice.state === "unsupported")}
           aria-pressed={voice.state === "listening"}
           aria-label={voice.state === "listening" ? "Stop listening" : "Start voice input"}
-          className={`flex h-28 w-28 items-center justify-center rounded-full transition-colors ${
+          className={`flex h-24 w-24 items-center justify-center rounded-full transition-colors ${
             voice.state === "listening"
               ? "bg-primary text-white"
               : voice.supported
@@ -47,7 +59,7 @@ export function VoicePanel() {
                 : "cursor-not-allowed bg-sunken text-muted"
           }`}
         >
-          <MicIcon size={40} />
+          <MicIcon size={36} />
         </button>
 
         <p className="mt-2 text-[17px] font-semibold">

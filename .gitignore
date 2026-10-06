@@ -35,6 +35,7 @@ ml/.venv/
 # temporary design-pipeline files
 .design-*.cjs
 .design-job.rendered.cjs
+.asset-job.rendered.cjs
 scripts/*.rendered.cjs
 
 # typescript
@@ -51,3 +52,6 @@ scripts/*.rendered.cjs
 .design-queue.json
 design/.next-job.json
 design/.results.json
+
+# generated asset sources (PNGs); the optimised WebP files are committed
+public/assets/*.png

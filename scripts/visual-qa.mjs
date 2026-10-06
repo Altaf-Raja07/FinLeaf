@@ -60,10 +60,20 @@ async function main() {
     const slug = route === "/" ? "home" : route.replace(/^\//, "").replace(/\//g, "-");
     const shotName = `${slug}.${viewport}.png`;
 
+    const isPublic = ["/", "/login", "/signup"].includes(route);
     try {
-      execFileSync("node", [join(ROOT, "scripts", "visual-capture.mjs"), route, `--viewport=${viewport}`], {
-        stdio: "pipe",
-      });
+      execFileSync(
+        "node",
+        [
+          join(ROOT, "scripts", "visual-capture.mjs"),
+          route,
+          `--viewport=${viewport}`,
+          // /login and /signup redirect an authenticated visitor to the
+          // dashboard, so capturing them signed in would screenshot the wrong page.
+          ...(isPublic ? ["--public"] : []),
+        ],
+        { stdio: "pipe" }
+      );
     } catch (err) {
       results.push({ route, reference, status: "capture-failed", detail: String(err.stderr ?? err).slice(0, 200) });
       continue;
