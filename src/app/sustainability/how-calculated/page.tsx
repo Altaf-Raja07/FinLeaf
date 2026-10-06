@@ -84,7 +84,7 @@ export default async function CarbonDetailsPage() {
         <div className="mt-2">
           <Notice tone="neutral">
             These are category averages. Real emissions depend on the exact fuel, distance travelled,
-            and energy source, which this prototype cannot measure. Treat every figure here as an
+            and energy source, which this system does not collect. Treat every figure here as an
             estimate.
           </Notice>
         </div>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { getAccounts } from "@/lib/queries";
 import { formatMoney } from "@/lib/money";
+import { ENVIRONMENT_LABEL } from "@/lib/site";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, IconTile, Pill } from "@/components/ui";
 import { PiggyIcon, WalletIcon } from "@/components/icons";
@@ -92,8 +93,8 @@ export default async function AccountsPage() {
 
       <Card className="mt-4 p-5">
         <p className="text-[13px] text-muted">
-          These are simulated accounts inside this prototype. No real bank holds your money here, and
-          these balances are not insured by any real authority.
+          These accounts live inside this {ENVIRONMENT_LABEL.toLowerCase()}. No real bank holds
+          your money here, and these balances carry no deposit insurance.
         </p>
       </Card>
     </AppShell>

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { withTransaction } from "@/lib/db";
 import { handler, parseBody, ApiError } from "@/lib/api";
+import { consume, RATE_LIMITS } from "@/lib/rate-limit";
 import { ensureWallet, recordDebit } from "@/lib/wallet";
 import type { CarbonCategory } from "@/lib/carbon";
 
@@ -26,7 +27,16 @@ export async function POST(request: Request) {
   return handler(async () => {
     const user = await getSessionUser();
     if (!user) throw new ApiError("unauthorized", "Sign in to pay a bill.");
-
+    // Throttle per signed-in user. A stolen session is the realistic abuse
+    // case, so this bounds how fast money can leave even with valid
+    // credentials.
+    const limit = await consume(`money:user:${user.id}`, RATE_LIMITS.money);
+    if (!limit.allowed) {
+      throw new ApiError(
+        "rate_limited",
+        "Too many requests. Wait a few minutes before trying again."
+      );
+    }
     const input = await parseBody(request, schema);
 
     const result = await withTransaction(async (client) => {

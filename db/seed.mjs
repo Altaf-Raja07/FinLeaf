@@ -22,7 +22,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { randomBytes, scryptSync } from "node:crypto";
+import { createHash, randomBytes, scryptSync } from "node:crypto";
 import dotenv from "dotenv";
 import pg from "pg";
 
@@ -32,7 +32,10 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const MIGRATIONS_DIR = join(HERE, "migrations");
 
 const SEED = 20261005;
-const DEMO_PASSWORD = "finleaf123";
+// Sandbox accounts authenticate by one-time code, not by password. This value is
+// hashed into the password column so the NOT NULL constraint holds and no account
+// has a usable credential.
+const UNUSABLE_PASSWORD = randomBytes(32).toString("base64url");
 
 /* --- emission factors, mirrored from src/lib/carbon.ts ------------------- */
 const FACTORS = {
@@ -165,10 +168,10 @@ async function main() {
     /* --- users ---------------------------------------------------------- */
     const userIds = [];
     for (const person of PEOPLE) {
-      const { hash, salt, params } = hashPassword(DEMO_PASSWORD);
+      const { hash, salt, params } = hashPassword(UNUSABLE_PASSWORD);
       const { rows } = await client.query(
         `INSERT INTO users (phone, full_name, language, password_hash, password_salt,
-                            password_params, kyc_reference, is_demo, created_at)
+                            password_params, kyc_reference, is_sandbox, created_at)
          VALUES ($1,$2,$3,$4,$5,$6,$7,TRUE,$8) RETURNING id`,
         [
           person.phone,
@@ -177,7 +180,7 @@ async function main() {
           hash,
           salt,
           params,
-          `DEMO-${person.phone.slice(-4)}`,
+          `FL-${createHash("sha256").update(person.phone).digest("hex").slice(0, 16).toUpperCase()}`,
           daysAgo(person.tenureMonths * 30),
         ]
       );

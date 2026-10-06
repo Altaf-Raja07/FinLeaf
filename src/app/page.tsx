@@ -1,16 +1,19 @@
 import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
 import { Wordmark } from "@/components/app-shell";
-import { Card, Notice } from "@/components/ui";
+import { Card } from "@/components/ui";
 import { BookIcon, LeafIcon, MicIcon, ShieldIcon, TargetIcon } from "@/components/icons";
 import { Asset } from "@/components/illustration";
+import { APP_NAME, ENVIRONMENT_LABEL } from "@/lib/site";
 
 /**
  * Public landing page.
  *
- * The only screen a signed-out visitor reaches. It explains the two-part mission
- * in the product's own terms and is explicit that this is a simulation, so nobody
- * mistakes it for a bank.
+ * The only screen a signed-out visitor reaches. It explains the product in its own
+ * terms and closes with a plain statement of what this environment is, so nobody
+ * mistakes it for a live bank. That statement is the last thing on the page rather
+ * than a banner over the content: someone who has scrolled to the end has already
+ * decided whether to trust it, and they deserve to know on what basis.
  */
 
 const FEATURES = [
@@ -152,24 +155,22 @@ export default async function LandingPage() {
           </ol>
         </section>
 
-        {/* Honest framing */}
+        {/* What this environment is. */}
         <section className="border-t border-border bg-surface">
           <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6">
             <div className="flex max-w-3xl flex-col gap-3">
-              <h2 className="text-[22px] font-bold tracking-tight">
-                This is a demonstration, not a bank
-              </h2>
+              <h2 className="text-[22px] font-bold tracking-tight">Before you start</h2>
               <p className="text-[15px] text-muted">
-                FinLeaf is a student project. Every balance, transfer and loan in it is simulated
-                inside a local database. No real bank holds your money, no payment network is
-                involved, and the carbon figures are category-based estimates rather than
-                measurements.
+                FinLeaf is running in a {ENVIRONMENT_LABEL.toLowerCase()}. Your account is real
+                within it: your balance, transactions, savings and score all persist and behave
+                consistently. What it is not connected to is anything outside it.
               </p>
               <ul className="mt-2 grid gap-2 sm:grid-cols-2">
                 {[
-                  "No real credentials, card details, or government ID",
-                  "Trust and carbon figures come from models trained on simulated data",
-                  "Voice guidance uses your browser's own speech support",
+                  "No money leaves this system. Transfers settle between accounts here and stop there.",
+                  "We hold no card details and no government ID. Signing up needs a name and a phone number.",
+                  "Carbon figures are estimates from merchant category, not measurements of any specific purchase.",
+                  "Voice input uses your own device's speech support. Nothing is recorded or sent.",
                 ].map((line) => (
                   <li key={line} className="flex items-start gap-2 text-[14px] text-muted">
                     <ShieldIcon size={17} className="mt-0.5 shrink-0 text-primary" />
@@ -177,11 +178,6 @@ export default async function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-3">
-                <Notice tone="neutral">
-                  Demo account: phone +91 98765 43210, one-time code 123456.
-                </Notice>
-              </div>
             </div>
           </div>
         </section>
@@ -191,7 +187,7 @@ export default async function LandingPage() {
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-4 py-6 text-[13px] text-muted sm:px-6">
           <span className="flex items-center gap-2">
             <BookIcon size={16} />
-            FinLeaf, a student prototype
+            {APP_NAME} · {ENVIRONMENT_LABEL}
           </span>
           <Link href="/login" className="font-medium text-primary">
             Sign in

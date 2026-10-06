@@ -14,14 +14,20 @@ export const dynamic = "force-dynamic";
  * of this screen that communicates "you are welcome here" to a user who cannot
  * read the form copy, which is a large part of who this product is for.
  *
- * There is no SMS provider, so the expected code is shown on screen and the page
- * never claims a message was sent.
+ * Codes are issued by the server, single-use, and expire. When no SMS gateway is
+ * configured the code comes back on the redirect and is shown here; when one is
+ * configured nothing is displayed and the code is delivered by the gateway. The
+ * page states which happened rather than implying a text was always sent.
  */
 
 interface SearchParams {
   step?: string;
   phone?: string;
   error?: string;
+  /** "sms" when a gateway delivered the code, anything else when shown on screen. */
+  delivery?: string;
+  /** The issued code. Present only when no gateway is configured. */
+  devCode?: string;
 }
 
 export default async function LoginPage({
@@ -36,7 +42,8 @@ export default async function LoginPage({
   const step = params.step === "otp" ? "otp" : "phone";
   const phone = params.phone ?? "";
   const error = params.error;
-  const demoOtp = process.env.DEMO_OTP ?? "123456";
+  const issuedCode = params.devCode ?? "";
+  const deliveredBySms = params.delivery === "sms";
 
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
@@ -91,23 +98,39 @@ export default async function LoginPage({
               <form action="/api/auth/verify" method="post" className="flex flex-col gap-4">
                 <input type="hidden" name="phone" value={phone} />
 
-                <Field label="One-time password" htmlFor="otp" hint={`Demo code is ${demoOtp}`}>
+                <Field
+                  label="One-time password"
+                  htmlFor="otp"
+                  hint={issuedCode ? `Your code is ${issuedCode}` : undefined}
+                >
                   <Input
                     id="otp"
                     name="otp"
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     maxLength={6}
-                    placeholder="123456"
+                    placeholder="••••••"
                     required
+                    autoFocus
                     className="fl-num tracking-[0.3em]"
                   />
                 </Field>
 
-                <Notice tone="neutral">
-                  This prototype has no SMS provider. Use the demo code shown above; no message was
-                  sent.
-                </Notice>
+                {issuedCode ? (
+                  <Notice tone="neutral">
+                    No SMS gateway is configured on this environment, so your code is shown here
+                    instead of being texted. It expires in five minutes and works once.
+                  </Notice>
+                ) : deliveredBySms ? (
+                  <Notice tone="neutral">
+                    We sent a six-digit code to {phone}. It expires in five minutes and can only be
+                    used once.
+                  </Notice>
+                ) : (
+                  <Notice tone="neutral">
+                    Enter the six-digit code for {phone}. It expires in five minutes and works once.
+                  </Notice>
+                )}
 
                 {error && (
                   <p role="alert" className="text-[13px] font-medium text-danger">
@@ -134,11 +157,11 @@ export default async function LoginPage({
           <div className="mt-4 flex flex-col items-center gap-1.5 text-[13px] text-muted">
             <span className="inline-flex items-center gap-1.5">
               <LockIcon size={15} />
-              Simulated prototype. No real money moves.
+              Sessions are encrypted and expire after seven days.
             </span>
             <span className="inline-flex items-center gap-1.5">
               <PhoneIcon size={15} />
-              Demo user: +91 98765 43210
+              Need help signing in? Reach us on 1800 123 4567.
             </span>
           </div>
         </div>

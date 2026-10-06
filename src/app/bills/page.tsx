@@ -78,7 +78,8 @@ export default async function BillsPage({
           <p className="mt-2 text-[13px] text-muted">Main wallet</p>
           <div className="mt-4">
             <Notice tone="neutral">
-              A simulated payment. Nothing leaves this database, and no biller is contacted.
+              Nothing leaves this system. No biller is contacted and no payment network is
+              involved.
             </Notice>
           </div>
         </Card>

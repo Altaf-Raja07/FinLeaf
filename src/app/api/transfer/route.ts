@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { withTransaction } from "@/lib/db";
 import { transferMoney } from "@/lib/wallet";
 import { handler, parseBody, ApiError } from "@/lib/api";
+import { consume, RATE_LIMITS } from "@/lib/rate-limit";
 
 /**
  * Simulated transfer between two seeded users.
@@ -24,6 +25,16 @@ export async function POST(request: Request) {
   return handler(async () => {
     const user = await getSessionUser();
     if (!user) throw new ApiError("unauthorized", "Sign in to send money.");
+
+    // Throttle per signed-in user. A stolen session is the realistic abuse case,
+    // so this bounds how fast money can leave even with valid credentials.
+    const limit = await consume(`money:user:${user.id}`, RATE_LIMITS.money);
+    if (!limit.allowed) {
+      throw new ApiError(
+        "rate_limited",
+        "Too many requests. Wait a few minutes before trying again."
+      );
+    }
 
     const input = await parseBody(request, schema);
 

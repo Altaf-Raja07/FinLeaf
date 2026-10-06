@@ -99,7 +99,7 @@ export default async function SignupPage({
 
           <div className="mt-4 flex items-center justify-center gap-1.5 text-[13px] text-muted">
             <LockIcon size={15} />
-            Demo accounts share one password, so nobody needs credentials for this project.
+            No documents, no branch visit. You will get a one-time code on the next screen.
           </div>
         </div>
 

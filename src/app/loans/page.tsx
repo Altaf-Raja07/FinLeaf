@@ -89,8 +89,8 @@ export default async function LoansPage() {
           </ul>
           <div className="mt-4">
             <Notice tone="trust">
-              This is a simulation, not a credit approval. No real lender is involved and no loan can
-              be borrowed here.
+              An application here is a decision aid, not a credit approval. No lender is
+              involved, and funds cannot be drawn against an application.
             </Notice>
           </div>
         </Card>

@@ -4,8 +4,10 @@ import dotenv from "dotenv";
 import { withTransaction, queryOne } from "@/lib/db";
 import { hashPassword, createSession, SESSION_COOKIE } from "@/lib/auth";
 import { normalisePhone, validatePhone } from "@/lib/phone";
+import { clientAddress, consume, RATE_LIMITS } from "@/lib/rate-limit";
 import { redirectUrl } from "@/lib/redirect";
 import { cookies } from "next/headers";
+import { createHash, randomBytes } from "node:crypto";
 import { handler, parseBody } from "@/lib/api";
 
 dotenv.config({ quiet: true });
@@ -13,11 +15,15 @@ dotenv.config({ quiet: true });
 /**
  * Registration.
  *
- * Creates a demo account with a wallet, then signs the user straight in.
+ * Creates an account with a wallet, then signs the user straight in.
  *
  * Deliberately minimal fields, which is the point of the inclusion work: three
- * details, no documents. The `kyc_reference` is a synthetic token; no real
- * identity document is ever requested or stored.
+ * details, no documents. The `kyc_reference` is an opaque internal token; no real
+ * identity document is ever requested or stored, and the column is commented in
+ * the schema to say so.
+ *
+ * Rate limited per address. Without that, this endpoint is a way to create
+ * accounts in bulk from one machine.
  */
 
 const schema = z.object({
@@ -39,6 +45,16 @@ export async function POST(request: Request) {
     }
     const phone = normalisePhone(input.phone);
 
+    const limit = await consume(`register:ip:${clientAddress(request)}`, RATE_LIMITS.register);
+    if (!limit.allowed) {
+      return NextResponse.redirect(
+        redirectUrl(request.url, "/signup", {
+          error: "Too many accounts created from this device. Try again later.",
+        }),
+        { status: 303 }
+      );
+    }
+
     const taken = await queryOne<{ id: number }>("SELECT id FROM users WHERE phone = $1", [phone]);
     if (taken) {
       return NextResponse.redirect(
@@ -49,14 +65,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // Every demo account shares the same fixed password so the project can be
-    // demonstrated without handing out credentials. Stated in the UI.
-    const { hash, salt, params } = hashPassword("finleaf123");
+    // Sign-in is by one-time code over the phone, not by password. The column is
+    // NOT NULL and a real bank schema would carry it, so it is filled with the
+    // hash of a value nobody holds: 32 random bytes that are discarded here and
+    // never stored in plaintext. Setting a known shared password instead would
+    // mean every sandbox account had a usable credential.
+    const unusable = randomBytes(32).toString("base64url");
+    const { hash, salt, params } = hashPassword(unusable);
 
     const userId = await withTransaction(async (client) => {
       const inserted = await client.query<{ id: number }>(
         `INSERT INTO users
-           (phone, full_name, language, password_hash, password_salt, password_params, kyc_reference, is_demo)
+           (phone, full_name, language, password_hash, password_salt, password_params, kyc_reference, is_sandbox)
          VALUES ($1,$2,$3,$4,$5,$6,$7,TRUE)
          RETURNING id`,
         [
@@ -66,7 +86,9 @@ export async function POST(request: Request) {
           hash,
           salt,
           params,
-          `DEMO-${phone.slice(-4)}`,
+          // Opaque, derived from the phone so it is stable and unique, but not a
+          // real-world identifier.
+          `FL-${createHash("sha256").update(phone).digest("hex").slice(0, 16).toUpperCase()}`,
         ]
       );
       const id = inserted.rows[0].id;

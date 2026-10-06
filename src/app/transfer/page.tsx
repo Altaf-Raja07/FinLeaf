@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { getAccounts } from "@/lib/queries";
 import { getRecipients } from "@/lib/screens";
 import { formatMoney } from "@/lib/money";
+import { ENVIRONMENT_LABEL } from "@/lib/site";
 import { AppShell, PageHeader } from "@/components/app-shell";
 import { Card, EmptyState, Notice } from "@/components/ui";
 import { TransferForm } from "@/components/transfer-form";
@@ -87,8 +88,8 @@ export default async function TransferPage() {
 
       <div className="mt-4">
         <Notice tone="neutral">
-          Transfers only move simulated balances between demo accounts in this prototype. Nothing
-          leaves the database, and no payment network is involved.
+          Transfers move money between accounts inside this {ENVIRONMENT_LABEL.toLowerCase()}.
+          Nothing leaves this system, and no payment network is involved.
         </Notice>
       </div>
     </AppShell>

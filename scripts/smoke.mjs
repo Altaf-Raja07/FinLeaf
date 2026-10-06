@@ -9,14 +9,12 @@
  * Usage: node scripts/smoke.mjs [--base=http://localhost:3100]
  */
 import { chromium } from "playwright";
+import { signIn } from "./sign-in.mjs";
 
 const BASE =
   process.argv.find((a) => a.startsWith("--base="))?.split("=")[1] ??
   process.env.APP_URL ??
-  "http://localhost:3100";
-
-const DEMO_PHONE = process.env.DEMO_PHONE ?? "+91 98765 43210";
-const DEMO_OTP = process.env.DEMO_OTP ?? "123456";
+  "http://localhost:3000";
 
 const PUBLIC_ROUTES = ["/", "/login", "/signup"];
 const PRIVATE_ROUTES = [
@@ -41,16 +39,6 @@ const PRIVATE_ROUTES = [
   "/security/alerts",
   "/settings",
 ];
-
-async function signIn(page) {
-  await page.goto(`${BASE}/login`, { waitUntil: "domcontentloaded" });
-  await page.fill("#phone", DEMO_PHONE);
-  await page.click('button[type="submit"]');
-  await page.waitForSelector("#otp", { state: "visible", timeout: 30000 });
-  await page.fill("#otp", DEMO_OTP);
-  await page.click('button[type="submit"]');
-  await page.waitForSelector("main h1", { state: "visible", timeout: 30000 });
-}
 
 async function main() {
   const browser = await chromium.launch();
@@ -91,7 +79,7 @@ async function main() {
   {
     const context = await browser.newContext({ viewport: { width: 1586, height: 992 } });
     const page = await context.newPage();
-    await signIn(page);
+    await signIn(page, BASE);
 
     for (const route of PRIVATE_ROUTES) {
       const problems = [];

@@ -148,8 +148,9 @@ export default async function TrustScorePage() {
           </ul>
           <div className="mt-4">
             <Notice tone="trust">
-              This score comes from a model trained on simulated behaviour, for demonstration. It
-              is not a credit decision, and it does not establish real creditworthiness.
+              This score is built from your own account behaviour by a model trained on this
+              environment&apos;s data. It is a decision aid, not a credit decision, and it does not
+              establish creditworthiness with any lender.
             </Notice>
           </div>
         </Card>

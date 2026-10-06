@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
  * The requested amount is capped at what the trust score allows, and the cap is
  * re-checked on the server rather than trusted from the form. Submitting records
  * the application as "submitted"; nothing is approved automatically, because a
- * prototype cannot approve credit.
+ * environment, where no lender is present to approve credit.
  */
 export default async function LoanApplyPage({
   searchParams,
@@ -53,8 +53,8 @@ export default async function LoanApplyPage({
           <p className="mt-1 text-[13px] text-muted">From trust score {score.score} of 100</p>
           <div className="mt-4">
             <Notice tone="trust">
-              This is a simulated application. It is recorded in the database and never approved by a
-              real lender.
+              Your application is recorded here so you can see how the numbers come out. No lender
+              reviews it and nothing is approved.
             </Notice>
           </div>
           <Link href="/loans" className="mt-4 inline-block text-[14px] font-medium text-primary">

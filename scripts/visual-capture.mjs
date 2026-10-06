@@ -15,6 +15,7 @@
  *   node scripts/visual-capture.mjs <route> [--viewport=desktop|mobile|wide]
  */
 import { chromium } from "playwright";
+import { signIn } from "./sign-in.mjs";
 import { mkdir } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,32 +45,6 @@ export const VIEWPORTS = {
  * origin and the redirect origin identical, which is also what a real user gets.
  */
 const BASE_URL = process.env.APP_URL ?? "http://localhost:3100";
-const DEMO_PHONE = process.env.DEMO_PHONE ?? "+91 98765 43210";
-const DEMO_OTP = process.env.DEMO_OTP ?? "123456";
-
-/**
- * Sign in through the real form flow.
- *
- * Waits on DOM state rather than navigation events: a 303 redirect leaves no
- * history entry, so waitForURL can miss it and wait for a navigation that never
- * arrives. Checking that the next step's field exists is both simpler and a
- * stronger assertion - it proves the OTP step rendered.
- */
-async function signIn(page) {
-  await page.goto(`${BASE_URL}/login`, { waitUntil: "domcontentloaded" });
-
-  await page.fill("#phone", DEMO_PHONE);
-  await page.click('button[type="submit"]');
-  await page.waitForSelector("#otp", { state: "visible", timeout: 30000 });
-
-  await page.fill("#otp", DEMO_OTP);
-  await page.click('button[type="submit"]');
-  await page.waitForSelector("main h1", { state: "visible", timeout: 30000 });
-
-  if (!page.url().includes("/dashboard")) {
-    throw new Error(`sign-in did not reach the dashboard (landed on ${page.url()})`);
-  }
-}
 
 async function main() {
   const route = process.argv[2] ?? "/dashboard";
@@ -105,7 +80,7 @@ async function main() {
   // screenshot the wrong page.
   const captureSignedOut = process.argv.includes("--public");
   if (!captureSignedOut) {
-    await signIn(page);
+    await signIn(page, BASE_URL);
   }
 
   await page.goto(`${BASE_URL}${route}`, { waitUntil: "networkidle" });
