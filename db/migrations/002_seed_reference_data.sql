@@ -14,9 +14,9 @@ ON CONFLICT (code) DO UPDATE
       icon = EXCLUDED.icon;
 
 INSERT INTO offset_projects (code, title, location, points_cost, co2e_kg, outcome) VALUES
-  ('trees-doddawadi',   'Trees for Doddawadi',    'Dharwad district',        600,  720.00, '1,200 trees planted'),
-  ('clean-cookstoves',  'Cleaner cookstoves',      'Rural Karnataka',         800,  910.00, '310 cookstoves funded'),
-  ('mangrove-coast',    'Mangrove restoration',   'Coastal Karnataka',     1100, 1480.00, '4,500 saplings')
+  ('trees-doddawadi',   'Trees for Doddawadi',    'Dharwad district, Karnataka', 600,  720.00, '1,200 trees planted'),
+  ('clean-cookstoves',  'Cleaner cookstoves',      'Rural Karnataka',             800,  910.00, '310 cookstoves funded'),
+  ('mangrove-coast',    'Mangrove restoration',   'Coastal Karnataka',          1100, 1480.00, '4,500 saplings')
 ON CONFLICT (code) DO UPDATE
   SET title = EXCLUDED.title,
       location = EXCLUDED.location,

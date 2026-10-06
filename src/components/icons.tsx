@@ -2,8 +2,8 @@
  * Icon set.
  *
  * Hand-drawn on a 24x24 grid with a consistent 1.8 stroke weight, rather than an
- * icon package: nine icons do not justify a dependency, and emoji are explicitly
- * not an acceptable substitute (design-system.md section 8).
+ * icon package: a couple of dozen icons do not justify a dependency, and emoji are
+ * explicitly not an acceptable substitute (design-system.md section 8).
  *
  * Every icon is decorative. The control that wraps it supplies the accessible
  * name, which is why none of these take a title prop.
@@ -191,6 +191,38 @@ export const MapPinIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M12 21c4.2-4.4 6.4-7.8 6.4-10.6a6.4 6.4 0 1 0-12.8 0C5.6 13.2 7.8 16.6 12 21Z" />
     <circle cx="12" cy="10.2" r="2.3" />
+  </Svg>
+);
+
+/** Outcome glyphs for carbon offset projects. Same grid and stroke weight. */
+export const TreeIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 3.4 6.6 10h2.5L5.4 16.4h13.2L15 10h2.4L12 3.4Z" />
+    <path d="M12 16.4v4.2" />
+  </Svg>
+);
+
+export const CloudIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7.6 18.4a4.1 4.1 0 0 1-.5-8.2 5.4 5.4 0 0 1 10.3 1.3 3.5 3.5 0 0 1-.9 6.9H7.6Z" />
+  </Svg>
+);
+
+export const WavesIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3.4 8.6c1.9 0 1.9 1.4 3.8 1.4s1.9-1.4 3.8-1.4 1.9 1.4 3.8 1.4 1.9-1.4 3.8-1.4" />
+    <path d="M3.4 13.4c1.9 0 1.9 1.4 3.8 1.4s1.9-1.4 3.8-1.4 1.9 1.4 3.8 1.4 1.9-1.4 3.8-1.4" />
+    <path d="M3.4 18.2c1.9 0 1.9 1.4 3.8 1.4s1.9-1.4 3.8-1.4 1.9 1.4 3.8 1.4 1.9-1.4 3.8-1.4" />
+  </Svg>
+);
+
+export const StoveIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="4.4" y="9.4" width="15.2" height="10.2" rx="1.6" />
+    <path d="M4.4 13.4h15.2" />
+    <path d="M7.4 6.6h9.2l-1.5 2.8H8.9L7.4 6.6Z" />
+    <circle cx="9.2" cy="16.6" r="1" />
+    <circle cx="14.8" cy="16.6" r="1" />
   </Svg>
 );
 

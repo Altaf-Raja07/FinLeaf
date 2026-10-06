@@ -180,6 +180,12 @@ export async function getRewards(): Promise<RewardRow[]> {
   }));
 }
 
+export interface OffsetMetricRow {
+  iconKey: string;
+  label: string;
+  value: string;
+}
+
 export interface OffsetProjectRow {
   id: number;
   code: string;
@@ -188,6 +194,8 @@ export interface OffsetProjectRow {
   pointsCost: number;
   co2eKg: number;
   outcome: string;
+  /** Outcome rows, in the order shown on the card. */
+  metrics: OffsetMetricRow[];
 }
 
 export async function getOffsetProjects(): Promise<OffsetProjectRow[]> {
@@ -200,6 +208,31 @@ export async function getOffsetProjects(): Promise<OffsetProjectRow[]> {
     co2e_kg: string;
     outcome: string;
   }>(`SELECT id, code, title, location, points_cost, co2e_kg, outcome FROM offset_projects ORDER BY points_cost`);
+
+  const ids = rows.map((r) => r.id);
+  const metrics = ids.length
+    ? await query<{
+        project_id: number;
+        icon_key: string;
+        label: string;
+        value: string;
+        position: number;
+      }>(
+        `SELECT project_id, icon_key, label, value, position
+           FROM offset_project_metrics
+          WHERE project_id = ANY($1)
+          ORDER BY project_id, position`,
+        [ids]
+      )
+    : [];
+
+  const byProject = new Map<number, OffsetMetricRow[]>();
+  for (const m of metrics) {
+    const list = byProject.get(m.project_id) ?? [];
+    list.push({ iconKey: m.icon_key, label: m.label, value: m.value });
+    byProject.set(m.project_id, list);
+  }
+
   return rows.map((r) => ({
     id: r.id,
     code: r.code,
@@ -208,7 +241,45 @@ export async function getOffsetProjects(): Promise<OffsetProjectRow[]> {
     pointsCost: r.points_cost,
     co2eKg: Number(r.co2e_kg),
     outcome: r.outcome,
+    metrics: byProject.get(r.id) ?? [],
   }));
+}
+
+/**
+ * What this user has funded, so the impact summary can show a real total.
+ *
+ * Summed from the funding ledger rather than stored: a stored total has to be
+ * maintained by every code path that spends points, and a missed update is a
+ * number that quietly disagrees with its own history.
+ */
+export interface OffsetImpactRow {
+  pointsSpent: number;
+  kgCO2e: number;
+  treesSupported: number;
+}
+
+export async function getOffsetImpact(userId: number): Promise<OffsetImpactRow> {
+  const row = await queryOne<{
+    points_spent: string;
+    co2e_kg: string;
+    trees: string;
+  }>(
+    `SELECT
+       COALESCE(SUM(f.points_spent), 0) AS points_spent,
+       COALESCE(SUM(p.co2e_kg), 0) AS co2e_kg,
+       COALESCE(SUM(CASE WHEN m.icon_key = 'tree' THEN NULLIF(m.value, '')::int ELSE 0 END), 0) AS trees
+      FROM offset_fundings f
+      JOIN offset_projects p ON p.id = f.project_id
+      LEFT JOIN offset_project_metrics m ON m.project_id = p.id
+     WHERE f.user_id = $1
+     GROUP BY 1, 2, 3`,
+    [userId]
+  );
+  return {
+    pointsSpent: Number(row?.points_spent ?? 0),
+    kgCO2e: Number(row?.co2e_kg ?? 0),
+    treesSupported: Number(row?.trees ?? 0),
+  };
 }
 
 export interface PeerRow {

@@ -1,22 +1,22 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { getGreenPoints } from "@/lib/queries";
-import { getOffsetProjects, getRewards } from "@/lib/screens";
+import { getRewards } from "@/lib/screens";
 import { AppShell, PageHeader } from "@/components/app-shell";
-import { Card, EmptyState, Pill } from "@/components/ui";
-import { RedeemButton, OffsetFundButton } from "@/components/reward-controls";
-import { EmptyStateArt } from "@/components/illustration";
+import { Card, Pill } from "@/components/ui";
+import { RedeemButton } from "@/components/reward-controls";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 /**
  * Green rewards.
  *
- * The affordability of each reward comes from the real point balance, so a card
- * disables itself only when the user genuinely cannot afford it, and the reason
- * is shown rather than left unexplained.
+ * Small rewards (discounts, small donations) live here. The offset projects are a
+ * separate page, because funding them is a different decision: it spends points on
+ * a real-world outcome rather than on a discount, and the cards are wide enough to
+ * need their own layout.
  */
-
 export default async function RewardsPage() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
@@ -92,51 +92,14 @@ export default async function RewardsPage() {
           Spend points on carbon offset projects instead of small discounts.
         </p>
         <div className="mt-4">
-          <LinkToOffsets />
+          <Link
+            href="/sustainability/offsets"
+            className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-5 text-[15px] font-semibold text-white hover:bg-primary-hover"
+          >
+            Browse offset projects
+          </Link>
         </div>
       </Card>
     </AppShell>
-  );
-}
-
-async function LinkToOffsets() {
-  const user = await getSessionUser();
-  const projects = await getOffsetProjects();
-  if (!user) redirect("/login");
-  const points = await getGreenPoints(user.id);
-
-  if (projects.length === 0) {
-    return (
-      <EmptyState
-        title="No projects available"
-        body="Offset projects will appear here."
-        art={<EmptyStateArt name="empty-rewards" />}
-      />
-    );
-  }
-
-  return (
-    <div className="grid gap-3 sm:grid-cols-3">
-      {projects.map((p) => (
-        <div key={p.id} className="rounded-md border border-border p-4">
-          <p className="text-[14.5px] font-semibold">{p.title}</p>
-          <p className="text-[13px] text-muted">{p.location}</p>
-          <p className="fl-num mt-2 text-[15px] font-semibold text-leaf">{p.pointsCost} points</p>
-          <div className="mt-2">
-            {points.balance >= p.pointsCost ? (
-              <OffsetFundButton projectId={p.id} pointsCost={p.pointsCost} />
-            ) : (
-              <button
-                type="button"
-                disabled
-                className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center rounded-md border border-border-strong text-[13px] opacity-45"
-              >
-                {(p.pointsCost - points.balance).toLocaleString("en-IN")} points to go
-              </button>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }

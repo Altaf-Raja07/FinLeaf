@@ -39,6 +39,7 @@ export const ROUTE_REFERENCES = {
   "/sustainability/compare": "leaderboard",
   "/security/alerts": "fraud-alerts",
   "/settings": "profile-settings",
+  "/sustainability/offsets": "carbon-offsets",
   "/voice": "voice-assistant",
   "/chatbot": "chatbot",
 };
