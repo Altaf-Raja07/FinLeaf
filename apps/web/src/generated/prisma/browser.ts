@@ -151,11 +151,6 @@ export type OffsetProject = Prisma.OffsetProjectModel
  */
 export type OffsetContribution = Prisma.OffsetContributionModel
 /**
- * Model Voucher
- * 
- */
-export type Voucher = Prisma.VoucherModel
-/**
  * Model TrustScoreSnapshot
  * 
  */

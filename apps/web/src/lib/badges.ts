@@ -18,7 +18,6 @@ export type BadgeCriteria =
   | { type: "offset_contributions"; count: number }
   | { type: "green_points"; threshold: number }
   | { type: "trust_score"; threshold: number }
-  | { type: "voucher_redeemed"; count: number }
   | { type: "days_active"; count: number };
 
 export interface BadgeProgress {
@@ -41,7 +40,6 @@ export interface BadgeProgressInput {
     completedGoalCount: number;
     transactionCount: number;
     offsetContributionCount: number;
-    voucherRedeemedCount: number;
     greenPoints: number;
     trustScore: number;
     accountAgeDays: number;
@@ -116,9 +114,6 @@ export function evaluateBadge({
     case "offset_contributions":
       return { ...ratio(stats.offsetContributionCount, criteria.count), detail: `${ratio(stats.offsetContributionCount, criteria.count).detail} contributions` };
 
-    case "voucher_redeemed":
-      return { ...ratio(stats.voucherRedeemedCount, criteria.count), detail: `${ratio(stats.voucherRedeemedCount, criteria.count).detail} vouchers` };
-
     case "green_points": {
       const result = ratio(stats.greenPoints, criteria.threshold);
       return { ...result, detail: `${Math.min(stats.greenPoints, criteria.threshold)} of ${criteria.threshold} points` };
@@ -158,7 +153,6 @@ export function parseCriteria(value: unknown): BadgeCriteria | null {
     case "goal_completed":
     case "transaction_count":
     case "offset_contributions":
-    case "voucher_redeemed":
     case "days_active":
       return typeof candidate.count === "number"
         ? { type, count: candidate.count }

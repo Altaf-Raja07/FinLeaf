@@ -202,7 +202,6 @@ model User {
   familyMemberships    FamilyMember[]
   ownedFamilies        FamilyGroup[]
   offsets              OffsetContribution[]
-  vouchers             Voucher[]
   anomalyFlags         AnomalyFlag[]
   trustSnapshots       TrustScoreSnapshot[]
   notifications        Notification[]
@@ -679,22 +678,6 @@ model OffsetContribution {
   @@index([projectId])
 }
 
-model Voucher {
-  id         String    @id @default(cuid())
-  userId     String
-  label      String
-  detail     String
-  value      Decimal   @db.Decimal(10, 2)
-  /// Redemption is an explicit user action; reward codes are never auto-applied.
-  redeemed   Boolean   @default(false)
-  redeemedAt DateTime?
-  expiresAt  DateTime?
-  createdAt  DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, redeemed])
-}
 
 // ---------------------------------------------------------------------------
 // ML outputs

@@ -589,5 +589,8 @@ export const hi: TranslationTree = {
   "loans.instalmentAmount": "किस्त की राशि",
   "loans.payNext": "अगली किस्त चुकाएँ",
   "savings.goalReached": "आपने {count} लक्ष्य पूरी तरह पूरा किए हैं।",
-  "savings.contributions": "हालिया योगदान"
+  "savings.contributions": "हालिया योगदान",
+  "rewards.spendOn": "आपके अंक क्या कर सकते हैं",
+  "rewards.keepGoing": "अभी थोड़ा कम है",
+  "rewards.lessonPointsNote": "साक्षरता पाठ पूरा करने से भी अंक मिलते हैं, और उसके लिए कोई लेन-देन पंक्ति नहीं बनती — इसलिए ऊपर की कुल राशि आपके बैलेंस से कम हो सकती है।"
 };

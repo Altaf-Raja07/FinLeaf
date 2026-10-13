@@ -344,7 +344,6 @@ export type UserWhereInput = {
   familyMemberships?: Prisma.FamilyMemberListRelationFilter
   ownedFamilies?: Prisma.FamilyGroupListRelationFilter
   offsets?: Prisma.OffsetContributionListRelationFilter
-  vouchers?: Prisma.VoucherListRelationFilter
   anomalyFlags?: Prisma.AnomalyFlagListRelationFilter
   trustSnapshots?: Prisma.TrustScoreSnapshotListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
@@ -386,7 +385,6 @@ export type UserOrderByWithRelationInput = {
   familyMemberships?: Prisma.FamilyMemberOrderByRelationAggregateInput
   ownedFamilies?: Prisma.FamilyGroupOrderByRelationAggregateInput
   offsets?: Prisma.OffsetContributionOrderByRelationAggregateInput
-  vouchers?: Prisma.VoucherOrderByRelationAggregateInput
   anomalyFlags?: Prisma.AnomalyFlagOrderByRelationAggregateInput
   trustSnapshots?: Prisma.TrustScoreSnapshotOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
@@ -431,7 +429,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   familyMemberships?: Prisma.FamilyMemberListRelationFilter
   ownedFamilies?: Prisma.FamilyGroupListRelationFilter
   offsets?: Prisma.OffsetContributionListRelationFilter
-  vouchers?: Prisma.VoucherListRelationFilter
   anomalyFlags?: Prisma.AnomalyFlagListRelationFilter
   trustSnapshots?: Prisma.TrustScoreSnapshotListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
@@ -521,7 +518,6 @@ export type UserCreateInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -563,7 +559,6 @@ export type UserUncheckedCreateInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -605,7 +600,6 @@ export type UserUpdateInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -647,7 +641,6 @@ export type UserUncheckedUpdateInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1069,20 +1062,6 @@ export type UserUpdateOneRequiredWithoutOffsetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOffsetsInput, Prisma.UserUpdateWithoutOffsetsInput>, Prisma.UserUncheckedUpdateWithoutOffsetsInput>
 }
 
-export type UserCreateNestedOneWithoutVouchersInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutVouchersInput, Prisma.UserUncheckedCreateWithoutVouchersInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVouchersInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutVouchersNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutVouchersInput, Prisma.UserUncheckedCreateWithoutVouchersInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVouchersInput
-  upsert?: Prisma.UserUpsertWithoutVouchersInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVouchersInput, Prisma.UserUpdateWithoutVouchersInput>, Prisma.UserUncheckedUpdateWithoutVouchersInput>
-}
-
 export type UserCreateNestedOneWithoutTrustSnapshotsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutTrustSnapshotsInput, Prisma.UserUncheckedCreateWithoutTrustSnapshotsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutTrustSnapshotsInput
@@ -1188,7 +1167,6 @@ export type UserCreateWithoutOtpsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1229,7 +1207,6 @@ export type UserUncheckedCreateWithoutOtpsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1286,7 +1263,6 @@ export type UserUpdateWithoutOtpsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1327,7 +1303,6 @@ export type UserUncheckedUpdateWithoutOtpsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1368,7 +1343,6 @@ export type UserCreateWithoutSessionsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1409,7 +1383,6 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1466,7 +1439,6 @@ export type UserUpdateWithoutSessionsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1507,7 +1479,6 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1548,7 +1519,6 @@ export type UserCreateWithoutAccountsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1589,7 +1559,6 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1646,7 +1615,6 @@ export type UserUpdateWithoutAccountsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1687,7 +1655,6 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -1728,7 +1695,6 @@ export type UserCreateWithoutSentTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1769,7 +1735,6 @@ export type UserUncheckedCreateWithoutSentTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1815,7 +1780,6 @@ export type UserCreateWithoutReceivedTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -1856,7 +1820,6 @@ export type UserUncheckedCreateWithoutReceivedTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -1913,7 +1876,6 @@ export type UserUpdateWithoutSentTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -1954,7 +1916,6 @@ export type UserUncheckedUpdateWithoutSentTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2006,7 +1967,6 @@ export type UserUpdateWithoutReceivedTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2047,7 +2007,6 @@ export type UserUncheckedUpdateWithoutReceivedTransactionsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2088,7 +2047,6 @@ export type UserCreateWithoutLedgerEntriesInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2129,7 +2087,6 @@ export type UserUncheckedCreateWithoutLedgerEntriesInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2186,7 +2143,6 @@ export type UserUpdateWithoutLedgerEntriesInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2227,7 +2183,6 @@ export type UserUncheckedUpdateWithoutLedgerEntriesInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2268,7 +2223,6 @@ export type UserCreateWithoutLoansInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2309,7 +2263,6 @@ export type UserUncheckedCreateWithoutLoansInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2366,7 +2319,6 @@ export type UserUpdateWithoutLoansInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2407,7 +2359,6 @@ export type UserUncheckedUpdateWithoutLoansInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2448,7 +2399,6 @@ export type UserCreateWithoutSavingsGoalsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2489,7 +2439,6 @@ export type UserUncheckedCreateWithoutSavingsGoalsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2546,7 +2495,6 @@ export type UserUpdateWithoutSavingsGoalsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2587,7 +2535,6 @@ export type UserUncheckedUpdateWithoutSavingsGoalsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2628,7 +2575,6 @@ export type UserCreateWithoutQuizAttemptsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2669,7 +2615,6 @@ export type UserUncheckedCreateWithoutQuizAttemptsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2726,7 +2671,6 @@ export type UserUpdateWithoutQuizAttemptsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2767,7 +2711,6 @@ export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2808,7 +2751,6 @@ export type UserCreateWithoutBadgesInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -2849,7 +2791,6 @@ export type UserUncheckedCreateWithoutBadgesInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -2906,7 +2847,6 @@ export type UserUpdateWithoutBadgesInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -2947,7 +2887,6 @@ export type UserUncheckedUpdateWithoutBadgesInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -2988,7 +2927,6 @@ export type UserCreateWithoutOwnedFamiliesInput = {
   vouchesReceived?: Prisma.CircleVouchCreateNestedManyWithoutToUserInput
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3029,7 +2967,6 @@ export type UserUncheckedCreateWithoutOwnedFamiliesInput = {
   vouchesReceived?: Prisma.CircleVouchUncheckedCreateNestedManyWithoutToUserInput
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3086,7 +3023,6 @@ export type UserUpdateWithoutOwnedFamiliesInput = {
   vouchesReceived?: Prisma.CircleVouchUpdateManyWithoutToUserNestedInput
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3127,7 +3063,6 @@ export type UserUncheckedUpdateWithoutOwnedFamiliesInput = {
   vouchesReceived?: Prisma.CircleVouchUncheckedUpdateManyWithoutToUserNestedInput
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3168,7 +3103,6 @@ export type UserCreateWithoutFamilyMembershipsInput = {
   vouchesReceived?: Prisma.CircleVouchCreateNestedManyWithoutToUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3209,7 +3143,6 @@ export type UserUncheckedCreateWithoutFamilyMembershipsInput = {
   vouchesReceived?: Prisma.CircleVouchUncheckedCreateNestedManyWithoutToUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3266,7 +3199,6 @@ export type UserUpdateWithoutFamilyMembershipsInput = {
   vouchesReceived?: Prisma.CircleVouchUpdateManyWithoutToUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3307,7 +3239,6 @@ export type UserUncheckedUpdateWithoutFamilyMembershipsInput = {
   vouchesReceived?: Prisma.CircleVouchUncheckedUpdateManyWithoutToUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3348,7 +3279,6 @@ export type UserCreateWithoutCircleMembershipsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3389,7 +3319,6 @@ export type UserUncheckedCreateWithoutCircleMembershipsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3446,7 +3375,6 @@ export type UserUpdateWithoutCircleMembershipsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3487,7 +3415,6 @@ export type UserUncheckedUpdateWithoutCircleMembershipsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3528,7 +3455,6 @@ export type UserCreateWithoutVouchesGivenInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3569,7 +3495,6 @@ export type UserUncheckedCreateWithoutVouchesGivenInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3615,7 +3540,6 @@ export type UserCreateWithoutVouchesReceivedInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3656,7 +3580,6 @@ export type UserUncheckedCreateWithoutVouchesReceivedInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3713,7 +3636,6 @@ export type UserUpdateWithoutVouchesGivenInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3754,7 +3676,6 @@ export type UserUncheckedUpdateWithoutVouchesGivenInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3806,7 +3727,6 @@ export type UserUpdateWithoutVouchesReceivedInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -3847,7 +3767,6 @@ export type UserUncheckedUpdateWithoutVouchesReceivedInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -3888,7 +3807,6 @@ export type UserCreateWithoutOffsetsInput = {
   vouchesReceived?: Prisma.CircleVouchCreateNestedManyWithoutToUserInput
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -3929,7 +3847,6 @@ export type UserUncheckedCreateWithoutOffsetsInput = {
   vouchesReceived?: Prisma.CircleVouchUncheckedCreateNestedManyWithoutToUserInput
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -3986,7 +3903,6 @@ export type UserUpdateWithoutOffsetsInput = {
   vouchesReceived?: Prisma.CircleVouchUpdateManyWithoutToUserNestedInput
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -4027,187 +3943,6 @@ export type UserUncheckedUpdateWithoutOffsetsInput = {
   vouchesReceived?: Prisma.CircleVouchUncheckedUpdateManyWithoutToUserNestedInput
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
-  anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
-  trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutVouchersInput = {
-  id?: string
-  name: string
-  phone: string
-  email?: string | null
-  passwordHash: string
-  village: string
-  preferredLang?: $Enums.Locale
-  role?: $Enums.UserRole
-  status?: $Enums.UserStatus
-  trustScore?: number
-  sustainability?: number
-  greenPoints?: number
-  paperlessSheets?: number
-  accountAgeDays?: number
-  lastLoginAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  sentTransactions?: Prisma.TransactionCreateNestedManyWithoutFromUserInput
-  receivedTransactions?: Prisma.TransactionCreateNestedManyWithoutToUserInput
-  ledgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutUserInput
-  otps?: Prisma.OtpCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  loans?: Prisma.LoanCreateNestedManyWithoutUserInput
-  savingsGoals?: Prisma.SavingsGoalCreateNestedManyWithoutUserInput
-  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
-  badges?: Prisma.UserBadgeCreateNestedManyWithoutUserInput
-  circleMemberships?: Prisma.CircleMemberCreateNestedManyWithoutUserInput
-  vouchesGiven?: Prisma.CircleVouchCreateNestedManyWithoutFromUserInput
-  vouchesReceived?: Prisma.CircleVouchCreateNestedManyWithoutToUserInput
-  familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
-  ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
-  offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
-  trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutVouchersInput = {
-  id?: string
-  name: string
-  phone: string
-  email?: string | null
-  passwordHash: string
-  village: string
-  preferredLang?: $Enums.Locale
-  role?: $Enums.UserRole
-  status?: $Enums.UserStatus
-  trustScore?: number
-  sustainability?: number
-  greenPoints?: number
-  paperlessSheets?: number
-  accountAgeDays?: number
-  lastLoginAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  sentTransactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutFromUserInput
-  receivedTransactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutToUserInput
-  ledgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutUserInput
-  otps?: Prisma.OtpUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  loans?: Prisma.LoanUncheckedCreateNestedManyWithoutUserInput
-  savingsGoals?: Prisma.SavingsGoalUncheckedCreateNestedManyWithoutUserInput
-  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
-  badges?: Prisma.UserBadgeUncheckedCreateNestedManyWithoutUserInput
-  circleMemberships?: Prisma.CircleMemberUncheckedCreateNestedManyWithoutUserInput
-  vouchesGiven?: Prisma.CircleVouchUncheckedCreateNestedManyWithoutFromUserInput
-  vouchesReceived?: Prisma.CircleVouchUncheckedCreateNestedManyWithoutToUserInput
-  familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
-  ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
-  offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
-  trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutVouchersInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutVouchersInput, Prisma.UserUncheckedCreateWithoutVouchersInput>
-}
-
-export type UserUpsertWithoutVouchersInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutVouchersInput, Prisma.UserUncheckedUpdateWithoutVouchersInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutVouchersInput, Prisma.UserUncheckedCreateWithoutVouchersInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutVouchersInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutVouchersInput, Prisma.UserUncheckedUpdateWithoutVouchersInput>
-}
-
-export type UserUpdateWithoutVouchersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  village?: Prisma.StringFieldUpdateOperationsInput | string
-  preferredLang?: Prisma.EnumLocaleFieldUpdateOperationsInput | $Enums.Locale
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  trustScore?: Prisma.IntFieldUpdateOperationsInput | number
-  sustainability?: Prisma.IntFieldUpdateOperationsInput | number
-  greenPoints?: Prisma.IntFieldUpdateOperationsInput | number
-  paperlessSheets?: Prisma.IntFieldUpdateOperationsInput | number
-  accountAgeDays?: Prisma.IntFieldUpdateOperationsInput | number
-  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  sentTransactions?: Prisma.TransactionUpdateManyWithoutFromUserNestedInput
-  receivedTransactions?: Prisma.TransactionUpdateManyWithoutToUserNestedInput
-  ledgerEntries?: Prisma.LedgerEntryUpdateManyWithoutUserNestedInput
-  otps?: Prisma.OtpUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  loans?: Prisma.LoanUpdateManyWithoutUserNestedInput
-  savingsGoals?: Prisma.SavingsGoalUpdateManyWithoutUserNestedInput
-  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
-  badges?: Prisma.UserBadgeUpdateManyWithoutUserNestedInput
-  circleMemberships?: Prisma.CircleMemberUpdateManyWithoutUserNestedInput
-  vouchesGiven?: Prisma.CircleVouchUpdateManyWithoutFromUserNestedInput
-  vouchesReceived?: Prisma.CircleVouchUpdateManyWithoutToUserNestedInput
-  familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
-  ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
-  offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
-  trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutVouchersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  village?: Prisma.StringFieldUpdateOperationsInput | string
-  preferredLang?: Prisma.EnumLocaleFieldUpdateOperationsInput | $Enums.Locale
-  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
-  trustScore?: Prisma.IntFieldUpdateOperationsInput | number
-  sustainability?: Prisma.IntFieldUpdateOperationsInput | number
-  greenPoints?: Prisma.IntFieldUpdateOperationsInput | number
-  paperlessSheets?: Prisma.IntFieldUpdateOperationsInput | number
-  accountAgeDays?: Prisma.IntFieldUpdateOperationsInput | number
-  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  sentTransactions?: Prisma.TransactionUncheckedUpdateManyWithoutFromUserNestedInput
-  receivedTransactions?: Prisma.TransactionUncheckedUpdateManyWithoutToUserNestedInput
-  ledgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutUserNestedInput
-  otps?: Prisma.OtpUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  loans?: Prisma.LoanUncheckedUpdateManyWithoutUserNestedInput
-  savingsGoals?: Prisma.SavingsGoalUncheckedUpdateManyWithoutUserNestedInput
-  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
-  badges?: Prisma.UserBadgeUncheckedUpdateManyWithoutUserNestedInput
-  circleMemberships?: Prisma.CircleMemberUncheckedUpdateManyWithoutUserNestedInput
-  vouchesGiven?: Prisma.CircleVouchUncheckedUpdateManyWithoutFromUserNestedInput
-  vouchesReceived?: Prisma.CircleVouchUncheckedUpdateManyWithoutToUserNestedInput
-  familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
-  ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
-  offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -4249,7 +3984,6 @@ export type UserCreateWithoutTrustSnapshotsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
@@ -4290,7 +4024,6 @@ export type UserUncheckedCreateWithoutTrustSnapshotsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
@@ -4347,7 +4080,6 @@ export type UserUpdateWithoutTrustSnapshotsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
@@ -4388,7 +4120,6 @@ export type UserUncheckedUpdateWithoutTrustSnapshotsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
@@ -4429,7 +4160,6 @@ export type UserCreateWithoutAnomalyFlagsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
@@ -4470,7 +4200,6 @@ export type UserUncheckedCreateWithoutAnomalyFlagsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
@@ -4527,7 +4256,6 @@ export type UserUpdateWithoutAnomalyFlagsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
@@ -4568,7 +4296,6 @@ export type UserUncheckedUpdateWithoutAnomalyFlagsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
@@ -4609,7 +4336,6 @@ export type UserCreateWithoutNotificationsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutUserInput
@@ -4650,7 +4376,6 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutUserInput
@@ -4707,7 +4432,6 @@ export type UserUpdateWithoutNotificationsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutUserNestedInput
@@ -4748,7 +4472,6 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutUserNestedInput
@@ -4789,7 +4512,6 @@ export type UserCreateWithoutChatMessagesInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -4830,7 +4552,6 @@ export type UserUncheckedCreateWithoutChatMessagesInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -4887,7 +4608,6 @@ export type UserUpdateWithoutChatMessagesInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -4928,7 +4648,6 @@ export type UserUncheckedUpdateWithoutChatMessagesInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -4969,7 +4688,6 @@ export type UserCreateWithoutAuditLogsInput = {
   familyMemberships?: Prisma.FamilyMemberCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
@@ -5010,7 +4728,6 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedCreateNestedManyWithoutUserInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedCreateNestedManyWithoutOwnerInput
   offsets?: Prisma.OffsetContributionUncheckedCreateNestedManyWithoutUserInput
-  vouchers?: Prisma.VoucherUncheckedCreateNestedManyWithoutUserInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedCreateNestedManyWithoutUserInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -5067,7 +4784,6 @@ export type UserUpdateWithoutAuditLogsInput = {
   familyMemberships?: Prisma.FamilyMemberUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
@@ -5108,7 +4824,6 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   familyMemberships?: Prisma.FamilyMemberUncheckedUpdateManyWithoutUserNestedInput
   ownedFamilies?: Prisma.FamilyGroupUncheckedUpdateManyWithoutOwnerNestedInput
   offsets?: Prisma.OffsetContributionUncheckedUpdateManyWithoutUserNestedInput
-  vouchers?: Prisma.VoucherUncheckedUpdateManyWithoutUserNestedInput
   anomalyFlags?: Prisma.AnomalyFlagUncheckedUpdateManyWithoutUserNestedInput
   trustSnapshots?: Prisma.TrustScoreSnapshotUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -5137,7 +4852,6 @@ export type UserCountOutputType = {
   familyMemberships: number
   ownedFamilies: number
   offsets: number
-  vouchers: number
   anomalyFlags: number
   trustSnapshots: number
   notifications: number
@@ -5162,7 +4876,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   familyMemberships?: boolean | UserCountOutputTypeCountFamilyMembershipsArgs
   ownedFamilies?: boolean | UserCountOutputTypeCountOwnedFamiliesArgs
   offsets?: boolean | UserCountOutputTypeCountOffsetsArgs
-  vouchers?: boolean | UserCountOutputTypeCountVouchersArgs
   anomalyFlags?: boolean | UserCountOutputTypeCountAnomalyFlagsArgs
   trustSnapshots?: boolean | UserCountOutputTypeCountTrustSnapshotsArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
@@ -5295,13 +5008,6 @@ export type UserCountOutputTypeCountOffsetsArgs<ExtArgs extends runtime.Types.Ex
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountVouchersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VoucherWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
 export type UserCountOutputTypeCountAnomalyFlagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AnomalyFlagWhereInput
 }
@@ -5369,7 +5075,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   familyMemberships?: boolean | Prisma.User$familyMembershipsArgs<ExtArgs>
   ownedFamilies?: boolean | Prisma.User$ownedFamiliesArgs<ExtArgs>
   offsets?: boolean | Prisma.User$offsetsArgs<ExtArgs>
-  vouchers?: boolean | Prisma.User$vouchersArgs<ExtArgs>
   anomalyFlags?: boolean | Prisma.User$anomalyFlagsArgs<ExtArgs>
   trustSnapshots?: boolean | Prisma.User$trustSnapshotsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
@@ -5456,7 +5161,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   familyMemberships?: boolean | Prisma.User$familyMembershipsArgs<ExtArgs>
   ownedFamilies?: boolean | Prisma.User$ownedFamiliesArgs<ExtArgs>
   offsets?: boolean | Prisma.User$offsetsArgs<ExtArgs>
-  vouchers?: boolean | Prisma.User$vouchersArgs<ExtArgs>
   anomalyFlags?: boolean | Prisma.User$anomalyFlagsArgs<ExtArgs>
   trustSnapshots?: boolean | Prisma.User$trustSnapshotsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
@@ -5486,7 +5190,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     familyMemberships: Prisma.$FamilyMemberPayload<ExtArgs>[]
     ownedFamilies: Prisma.$FamilyGroupPayload<ExtArgs>[]
     offsets: Prisma.$OffsetContributionPayload<ExtArgs>[]
-    vouchers: Prisma.$VoucherPayload<ExtArgs>[]
     anomalyFlags: Prisma.$AnomalyFlagPayload<ExtArgs>[]
     trustSnapshots: Prisma.$TrustScoreSnapshotPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
@@ -5934,7 +5637,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   familyMemberships<T extends Prisma.User$familyMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$familyMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FamilyMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ownedFamilies<T extends Prisma.User$ownedFamiliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedFamiliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FamilyGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   offsets<T extends Prisma.User$offsetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$offsetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OffsetContributionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  vouchers<T extends Prisma.User$vouchersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$vouchersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VoucherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   anomalyFlags<T extends Prisma.User$anomalyFlagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$anomalyFlagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnomalyFlagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   trustSnapshots<T extends Prisma.User$trustSnapshotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$trustSnapshotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TrustScoreSnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6760,30 +6462,6 @@ export type User$offsetsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.OffsetContributionScalarFieldEnum | Prisma.OffsetContributionScalarFieldEnum[]
-}
-
-/**
- * User.vouchers
- */
-export type User$vouchersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Voucher
-   */
-  select?: Prisma.VoucherSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Voucher
-   */
-  omit?: Prisma.VoucherOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VoucherInclude<ExtArgs> | null
-  where?: Prisma.VoucherWhereInput
-  orderBy?: Prisma.VoucherOrderByWithRelationInput | Prisma.VoucherOrderByWithRelationInput[]
-  cursor?: Prisma.VoucherWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VoucherScalarFieldEnum | Prisma.VoucherScalarFieldEnum[]
 }
 
 /**

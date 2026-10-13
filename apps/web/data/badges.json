@@ -29,111 +29,243 @@
     {
       "slug": "first-lesson",
       "icon": "book-open-check",
-      "criteria": { "type": "total_lessons", "count": 1 },
+      "criteria": {
+        "type": "total_lessons",
+        "count": 1
+      },
       "translations": {
-        "en": { "name": "First lesson done", "description": "Finished your first financial literacy lesson." },
-        "hi": { "name": "पहला पाठ पूरा", "description": "अपना पहला वित्तीय साक्षरता पाठ पूरा किया।" },
-        "kn": { "name": "ಮೊದಲ ಪಾಠ ಪೂರ್ಣ", "description": "ನಿಮ್ಮ ಮೊದಲ ಹಣಕಾಸು ಸಾಕ್ಷರತಾ ಪಾಠವನ್ನು ಪೂರ್ಣ ಮಾಡಿದಿರಿ." }
+        "en": {
+          "name": "First lesson done",
+          "description": "Finished your first financial literacy lesson."
+        },
+        "hi": {
+          "name": "\u092a\u0939\u0932\u093e \u092a\u093e\u0920 \u092a\u0942\u0930\u093e",
+          "description": "\u0905\u092a\u0928\u093e \u092a\u0939\u0932\u093e \u0935\u093f\u0924\u094d\u0924\u0940\u092f \u0938\u093e\u0915\u094d\u0937\u0930\u0924\u093e \u092a\u093e\u0920 \u092a\u0942\u0930\u093e \u0915\u093f\u092f\u093e\u0964"
+        },
+        "kn": {
+          "name": "\u0cae\u0cca\u0ca6\u0cb2 \u0caa\u0cbe\u0ca0 \u0caa\u0cc2\u0cb0\u0ccd\u0ca3",
+          "description": "\u0ca8\u0cbf\u0cae\u0ccd\u0cae \u0cae\u0cca\u0ca6\u0cb2 \u0cb9\u0ca3\u0c95\u0cbe\u0cb8\u0cc1 \u0cb8\u0cbe\u0c95\u0ccd\u0cb7\u0cb0\u0ca4\u0cbe \u0caa\u0cbe\u0ca0\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0caa\u0cc2\u0cb0\u0ccd\u0ca3 \u0cae\u0cbe\u0ca1\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "curious-student",
       "icon": "graduation-cap",
-      "criteria": { "type": "total_lessons", "count": 3 },
+      "criteria": {
+        "type": "total_lessons",
+        "count": 3
+      },
       "translations": {
-        "en": { "name": "Curious student", "description": "Completed three financial literacy lessons." },
-        "hi": { "name": "ज़्यादा उत्सुक छात्र", "description": "तीन वित्तीय साक्षरता पाठ पूरे किए।" },
-        "kn": { "name": "ಜ್ಞಾನ ಉತ್ಸುಕ ವಿದ್ಯಾರ್ಥಿ", "description": "ಮೂರು ಹಣಕಾಸು ಸಾಕ್ಷರತಾ ಪಾಠಗಳನ್ನು ಪೂರ್ಣ ಮಾಡಿದಿರಿ." }
+        "en": {
+          "name": "Curious student",
+          "description": "Completed three financial literacy lessons."
+        },
+        "hi": {
+          "name": "\u091c\u093c\u094d\u092f\u093e\u0926\u093e \u0909\u0924\u094d\u0938\u0941\u0915 \u091b\u093e\u0924\u094d\u0930",
+          "description": "\u0924\u0940\u0928 \u0935\u093f\u0924\u094d\u0924\u0940\u092f \u0938\u093e\u0915\u094d\u0937\u0930\u0924\u093e \u092a\u093e\u0920 \u092a\u0942\u0930\u0947 \u0915\u093f\u090f\u0964"
+        },
+        "kn": {
+          "name": "\u0c9c\u0ccd\u0c9e\u0cbe\u0ca8 \u0c89\u0ca4\u0ccd\u0cb8\u0cc1\u0c95 \u0cb5\u0cbf\u0ca6\u0ccd\u0caf\u0cbe\u0cb0\u0ccd\u0ca5\u0cbf",
+          "description": "\u0cae\u0cc2\u0cb0\u0cc1 \u0cb9\u0ca3\u0c95\u0cbe\u0cb8\u0cc1 \u0cb8\u0cbe\u0c95\u0ccd\u0cb7\u0cb0\u0ca4\u0cbe \u0caa\u0cbe\u0ca0\u0c97\u0cb3\u0ca8\u0ccd\u0ca8\u0cc1 \u0caa\u0cc2\u0cb0\u0ccd\u0ca3 \u0cae\u0cbe\u0ca1\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "scholar-of-the-basics",
       "icon": "library",
-      "criteria": { "type": "category_complete", "category": "basics" },
+      "criteria": {
+        "type": "category_complete",
+        "category": "basics"
+      },
       "translations": {
-        "en": { "name": "Basics scholar", "description": "Completed every lesson in the banking basics module." },
-        "hi": { "name": "बुनियादी विद्वान", "description": "बैंकिंग बुनियादें मॉड्यूल का हर पाठ पूरा किया।" },
-        "kn": { "name": "ಮೂಲಭೂತ ವಿದ್ವಾಂಸ", "description": "ಬ್ಯಾಂಕಿಂಗ್ ಮೂಲಭೂತ ಘಟಕದ ಪ್ರತಿ ಪಾಠವನ್ನು ಪೂರ್ಣ ಮಾಡಿದಿರಿ." }
+        "en": {
+          "name": "Basics scholar",
+          "description": "Completed every lesson in the banking basics module."
+        },
+        "hi": {
+          "name": "\u092c\u0941\u0928\u093f\u092f\u093e\u0926\u0940 \u0935\u093f\u0926\u094d\u0935\u093e\u0928",
+          "description": "\u092c\u0948\u0902\u0915\u093f\u0902\u0917 \u092c\u0941\u0928\u093f\u092f\u093e\u0926\u0947\u0902 \u092e\u0949\u0921\u094d\u092f\u0942\u0932 \u0915\u093e \u0939\u0930 \u092a\u093e\u0920 \u092a\u0942\u0930\u093e \u0915\u093f\u092f\u093e\u0964"
+        },
+        "kn": {
+          "name": "\u0cae\u0cc2\u0cb2\u0cad\u0cc2\u0ca4 \u0cb5\u0cbf\u0ca6\u0ccd\u0cb5\u0cbe\u0c82\u0cb8",
+          "description": "\u0cac\u0ccd\u0caf\u0cbe\u0c82\u0c95\u0cbf\u0c82\u0c97\u0ccd \u0cae\u0cc2\u0cb2\u0cad\u0cc2\u0ca4 \u0c98\u0c9f\u0c95\u0ca6 \u0caa\u0ccd\u0cb0\u0ca4\u0cbf \u0caa\u0cbe\u0ca0\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0caa\u0cc2\u0cb0\u0ccd\u0ca3 \u0cae\u0cbe\u0ca1\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "saver-of-saver",
       "icon": "piggy-bank",
-      "criteria": { "type": "goal_created", "count": 1 },
+      "criteria": {
+        "type": "goal_created",
+        "count": 1
+      },
       "translations": {
-        "en": { "name": "Goal setter", "description": "Created your first savings goal." },
-        "hi": { "name": "लक्ष्य निर्धारक", "description": "अपना पहला बचत लक्ष्य बनाया।" },
-        "kn": { "name": "ಗುರಿ ನಿರ್ಧಾರಿ", "description": "ನಿಮ್ಮ ಮೊದಲ ಉಳಿತಾಸಿನ ಗುರಿಯನ್ನು ರಚಿಸಿದಿರಿ." }
+        "en": {
+          "name": "Goal setter",
+          "description": "Created your first savings goal."
+        },
+        "hi": {
+          "name": "\u0932\u0915\u094d\u0937\u094d\u092f \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u0915",
+          "description": "\u0905\u092a\u0928\u093e \u092a\u0939\u0932\u093e \u092c\u091a\u0924 \u0932\u0915\u094d\u0937\u094d\u092f \u092c\u0928\u093e\u092f\u093e\u0964"
+        },
+        "kn": {
+          "name": "\u0c97\u0cc1\u0cb0\u0cbf \u0ca8\u0cbf\u0cb0\u0ccd\u0ca7\u0cbe\u0cb0\u0cbf",
+          "description": "\u0ca8\u0cbf\u0cae\u0ccd\u0cae \u0cae\u0cca\u0ca6\u0cb2 \u0c89\u0cb3\u0cbf\u0ca4\u0cbe\u0cb8\u0cbf\u0ca8 \u0c97\u0cc1\u0cb0\u0cbf\u0caf\u0ca8\u0ccd\u0ca8\u0cc1 \u0cb0\u0c9a\u0cbf\u0cb8\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "goal-reacher",
       "icon": "target",
-      "criteria": { "type": "goal_completed", "count": 1 },
+      "criteria": {
+        "type": "goal_completed",
+        "count": 1
+      },
       "translations": {
-        "en": { "name": "Goal reached", "description": "Fully funded a savings goal." },
-        "hi": { "name": "लक्ष्य प्राप्त", "description": "एक बचत लक्ष्य पूरी तरह पूरा किया।" },
-        "kn": { "name": "ಗುರಿ ಸಾಧಿಸಲಾಯಿತು", "description": "ಒಂದು ಉಳಿತಾಸಿನ ಗುರಿಯನ್ನು ಸಂಪೂರ್ಣ ಪೂರೈಸಿದಿರಿ." }
+        "en": {
+          "name": "Goal reached",
+          "description": "Fully funded a savings goal."
+        },
+        "hi": {
+          "name": "\u0932\u0915\u094d\u0937\u094d\u092f \u092a\u094d\u0930\u093e\u092a\u094d\u0924",
+          "description": "\u090f\u0915 \u092c\u091a\u0924 \u0932\u0915\u094d\u0937\u094d\u092f \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u092a\u0942\u0930\u093e \u0915\u093f\u092f\u093e\u0964"
+        },
+        "kn": {
+          "name": "\u0c97\u0cc1\u0cb0\u0cbf \u0cb8\u0cbe\u0ca7\u0cbf\u0cb8\u0cb2\u0cbe\u0caf\u0cbf\u0ca4\u0cc1",
+          "description": "\u0c92\u0c82\u0ca6\u0cc1 \u0c89\u0cb3\u0cbf\u0ca4\u0cbe\u0cb8\u0cbf\u0ca8 \u0c97\u0cc1\u0cb0\u0cbf\u0caf\u0ca8\u0ccd\u0ca8\u0cc1 \u0cb8\u0c82\u0caa\u0cc2\u0cb0\u0ccd\u0ca3 \u0caa\u0cc2\u0cb0\u0cc8\u0cb8\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "quiz-perfect",
       "icon": "sparkles",
-      "criteria": { "type": "quiz_score", "minPct": 100 },
+      "criteria": {
+        "type": "quiz_score",
+        "minPct": 100
+      },
       "translations": {
-        "en": { "name": "Perfect answer", "description": "Scored full marks on a lesson quiz." },
-        "hi": { "name": "सही उत्तर", "description": "पाठ प्रश्नोत्तरी में पूरे नंबर लिए।" },
-        "kn": { "name": "ಪರಿಪೂರ್ಣ ಉತ್ತರ", "description": "ಪಾಠದ ಪ್ರಶ್ನೋತ್ತರಿಯಲ್ಲಿ ಸಂಪೂರ್ಣ ಅಂಕ ಪಡೆದಿರಿ." }
+        "en": {
+          "name": "Perfect answer",
+          "description": "Scored full marks on a lesson quiz."
+        },
+        "hi": {
+          "name": "\u0938\u0939\u0940 \u0909\u0924\u094d\u0924\u0930",
+          "description": "\u092a\u093e\u0920 \u092a\u094d\u0930\u0936\u094d\u0928\u094b\u0924\u094d\u0924\u0930\u0940 \u092e\u0947\u0902 \u092a\u0942\u0930\u0947 \u0928\u0902\u092c\u0930 \u0932\u093f\u090f\u0964"
+        },
+        "kn": {
+          "name": "\u0caa\u0cb0\u0cbf\u0caa\u0cc2\u0cb0\u0ccd\u0ca3 \u0c89\u0ca4\u0ccd\u0ca4\u0cb0",
+          "description": "\u0caa\u0cbe\u0ca0\u0ca6 \u0caa\u0ccd\u0cb0\u0cb6\u0ccd\u0ca8\u0ccb\u0ca4\u0ccd\u0ca4\u0cb0\u0cbf\u0caf\u0cb2\u0ccd\u0cb2\u0cbf \u0cb8\u0c82\u0caa\u0cc2\u0cb0\u0ccd\u0ca3 \u0c85\u0c82\u0c95 \u0caa\u0ca1\u0cc6\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "first-transaction",
       "icon": "send",
-      "criteria": { "type": "transaction_count", "count": 1 },
+      "criteria": {
+        "type": "transaction_count",
+        "count": 1
+      },
       "translations": {
-        "en": { "name": "First money moved", "description": "Sent your first transaction." },
-        "hi": { "name": "पहला पैसा भेजा", "description": "अपना पहला लेन-देन भेजा।" },
-        "kn": { "name": "ಮೊದಲ ಹಣ ಸಾಧಿಸಲಾಯಿತು", "description": "ನಿಮ್ಮ ಮೊದಲ ವ್ಯವಹಾರವನ್ನು ಕಳಿಸಿದಿರಿ." }
+        "en": {
+          "name": "First money moved",
+          "description": "Sent your first transaction."
+        },
+        "hi": {
+          "name": "\u092a\u0939\u0932\u093e \u092a\u0948\u0938\u093e \u092d\u0947\u091c\u093e",
+          "description": "\u0905\u092a\u0928\u093e \u092a\u0939\u0932\u093e \u0932\u0947\u0928-\u0926\u0947\u0928 \u092d\u0947\u091c\u093e\u0964"
+        },
+        "kn": {
+          "name": "\u0cae\u0cca\u0ca6\u0cb2 \u0cb9\u0ca3 \u0cb8\u0cbe\u0ca7\u0cbf\u0cb8\u0cb2\u0cbe\u0caf\u0cbf\u0ca4\u0cc1",
+          "description": "\u0ca8\u0cbf\u0cae\u0ccd\u0cae \u0cae\u0cca\u0ca6\u0cb2 \u0cb5\u0ccd\u0caf\u0cb5\u0cb9\u0cbe\u0cb0\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0c95\u0cb3\u0cbf\u0cb8\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "regular-user",
       "icon": "repeat",
-      "criteria": { "type": "transaction_count", "count": 20 },
+      "criteria": {
+        "type": "transaction_count",
+        "count": 20
+      },
       "translations": {
-        "en": { "name": "Regular user", "description": "Made twenty transactions." },
-        "hi": { "name": "नियमित उपयोगकर्ता", "description": "बीस लेन-देन किए।" },
-        "kn": { "name": "ನಿಯಮಿತ ಬಳಕೆದಾರ", "description": "ಇಪ್ಪತ್ತು ವ್ಯವಹಾರಗಳನ್ನು ಮಾಡಿದಿರಿ." }
+        "en": {
+          "name": "Regular user",
+          "description": "Made twenty transactions."
+        },
+        "hi": {
+          "name": "\u0928\u093f\u092f\u092e\u093f\u0924 \u0909\u092a\u092f\u094b\u0917\u0915\u0930\u094d\u0924\u093e",
+          "description": "\u092c\u0940\u0938 \u0932\u0947\u0928-\u0926\u0947\u0928 \u0915\u093f\u090f\u0964"
+        },
+        "kn": {
+          "name": "\u0ca8\u0cbf\u0caf\u0cae\u0cbf\u0ca4 \u0cac\u0cb3\u0c95\u0cc6\u0ca6\u0cbe\u0cb0",
+          "description": "\u0c87\u0caa\u0ccd\u0caa\u0ca4\u0ccd\u0ca4\u0cc1 \u0cb5\u0ccd\u0caf\u0cb5\u0cb9\u0cbe\u0cb0\u0c97\u0cb3\u0ca8\u0ccd\u0ca8\u0cc1 \u0cae\u0cbe\u0ca1\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "trust-earned",
       "icon": "shield-check",
-      "criteria": { "type": "trust_score", "threshold": 70 },
+      "criteria": {
+        "type": "trust_score",
+        "threshold": 70
+      },
       "translations": {
-        "en": { "name": "Trust earned", "description": "Reached a trust score of 70." },
-        "hi": { "name": "भरोसा अर्जित", "description": "ट्रस्ट स्कोर 70 तक पहुँचे।" },
-        "kn": { "name": "ವಿಶ್ವಾಸ ಗಳಿಸಿದ್ದು", "description": "ವಿಶ್ವಾಸ ಸ್ಕೋರ್ 70 ತಲುಪಿದ್ದು." }
+        "en": {
+          "name": "Trust earned",
+          "description": "Reached a trust score of 70."
+        },
+        "hi": {
+          "name": "\u092d\u0930\u094b\u0938\u093e \u0905\u0930\u094d\u091c\u093f\u0924",
+          "description": "\u091f\u094d\u0930\u0938\u094d\u091f \u0938\u094d\u0915\u094b\u0930 70 \u0924\u0915 \u092a\u0939\u0941\u0901\u091a\u0947\u0964"
+        },
+        "kn": {
+          "name": "\u0cb5\u0cbf\u0cb6\u0ccd\u0cb5\u0cbe\u0cb8 \u0c97\u0cb3\u0cbf\u0cb8\u0cbf\u0ca6\u0ccd\u0ca6\u0cc1",
+          "description": "\u0cb5\u0cbf\u0cb6\u0ccd\u0cb5\u0cbe\u0cb8 \u0cb8\u0ccd\u0c95\u0ccb\u0cb0\u0ccd 70 \u0ca4\u0cb2\u0cc1\u0caa\u0cbf\u0ca6\u0ccd\u0ca6\u0cc1."
+        }
       }
     },
     {
       "slug": "offset-starter",
       "icon": "sprout",
-      "criteria": { "type": "offset_contributions", "count": 1 },
+      "criteria": {
+        "type": "offset_contributions",
+        "count": 1
+      },
       "translations": {
-        "en": { "name": "Offset starter", "description": "Funded your first carbon offset project." },
-        "hi": { "name": "ऑफसेट शुरू", "description": "अपना पहला कार्बन ऑफसेट प्रोजेक्ट निधित किया।" },
-        "kn": { "name": "ಆಫ್‌ಸೆಟ್ ಪ್ರಾರಂಭಕ", "description": "ನಿಮ್ಮ ಮೊದಲ ಕಾರ್ಬನ ಆಫ್‌ಸೆಟ್ ಯೋಜನೆಯ ಆಸ್ಪದ ನೀಡಿದಿರಿ." }
+        "en": {
+          "name": "Offset starter",
+          "description": "Funded your first carbon offset project."
+        },
+        "hi": {
+          "name": "\u0911\u092b\u0938\u0947\u091f \u0936\u0941\u0930\u0942",
+          "description": "\u0905\u092a\u0928\u093e \u092a\u0939\u0932\u093e \u0915\u093e\u0930\u094d\u092c\u0928 \u0911\u092b\u0938\u0947\u091f \u092a\u094d\u0930\u094b\u091c\u0947\u0915\u094d\u091f \u0928\u093f\u0927\u093f\u0924 \u0915\u093f\u092f\u093e\u0964"
+        },
+        "kn": {
+          "name": "\u0c86\u0cab\u0ccd\u200c\u0cb8\u0cc6\u0c9f\u0ccd \u0caa\u0ccd\u0cb0\u0cbe\u0cb0\u0c82\u0cad\u0c95",
+          "description": "\u0ca8\u0cbf\u0cae\u0ccd\u0cae \u0cae\u0cca\u0ca6\u0cb2 \u0c95\u0cbe\u0cb0\u0ccd\u0cac\u0ca8 \u0c86\u0cab\u0ccd\u200c\u0cb8\u0cc6\u0c9f\u0ccd \u0caf\u0ccb\u0c9c\u0ca8\u0cc6\u0caf \u0c86\u0cb8\u0ccd\u0caa\u0ca6 \u0ca8\u0cc0\u0ca1\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     },
     {
       "slug": "eco-champion",
       "icon": "leaf",
-      "criteria": { "type": "green_points", "threshold": 500 },
+      "criteria": {
+        "type": "green_points",
+        "threshold": 500
+      },
       "translations": {
-        "en": { "name": "Eco champion", "description": "Earned 500 green points." },
-        "hi": { "name": "पर्यावरण चैंपियन", "description": "500 हरित अंक अर्जित किए।" },
-        "kn": { "name": "ಪರಿಸರ ಚಾಂಪಿಯನ್", "description": "500 ಹಸಿರು ಅಂಕ ಗಳಿಸಿದಿರಿ." }
+        "en": {
+          "name": "Eco champion",
+          "description": "Earned 500 green points."
+        },
+        "hi": {
+          "name": "\u092a\u0930\u094d\u092f\u093e\u0935\u0930\u0923 \u091a\u0948\u0902\u092a\u093f\u092f\u0928",
+          "description": "500 \u0939\u0930\u093f\u0924 \u0905\u0902\u0915 \u0905\u0930\u094d\u091c\u093f\u0924 \u0915\u093f\u090f\u0964"
+        },
+        "kn": {
+          "name": "\u0caa\u0cb0\u0cbf\u0cb8\u0cb0 \u0c9a\u0cbe\u0c82\u0caa\u0cbf\u0caf\u0ca8\u0ccd",
+          "description": "500 \u0cb9\u0cb8\u0cbf\u0cb0\u0cc1 \u0c85\u0c82\u0c95 \u0c97\u0cb3\u0cbf\u0cb8\u0cbf\u0ca6\u0cbf\u0cb0\u0cbf."
+        }
       }
     }
   ]

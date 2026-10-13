@@ -423,7 +423,6 @@ export const ModelName = {
   Agent: 'Agent',
   OffsetProject: 'OffsetProject',
   OffsetContribution: 'OffsetContribution',
-  Voucher: 'Voucher',
   TrustScoreSnapshot: 'TrustScoreSnapshot',
   AnomalyFlag: 'AnomalyFlag',
   Notification: 'Notification',
@@ -445,7 +444,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "otp" | "session" | "account" | "transaction" | "ledgerEntry" | "biller" | "loan" | "loanRepayment" | "savingsGoal" | "savingsContribution" | "lesson" | "quiz" | "quizAttempt" | "badge" | "lessonBadge" | "userBadge" | "familyGroup" | "familyMember" | "familyInvitation" | "trustCircle" | "circleMember" | "circleVouch" | "agent" | "offsetProject" | "offsetContribution" | "voucher" | "trustScoreSnapshot" | "anomalyFlag" | "notification" | "chatMessage" | "auditLog" | "rateLimitBucket"
+    modelProps: "user" | "otp" | "session" | "account" | "transaction" | "ledgerEntry" | "biller" | "loan" | "loanRepayment" | "savingsGoal" | "savingsContribution" | "lesson" | "quiz" | "quizAttempt" | "badge" | "lessonBadge" | "userBadge" | "familyGroup" | "familyMember" | "familyInvitation" | "trustCircle" | "circleMember" | "circleVouch" | "agent" | "offsetProject" | "offsetContribution" | "trustScoreSnapshot" | "anomalyFlag" | "notification" | "chatMessage" | "auditLog" | "rateLimitBucket"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2373,80 +2372,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Voucher: {
-      payload: Prisma.$VoucherPayload<ExtArgs>
-      fields: Prisma.VoucherFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.VoucherFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.VoucherFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>
-        }
-        findFirst: {
-          args: Prisma.VoucherFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.VoucherFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>
-        }
-        findMany: {
-          args: Prisma.VoucherFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>[]
-        }
-        create: {
-          args: Prisma.VoucherCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>
-        }
-        createMany: {
-          args: Prisma.VoucherCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.VoucherCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>[]
-        }
-        delete: {
-          args: Prisma.VoucherDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>
-        }
-        update: {
-          args: Prisma.VoucherUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>
-        }
-        deleteMany: {
-          args: Prisma.VoucherDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.VoucherUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.VoucherUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>[]
-        }
-        upsert: {
-          args: Prisma.VoucherUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VoucherPayload>
-        }
-        aggregate: {
-          args: Prisma.VoucherAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateVoucher>
-        }
-        groupBy: {
-          args: Prisma.VoucherGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VoucherGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.VoucherCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VoucherCountAggregateOutputType> | number
-        }
-      }
-    }
     TrustScoreSnapshot: {
       payload: Prisma.$TrustScoreSnapshotPayload<ExtArgs>
       fields: Prisma.TrustScoreSnapshotFieldRefs
@@ -3292,21 +3217,6 @@ export const OffsetContributionScalarFieldEnum = {
 export type OffsetContributionScalarFieldEnum = (typeof OffsetContributionScalarFieldEnum)[keyof typeof OffsetContributionScalarFieldEnum]
 
 
-export const VoucherScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  label: 'label',
-  detail: 'detail',
-  value: 'value',
-  redeemed: 'redeemed',
-  redeemedAt: 'redeemedAt',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
-} as const
-
-export type VoucherScalarFieldEnum = (typeof VoucherScalarFieldEnum)[keyof typeof VoucherScalarFieldEnum]
-
-
 export const TrustScoreSnapshotScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3915,7 +3825,6 @@ export type GlobalOmitConfig = {
   agent?: Prisma.AgentOmit
   offsetProject?: Prisma.OffsetProjectOmit
   offsetContribution?: Prisma.OffsetContributionOmit
-  voucher?: Prisma.VoucherOmit
   trustScoreSnapshot?: Prisma.TrustScoreSnapshotOmit
   anomalyFlag?: Prisma.AnomalyFlagOmit
   notification?: Prisma.NotificationOmit

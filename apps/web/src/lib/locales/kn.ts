@@ -575,5 +575,8 @@ export const kn: TranslationTree = {
   "loans.instalmentAmount": "ಕಡ್ಡಾಯದ ಮತ್ತನೆ",
   "loans.payNext": "ಮುಂದಿನ ಕಡ್ಡಾಯ ಪಾವತಿಸಿ",
   "savings.goalReached": "ನೀವು {count} ಗುರಿ(ಗಳನ್ನು) ಸಂಪೂರ್ಣ ಪೂರೈಸಿದ್ದೀರಿ.",
-  "savings.contributions": "ಇತ್ತೀಚಿನ ಕೊಡುಗೆಗಳು"
+  "savings.contributions": "ಇತ್ತೀಚಿನ ಕೊಡುಗೆಗಳು",
+  "rewards.spendOn": "ನಿಮ್ಮ ಅಂಕಗಳಿಂದ ಏನನ್ನು ಮಾಡಬಹುದು",
+  "rewards.keepGoing": "ಇನ್ನೂ ಸ್ವಲ್ಪ ಕಡಿಮೆ",
+  "rewards.lessonPointsNote": "ಕನ್ನಡ-ಸಾಕ್ಷರತಾ ಪಾಠ ಪೂರ್ಣಗೊಳಿಸಿದರೂ ಅಂಕ ಸಿಗುತ್ತವೆ, ಮತ್ತು ಅದಕ್ಕೆ ಯಾವ ವ್ಯವಹಾರ ಸಾಲು ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ — ಆದಕಾರಣ ಮೇಲಿನ ಮೊತ್ತ ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್‌ಗಿಂಟ ಕಡಿಮೆ ಇರಬಹುದು."
 };

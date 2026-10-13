@@ -77,7 +77,6 @@ export const ModelName = {
   Agent: 'Agent',
   OffsetProject: 'OffsetProject',
   OffsetContribution: 'OffsetContribution',
-  Voucher: 'Voucher',
   TrustScoreSnapshot: 'TrustScoreSnapshot',
   AnomalyFlag: 'AnomalyFlag',
   Notification: 'Notification',
@@ -462,21 +461,6 @@ export const OffsetContributionScalarFieldEnum = {
 } as const
 
 export type OffsetContributionScalarFieldEnum = (typeof OffsetContributionScalarFieldEnum)[keyof typeof OffsetContributionScalarFieldEnum]
-
-
-export const VoucherScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  label: 'label',
-  detail: 'detail',
-  value: 'value',
-  redeemed: 'redeemed',
-  redeemedAt: 'redeemedAt',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
-} as const
-
-export type VoucherScalarFieldEnum = (typeof VoucherScalarFieldEnum)[keyof typeof VoucherScalarFieldEnum]
 
 
 export const TrustScoreSnapshotScalarFieldEnum = {

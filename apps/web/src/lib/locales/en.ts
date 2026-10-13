@@ -586,5 +586,8 @@ export const en = {
   "loans.instalmentAmount": "Instalment amount",
   "loans.payNext": "Pay next instalment",
   "savings.goalReached": "You have fully funded {count} goal(s).",
-  "savings.contributions": "Recent contributions"
+  "savings.contributions": "Recent contributions",
+  "rewards.spendOn": "What your points can do",
+  "rewards.keepGoing": "Not quite enough yet",
+  "rewards.lessonPointsNote": "Finishing a literacy lesson also adds points, and that credit writes no transaction row — so the total above can be lower than your balance."
 } as const;
