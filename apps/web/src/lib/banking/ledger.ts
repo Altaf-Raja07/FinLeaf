@@ -141,15 +141,11 @@ export async function postTransaction(
         where: { reference },
       });
       if (existing) {
-        return {
-          id: existing.id,
-          reference: existing.reference,
-          amount: existing.amount,
-          status: existing.status,
-          fromAccountId: existing.fromAccountId,
-          toAccountId: existing.toAccountId,
-          createdAt: existing.createdAt,
-        };
+        // A replayed reference is a client retry or a genuine attempt to replay
+        // a payment. Throwing is correct here: returning the existing row would
+        // look like success, and the caller would report a second payment as
+        // having been made. The route action turns this into "already sent".
+        throw new DuplicateReferenceError(reference);
       }
 
       // 1. Move the balances. The debit is guarded so an account can never be

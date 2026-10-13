@@ -21,20 +21,41 @@ export interface AuditEvent {
   detail?: Record<string, unknown>;
 }
 
-export async function recordAudit(event: AuditEvent): Promise<void> {
+/**
+ * Ambient request metadata, when there is a request at all.
+ *
+ * `headers()` throws when the caller is not inside a request scope — inside a
+ * background job, a cron run, or a CLI script. Those contexts are legitimate
+ * callers of `recordAudit`, so the read is treated as best-effort rather than
+ * required: outside a request the audit row simply carries no IP and no user
+ * agent, and everything else still records.
+ */
+async function requestMetadata(): Promise<{ ip: string | null; userAgent: string | null }> {
   try {
     const h = await headers();
+    return {
+      ip:
+        h.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        h.get("x-real-ip") ??
+        null,
+      userAgent: h.get("user-agent")?.slice(0, 256) ?? null,
+    };
+  } catch {
+    return { ip: null, userAgent: null };
+  }
+}
+
+export async function recordAudit(event: AuditEvent): Promise<void> {
+  try {
+    const { ip, userAgent } = await requestMetadata();
 
     await prisma.auditLog.create({
       data: {
         userId: event.userId ?? null,
         action: event.action,
         detail: (event.detail ?? undefined) as never,
-        ip:
-          h.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-          h.get("x-real-ip") ??
-          null,
-        userAgent: h.get("user-agent")?.slice(0, 256) ?? null,
+        ip,
+        userAgent,
       },
     });
   } catch (error) {

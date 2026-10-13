@@ -10,6 +10,9 @@
  * Vitest's own typings make it read-only.
  */
 
+// `vitest.integration.config.ts` loads apps/web/.env into the process before
+// this file runs. This line stays as the last-resort default for a unit run
+// without a database, and never overrides a real value.
 process.env.DATABASE_URL ??=
   "postgresql://test:test@localhost:5432/finleaf_test?schema=public";
 // A secret that is plainly a placeholder, so nothing here can be mistaken for a
