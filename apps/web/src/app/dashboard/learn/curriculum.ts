@@ -360,6 +360,8 @@ export async function badgeStats(userId: string): Promise<BadgeStats> {
 
 export interface BadgeProgressView {
   slug: string;
+  /** Icon name from data/badges.json, mapped by components/BadgeIcon.tsx. */
+  icon: string;
   name: string;
   description: string;
   earned: boolean;
@@ -383,7 +385,12 @@ function byDisplayOrder(a: BadgeProgressView, b: BadgeProgressView): number {
 
 async function loadBadgeRows(userId: string) {
   const [badges, held, stats] = await Promise.all([
-    prisma.badge.findMany({ orderBy: { slug: "asc" } }),
+    // The icon is selected too: the badge shelf renders it, and an
+    // undefined icon name falls back to a neutral glyph in BadgeIcon.tsx.
+    prisma.badge.findMany({
+      orderBy: { slug: "asc" },
+      select: { id: true, slug: true, icon: true, criteria: true, translations: true },
+    }),
     prisma.userBadge.findMany({ where: { userId }, select: { badgeId: true } }),
     badgeStats(userId),
   ]);
@@ -392,7 +399,12 @@ async function loadBadgeRows(userId: string) {
 }
 
 function badgeView(
-  badge: { slug: string; criteria: Prisma.JsonValue; translations: Prisma.JsonValue },
+  badge: {
+    slug: string;
+    icon: string;
+    criteria: Prisma.JsonValue;
+    translations: Prisma.JsonValue;
+  },
   stats: BadgeStats,
   locale: Locale,
 ): BadgeProgressView {
@@ -402,6 +414,7 @@ function badgeView(
 
   return {
     slug: badge.slug,
+    icon: badge.icon,
     name: text?.name ?? badge.slug,
     description: text?.description ?? "",
     earned: progress?.earned ?? false,

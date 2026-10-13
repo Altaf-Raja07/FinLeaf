@@ -10,6 +10,7 @@ import {
   ProgressBar,
   Stat,
 } from "@/components/ui";
+import { BadgeIcon } from "@/components/BadgeIcon";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { badgeBoard, listLessonCategories } from "./curriculum";
@@ -114,6 +115,9 @@ export default async function LearnPage() {
                 className="card-quiet flex flex-col gap-2 p-3"
               >
                 <div className="flex items-start justify-between gap-3">
+                  <span className={badge.earned ? "text-leaf-700" : "text-ink-faint"}>
+                    <BadgeIcon name={badge.icon} />
+                  </span>
                   <p className="font-bold">{badge.name}</p>
                   {badge.earned ? <Pill status="good">{t("learn.completed")}</Pill> : null}
                 </div>
