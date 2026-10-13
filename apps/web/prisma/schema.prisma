@@ -1,0 +1,795 @@
+// FinLeaf data contract.
+//
+// Money is always Decimal(14,2) — never a float. Carbon is Decimal(12,4).
+// Account.balance is a materialised running balance for fast reads; LedgerEntry
+// is the immutable double-entry audit trail that balance is derived from.
+//
+// No column stores a plaintext credential, OTP, government ID or session
+// token: secrets are stored as hashes only (see User.passwordHash, Otp.codeHash,
+// Session.tokenHash).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+/// Locales the interface ships translations for. Kept as an enum so an
+/// unsupported locale can never be persisted.
+enum Locale {
+  en
+  hi
+  kn
+}
+
+enum AccountStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum TxType {
+  DEPOSIT
+  WITHDRAW
+  TRANSFER_IN
+  TRANSFER_OUT
+  BILL_PAYMENT
+  RECHARGE
+  LOAN_DISBURSEMENT
+  LOAN_REPAYMENT
+  SAVINGS_CONTRIBUTION
+  GREEN_OFFSET
+}
+
+enum TxStatus {
+  PENDING
+  COMPLETED
+  FLAGGED
+  DECLINED
+  REVERSED
+}
+
+enum TxCategory {
+  GROCERIES
+  FUEL
+  TRAVEL_PUBLIC
+  TRAVEL_PRIVATE
+  ELECTRICITY
+  DINING
+  EDUCATION
+  HEALTHCARE
+  ELECTRONICS
+  CLOTHING
+  HOUSING
+  RENT
+  SALARY
+  TRANSFER
+  BILL_PAYMENT
+  RECHARGE
+  LOAN
+  SAVINGS
+  GREEN_REWARD
+  OFFSET
+  OTHER
+}
+
+enum OtpPurpose {
+  REGISTRATION
+  LOGIN
+  PASSWORD_RESET
+  PHONE_CHANGE
+}
+
+enum LoanStatus {
+  ACTIVE
+  REPAID
+  OVERDUE
+  DEFAULTED
+}
+
+enum RepaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum CircleRole {
+  MEMBER
+  MENTOR
+  ADMIN
+}
+
+enum LedgerDirection {
+  DEBIT
+  CREDIT
+}
+
+enum NotificationType {
+  TRANSACTION
+  LOAN
+  SAVINGS
+  REWARD
+  ANOMALY
+  SYSTEM
+  LESSON
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+enum AuditAction {
+  SIGN_IN
+  SIGN_OUT
+  SIGN_UP
+  OTP_REQUEST
+  OTP_FAILED
+  PASSWORD_CHANGED
+  PASSWORD_RESET
+  TRANSFER_SENT
+  TRANSFER_DECLINED
+  LOAN_APPLIED
+  LOAN_REPAYMENT
+  OFFSET_FUNDED
+  ANOMALY_REVIEWED
+  ADMIN_ACTION
+  RATE_LIMITED
+}
+
+// ---------------------------------------------------------------------------
+// Identity & access
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String     @id @default(cuid())
+  name          String
+  /// E.164, e.g. +919876543210. The single source of identity for the product.
+  phone         String     @unique
+  email         String?    @unique
+  passwordHash  String
+  village       String
+  preferredLang Locale     @default(en)
+  role          UserRole   @default(USER)
+  status        UserStatus @default(PENDING_VERIFICATION)
+
+  /// Materialised from scoring runs; the authoritative values live in
+  /// TrustScoreSnapshot. See lib/scoring.
+  trustScore      Int @default(0)
+  sustainability  Int @default(0)
+  greenPoints     Int @default(0)
+  /// Sheets of paper the user has avoided by going paperless.
+  paperlessSheets Int @default(0)
+  /// Set on first successful sign-in; recomputed by lib/scoring.
+  accountAgeDays  Int @default(0)
+
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  accounts             Account[]
+  sentTransactions     Transaction[]        @relation("TxFromUser")
+  receivedTransactions Transaction[]        @relation("TxToUser")
+  ledgerEntries        LedgerEntry[]
+  otps                 Otp[]
+  sessions             Session[]
+  loans                Loan[]
+  savingsGoals         SavingsGoal[]
+  quizAttempts         QuizAttempt[]
+  badges               UserBadge[]
+  circleMemberships    CircleMember[]
+  vouchesGiven         CircleVouch[]        @relation("Voucher")
+  vouchesReceived      CircleVouch[]        @relation("Vouchee")
+  familyMemberships    FamilyMember[]
+  ownedFamilies        FamilyGroup[]
+  offsets              OffsetContribution[]
+  vouchers             Voucher[]
+  anomalyFlags         AnomalyFlag[]
+  trustSnapshots       TrustScoreSnapshot[]
+  notifications        Notification[]
+  chatMessages         ChatMessage[]
+  auditLogs            AuditLog[]
+
+  @@index([village])
+  @@index([status])
+  @@index([trustScore])
+  @@index([sustainability])
+  @@index([greenPoints])
+}
+
+model Otp {
+  id         String     @id @default(cuid())
+  phone      String
+  /// SHA-256 of the 6-digit code. The plaintext code is never persisted.
+  codeHash   String
+  purpose    OtpPurpose
+  attempts   Int        @default(0)
+  /// Set once the code is successfully redeemed, so it cannot be replayed.
+  consumedAt DateTime?
+  expiresAt  DateTime
+  createdAt  DateTime   @default(now())
+  user       User?      @relation(fields: [userId], references: [id])
+  userId     String?
+
+  @@index([phone, purpose, createdAt])
+}
+
+model Session {
+  id         String    @id @default(cuid())
+  userId     String
+  /// SHA-256 of a 256-bit random token. The raw token only ever exists in
+  /// the client's httpOnly cookie.
+  tokenHash  String    @unique
+  userAgent  String?
+  ip         String?
+  lastSeenAt DateTime  @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+// Banking
+// ---------------------------------------------------------------------------
+
+model Account {
+  id        String        @id @default(cuid())
+  userId    String
+  /// Human-readable account number, 12 digits, shown on statements.
+  number    String        @unique
+  /// Materialised balance. Always written together with its LedgerEntry rows.
+  balance   Decimal       @default(0) @db.Decimal(14, 2)
+  status    AccountStatus @default(ACTIVE)
+  openedAt  DateTime      @default(now())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ledgerEntries LedgerEntry[]
+  transfersOut  Transaction[] @relation("DebitedAccount")
+  transfersIn   Transaction[] @relation("CreditedAccount")
+
+  @@index([userId])
+}
+
+model Transaction {
+  id        String     @id @default(cuid())
+  /// Idempotency key supplied by the caller. Guarantees a retried request
+  /// never double-debits an account.
+  reference String     @unique
+  type      TxType
+  category  TxCategory @default(OTHER)
+  status    TxStatus   @default(PENDING)
+
+  amount   Decimal @db.Decimal(14, 2)
+  note     String?
+  /// Billers are master data; this is the foreign key when applicable.
+  billerId String?
+
+  fromUserId    String?
+  toUserId      String?
+  fromAccountId String?
+  toAccountId   String?
+
+  /// Estimated kg CO2e. Category-based proxy per GHG Protocol Scope 3.1 —
+  /// never a measured value. See lib/carbon.
+  co2eKg      Decimal @default(0) @db.Decimal(12, 4)
+  /// Which emission-factor source produced co2eKg: "static-table" | "climatiq".
+  co2eSource  String  @default("static-table")
+  greenPoints Int     @default(0)
+  hourOfDay   Int     @default(12)
+
+  /// 0-1 from the anomaly detector. Stored for later review even when the
+  /// transaction was not flagged.
+  anomalyScore Float @default(0)
+
+  settledAt DateTime?
+  createdAt DateTime  @default(now())
+
+  fromUser             User?                 @relation("TxFromUser", fields: [fromUserId], references: [id], onDelete: SetNull)
+  toUser               User?                 @relation("TxToUser", fields: [toUserId], references: [id], onDelete: SetNull)
+  fromAccount          Account?              @relation("DebitedAccount", fields: [fromAccountId], references: [id], onDelete: SetNull)
+  toAccount            Account?              @relation("CreditedAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
+  biller               Biller?               @relation(fields: [billerId], references: [id], onDelete: SetNull)
+  ledger               LedgerEntry[]
+  anomalyFlag          AnomalyFlag?
+  savingsContributions SavingsContribution[]
+
+  @@index([fromUserId, createdAt])
+  @@index([toUserId, createdAt])
+  @@index([category, createdAt])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// Immutable double-entry record. Every settled transaction writes exactly one
+/// DEBIT and one CREDIT, so `SUM(debit) = SUM(credit)` always holds per
+/// transaction and balances can be reconciled from the ledger.
+model LedgerEntry {
+  id            String          @id @default(cuid())
+  transactionId String
+  accountId     String
+  direction     LedgerDirection
+  amount        Decimal         @db.Decimal(14, 2)
+  /// Running balance of the account after this entry was applied.
+  balanceAfter  Decimal         @db.Decimal(14, 2)
+  createdAt     DateTime        @default(now())
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  account     Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId      String?
+
+  @@index([accountId, createdAt])
+  @@index([transactionId])
+}
+
+/// Master data for bill payments and recharges. Sourced from curated reference
+/// data files, never generated.
+model Biller {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  name         String
+  category     TxCategory
+  /// Biller types accept a customer-entered identifier (e.g. a meter number).
+  requiresRef  Boolean    @default(false)
+  refLabel     String?
+  refPattern   String?
+  /// Lower-case locale keys -> display name, e.g. { en: "BESCOM", hi: "बीएसकॉम" }.
+  translations Json?
+  active       Boolean    @default(true)
+
+  transactions Transaction[]
+
+  @@index([category])
+}
+
+// ---------------------------------------------------------------------------
+// Financial inclusion
+// ---------------------------------------------------------------------------
+
+model Loan {
+  id              String     @id @default(cuid())
+  userId          String
+  principal       Decimal    @db.Decimal(12, 2)
+  outstanding     Decimal    @db.Decimal(12, 2)
+  /// Annual simple rate as a fraction, e.g. 0.08 = 8%.
+  interestRate    Decimal    @db.Decimal(5, 4)
+  termMonths      Int
+  status          LoanStatus @default(ACTIVE)
+  /// Trust score at the moment of approval — kept so the decision can be
+  /// explained and audited later (RBI Digital Lending Directions, 2025).
+  trustAtOrigin   Int
+  trustSnapshotId String?
+  dueDate         DateTime
+  disbursedAt     DateTime?
+  repaidAt        DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repayments    LoanRepayment[]
+  trustSnapshot TrustScoreSnapshot? @relation(fields: [trustSnapshotId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+}
+
+model LoanRepayment {
+  id               String          @id @default(cuid())
+  loanId           String
+  amount           Decimal         @db.Decimal(12, 2)
+  principalPortion Decimal         @db.Decimal(12, 2)
+  interestPortion  Decimal         @db.Decimal(12, 2)
+  status           RepaymentStatus @default(PENDING)
+  reference        String          @unique
+  paidAt           DateTime?
+  dueDate          DateTime
+  createdAt        DateTime        @default(now())
+
+  loan Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  @@index([loanId, status])
+}
+
+model SavingsGoal {
+  id         String    @id @default(cuid())
+  userId     String
+  title      String
+  target     Decimal   @db.Decimal(12, 2)
+  saved      Decimal   @default(0) @db.Decimal(12, 2)
+  dueDate    DateTime?
+  /// Archive instead of delete so a completed goal keeps its history.
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contributions SavingsContribution[]
+
+  @@index([userId, archivedAt])
+}
+
+model SavingsContribution {
+  id        String   @id @default(cuid())
+  goalId    String
+  amount    Decimal  @db.Decimal(12, 2)
+  reference String   @unique
+  createdAt DateTime @default(now())
+
+  goal          SavingsGoal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  transactionId String?
+
+  @@index([goalId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Financial literacy
+// ---------------------------------------------------------------------------
+
+model Lesson {
+  id           String  @id @default(cuid())
+  slug         String  @unique
+  category     String
+  minutes      Int     @default(3)
+  order        Int     @default(0)
+  /// Locale keys -> { title, summary, body } for every supported locale.
+  translations Json
+  active       Boolean @default(true)
+
+  quizzes      Quiz[]
+  quizAttempts QuizAttempt[]
+  badges       LessonBadge[]
+
+  @@index([category, order])
+}
+
+model Quiz {
+  id           String @id @default(cuid())
+  lessonId     String
+  order        Int    @default(0)
+  /// Locale keys -> { question, options[], answerIndex, explanation }.
+  translations Json
+
+  lesson   Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  attempts QuizAttempt[]
+
+  @@index([lessonId, order])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  lessonId  String
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([quizId])
+}
+
+model Badge {
+  id           String @id @default(cuid())
+  slug         String @unique
+  icon         String
+  /// How the badge is earned: { type, threshold } — see lib/badges.
+  criteria     Json
+  translations Json
+
+  users   UserBadge[]
+  lessons LessonBadge[]
+
+  @@index([slug])
+}
+
+model LessonBadge {
+  lessonId String
+  badgeId  String
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  badge  Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@id([lessonId, badgeId])
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId, awardedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Groups: family & trust circles
+// ---------------------------------------------------------------------------
+
+model FamilyGroup {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime @default(now())
+
+  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members     FamilyMember[]
+  invitations FamilyInvitation[]
+
+  @@index([ownerId])
+}
+
+model FamilyMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  /// Whether this member may spend from the owner's primary account.
+  canSpend Boolean  @default(false)
+  joinedAt DateTime @default(now())
+
+  group FamilyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([userId])
+}
+
+model FamilyInvitation {
+  id         String    @id @default(cuid())
+  groupId    String
+  phone      String
+  canSpend   Boolean   @default(false)
+  /// SHA-256 of the invite token; the raw token is emailed/SMS'd once.
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  group FamilyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@index([phone])
+}
+
+model TrustCircle {
+  id        String   @id @default(cuid())
+  name      String
+  village   String
+  createdAt DateTime @default(now())
+
+  members CircleMember[]
+  vouches CircleVouch[]
+
+  @@index([village])
+}
+
+model CircleMember {
+  id       String     @id @default(cuid())
+  circleId String
+  userId   String
+  role     CircleRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  circle TrustCircle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([circleId, userId])
+  @@index([userId])
+}
+
+model CircleVouch {
+  id         String   @id @default(cuid())
+  circleId   String
+  fromUserId String
+  toUserId   String
+  /// 1-5, capped at one vouch per pair per rolling window.
+  weight     Int      @default(1)
+  note       String?
+  createdAt  DateTime @default(now())
+
+  circle   TrustCircle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  fromUser User        @relation("Voucher", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User        @relation("Vouchee", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@unique([circleId, fromUserId, toUserId])
+  @@index([toUserId])
+}
+
+// ---------------------------------------------------------------------------
+// Agents & sustainability
+// ---------------------------------------------------------------------------
+
+model Agent {
+  id        String   @id @default(cuid())
+  name      String
+  shopName  String
+  village   String
+  phone     String
+  latitude  Float
+  longitude Float
+  openHours String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([village])
+}
+
+model OffsetProject {
+  id            String  @id @default(cuid())
+  slug          String  @unique
+  icon          String
+  /// Green points charged per unit contributed.
+  costPoints    Int
+  /// kg CO2e removed per unit, from the project methodology.
+  co2ePerUnitKg Decimal @db.Decimal(10, 3)
+  unit          String
+  translations  Json
+  active        Boolean @default(true)
+
+  contributions OffsetContribution[]
+}
+
+model OffsetContribution {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String
+  units       Int
+  co2eKg      Decimal  @db.Decimal(10, 3)
+  pointsSpent Int
+  reference   String   @unique
+  createdAt   DateTime @default(now())
+
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project OffsetProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([projectId])
+}
+
+model Voucher {
+  id         String    @id @default(cuid())
+  userId     String
+  label      String
+  detail     String
+  value      Decimal   @db.Decimal(10, 2)
+  /// Redemption is an explicit user action; reward codes are never auto-applied.
+  redeemed   Boolean   @default(false)
+  redeemedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, redeemed])
+}
+
+// ---------------------------------------------------------------------------
+// ML outputs
+// ---------------------------------------------------------------------------
+
+model TrustScoreSnapshot {
+  id            String   @id @default(cuid())
+  userId        String
+  /// Model that produced the score, e.g. "HistGradientBoostingClassifier".
+  model         String
+  score         Int
+  /// Normalised 0-1 inputs the model was scored on, for reproducibility.
+  features      Json
+  /// Per-factor contributions in points, so a past decision stays explainable.
+  contributions Json
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loans Loan[]
+
+  @@index([userId, createdAt])
+}
+
+model AnomalyFlag {
+  id            String    @id @default(cuid())
+  userId        String
+  transactionId String    @unique
+  score         Float
+  reasons       Json
+  resolved      Boolean   @default(false)
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, resolved])
+}
+
+// ---------------------------------------------------------------------------
+// Engagement & ops
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      ChatRole
+  text      String
+  /// Intent the rule-based assistant matched, or "unmatched".
+  intent    String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String?
+  action    AuditAction
+  /// Structured detail: what happened, to which resource, with which amounts.
+  detail    Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}
+
+/// Fixed-window rate-limit counters. Deliberately not reached through the typed
+/// client: writes use a raw-SQL upsert that must stay a single atomic
+/// statement. Rows are removed by lib/rate-limit.pruneRateLimitBuckets.
+model RateLimitBucket {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime
+  expiresAt   DateTime
+}

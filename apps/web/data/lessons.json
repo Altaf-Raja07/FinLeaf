@@ -1,0 +1,616 @@
+{
+  "$comment": [
+    "Financial literacy lessons and quizzes.",
+    "",
+    "Every lesson is written at a plain-language reading level suitable for a",
+    "first-time bank account holder, and is fully translated into Hindi and",
+    "Kannada because the target users are rural and under-banked.",
+    "",
+    "Schema per lesson:",
+    "  slug      - stable URL key, never change once published",
+    "  category  - one of: basics | saving | borrowing | fraud",
+    "  minutes   - honest reading time, shown to the user",
+    "  order     - display order within the curriculum",
+    "  translations[locale] = { title, summary, body[] }",
+    "  quizzes[] - { order, translations[locale] = { question, options[], answerIndex, explanation } }",
+    "",
+    "`body` is an array of short paragraphs. Short lines matter: the interface",
+    "renders them large, and long paragraphs are exactly what a low-literacy",
+    "user will not read.",
+    "",
+    "`answerIndex` is the zero-based index into options. `explanation` is shown",
+    "after answering, whether right or wrong."
+  ],
+  "lessons": [
+    {
+      "slug": "what-is-a-bank-account",
+      "category": "basics",
+      "minutes": 3,
+      "order": 1,
+      "translations": {
+        "en": {
+          "title": "What a bank account actually is",
+          "summary": "Why an account is useful even if you keep very little money in it.",
+          "body": [
+            "A bank account is a safe place to keep money that you can take out whenever you need it.",
+            "It is better than keeping cash at home, because money at home can be stolen or lost in a fire or a flood. Money in an account is insured up to a limit.",
+            "You do not need to be rich to open an account. You do not need to keep a large balance either. Many people start with a few hundred rupees.",
+            "Your account gives you three useful things: somewhere safe to keep money, a way to pay without carrying cash, and a record of what you spent.",
+            "That last one matters more than people expect. When you can see where your money went, it is much easier to decide what to change."
+          ]
+        },
+        "hi": {
+          "title": "बैंक खाता असल में क्या है",
+          "summary": "बहुत कम पैसा रखने पर भी खाता उपयोगी क्यों है।",
+          "body": [
+            "बैंक खाता वह सुरक्षित जगह है जहाँ आप पैसा रख सकते हैं और जब चाहें निकाल सकते हैं।",
+            "घर में रखे कैश से यह बेहतर है, क्योंकि घर का पैसा चोरी हो सकता है या आग-बाढ़ में खो जा सकता है। खाते का पैसा एक सीमा तक बीमित होता है।",
+            "खाता खोलने के लिए आपके अमीर होने की ज़रूरत नहीं। बड़ी राशि रखने की भी नहीं। बहुत से लोग कुछ सौ रुपये से शुरू करते हैं।",
+            "खाता आपको तीन काम देता है: पैसा रखने की सुरक्षित जगह, बिना नकद लिए भुगतान करने का तरीका, और खर्च का रिकॉर्ड।",
+            "आख़िरी बात लोगों की अपेक्षा से ज़्यादा अहम है। जब पता हो कि पैसा कहाँ गया, तो बदलने का फैसला लेना बहुत आसान हो जाता है।"
+          ]
+        },
+        "kn": {
+          "title": "ಬ್ಯಾಂಕ್ ಖಾತೆ ನಿಜಕ್ಕೂ ಏನು",
+          "summary": "ತುಂಬಾ ಕಡಿಮೆ ಹಣಕಾಸು ಇಟ್ಟರೂ ಖಾತೆ ಏಕೆ ಉಪಯೋಗಿ.",
+          "body": [
+            "ಬ್ಯಾಂಕ್ ಖಾತೆ ಎಂಬುದು ನಿಮ್ಮ ಹಣಕಾಸನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಇಡುವ ಮತ್ತು ಬೇಕಾದಾಗ ತೆಗೆಯುವ ಸ್ಥಳ.",
+            "ಮನೆಯಲ್ಲಿನ ಹಣಕಾಸಿಗಿಂತ ಇದು ಉತ್ತಮ: ಮನೆಯ ಹಣ ಕದಿರಬಹುದು ಅಥವಾ ಅಗ್ನಿ/ಸುವಳ್ಳೆಯಲ್ಲಿ ಕಳೆದುಹೋಗಬಹುದು. ಖಾತೆಯ ಹಣಕಾಸು ಒಂದು ಮಿತಿಯವರೆಗೆ ವಿಮಾ ಹೊಂದಿದೆ.",
+            "ಖಾತೆ ತೆರೆಯಲು ನೀವು ಶ್ರೀಮಂತರಾಗಿರಬೇಕು. ದೊಡ್ಡ ಮತ್ತನೆ ಇಡಬೇಕೂ ಇರಬೇಕು. ಬಹುತರು ಜನ ನೂರಾದ್ದೂ ರೂಪಾಯಿಗಳಿಂದ ಆರಂಭಿಸುತ್ತಾರೆ.",
+            "ಖಾತೆ ನಿಮಗೆ ಮೂರು ಉಪಯೋಗಗಳನ್ನು ನೀಡುತ್ತದೆ: ಹಣ ಇಡುವ ಸುರಕ್ಷಿತ ಸ್ಥಳ, ನಗದ್ ಇಲ್ಲದೆ ಪಾವತಿಸುವ ವಿಧಾನ, ಮತ್ತು ಖರ್ಚಿನ ದಾಖಲೆ.",
+            "ಕೊನೆಯ ವಿಷಯವೇ ಜನರು ನಿರೀಕ್ಷಿಸುವಷ್ಟು ಮುಖ್ಯ. ಹಣ ಎಲ್ಲಿಗೆ ಹೋಗಿದೆ ಎಂದು ಗೊತ್ತಿದರೆ, ಏನು ಬದಲಾಯಿಸಬೇಕೆಂದು ತೀರ್ಮಾನ ತೆಗೆದುಕೊಳ್ಳುವುದು ತುಂಬಾ ಸರಳ."
+          ]
+        }
+      },
+      "quizzes": [
+        {
+          "order": 1,
+          "translations": {
+            "en": {
+              "question": "Why is a bank account usually safer than keeping cash at home?",
+              "options": [
+                "It earns more interest every day",
+                "It is protected against theft, fire and flooding",
+                "It can be used anywhere in the world",
+                "It means you can borrow more money"
+              ],
+              "answerIndex": 1,
+              "explanation": "Correct. Cash at home can be stolen, burnt or washed away. Money in a bank account is held off-site and is insured up to a limit."
+            },
+            "hi": {
+              "question": "बैंक खाता आमतौर पर घर के कैश से सुरक्षित क्यों होता है?",
+              "options": [
+                "यह हर दिन ज़्यादा ब्याज देता है",
+                "यह चोरी, आग और बाढ़ से सुरक्षित रहता है",
+                "इसका उपयोग दुनिया भर में हो सकता है",
+                "इससे आप अधिक कर्ज़ ले सकते हैं"
+              ],
+              "answerIndex": 1,
+              "explanation": "सही। घर के कैश से चोरी, आग या बाढ़ का ख़तरा रहता है। बैंक खाते का पैसा खाते के बाहर सुरक्षित रहता है और एक सीमा तक बीमित होता है।"
+            },
+            "kn": {
+              "question": "ಬ್ಯಾಂಕ್ ಖಾತೆ ಸಾಮಾನ್ಯವಾಗಿ ಮನೆಯ ನಗದಿಗಿಂತ ಸುರಕ್ಷಿತವಾಗಿರುವುದೇಕೆ?",
+              "options": [
+                "ಪ್ರತಿದಿನ ಹೆಚ್ಚು ಬಡುವು ಗಳಿಸುತ್ತದೆ",
+                "ಕದಿರುವಿಕೆ, ಅಗ್ನಿ ಮತ್ತು ಸುವಳ್ಳೆಯಿಂದ ರಕ್ಷಿಸಲಾಗುತ್ತದೆ",
+                "ಜಗತ್ತಿನಲ್ಲಿ ಎಲ್ಲಿಯಾದರೂ ಬಳಸಬಹುದು",
+                "ಹೆಚ್ಚು ಸಾಲ ಪಡೆಯಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ"
+              ],
+              "answerIndex": 1,
+              "explanation": "ಸರಿ. ಮನೆಯ ನಗದು ಕದಿರುವುದು, ಸುಡುವುದು ಅಥವಾ ಕಳೆಯುವುದು ಅಪಾಯ. ಬ್ಯಾಂಕ್ ಖಾತೆಯ ಹಣ ಖಾತೆಯ ಹೊರಗೆ ಸುರಕ್ಷಿತವಾಗಿದ್ದು ಒಂದು ಮಿತಿಯವರೆಗೆ ವಿಮಾ ಹೊಂದಿದೆ."
+            }
+          }
+        },
+        {
+          "order": 2,
+          "translations": {
+            "en": {
+              "question": "How much money do you need before opening an account?",
+              "options": [
+                "At least one lakh rupees",
+                "Only if you own a house",
+                "Very little — many people start with a few hundred rupees",
+                "You must have a full-time job"
+              ],
+              "answerIndex": 2,
+              "explanation": "Correct. You can open an account with a small amount. Having a large balance is not a condition of holding an account."
+            },
+            "hi": {
+              "question": "खाता खोलने से पहले कितना पैसा चाहिए?",
+              "options": [
+                "कम से कम एक लाख रुपये",
+                "केवल अगर आपके पास घर है",
+                "बहुत कम — बहुत लोग कुछ सौ रुपये से शुरू करते हैं",
+                "पूर्णकालिक नौकरी होनी चाहिए"
+              ],
+              "answerIndex": 2,
+              "explanation": "सही। आप कम राशि से भी खाता खोल सकते हैं। बड़ी राशि रखना खाता होने की शर्त नहीं है।"
+            },
+            "kn": {
+              "question": "ಖಾತೆ ತೆರೆಯುವ ಮೊದಲು ಎಷ್ಟು ಹಣಕಾಸು ಬೇಕು?",
+              "options": [
+                "ಕನಿಷ್ಠ ಒಂದು ಲಕ್ಷ ರೂಪಾಯಿ",
+                "ಮನೆ ಇದ್ದರೆ ಮಾತ್ರ",
+                "ತುಂಬಾ ಕಡಿಮೆ — ಬಹುತರು ಜನ ನೂರಾದ್ದೂ ರೂಪಾಯಿಗಳಿಂದ ಆರಂಭಿಸುತ್ತಾರೆ",
+                "ಪೂರ್ಣಕಾಲಿನ ಕೆಲಸ ಇರಬೇಕು"
+              ],
+              "answerIndex": 2,
+              "explanation": "ಸರಿ. ಸಣ್ಣ ಮತ್ತನೆಯಲ್ಲೂ ಖಾತೆ ತೆರೆಯಬಹುದು. ದೊಡ್ಡ ಮತ್ತನೆ ಇಡುವುದು ಖಾತೆ ಇರುವ ನಿಯಮವಲ್ಲ."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slug": "how-to-save-small-amounts",
+      "category": "saving",
+      "minutes": 4,
+      "order": 2,
+      "translations": {
+        "en": {
+          "title": "Saving a small amount regularly",
+          "summary": "Why ten rupees a day adds up, and how to make it automatic.",
+          "body": [
+            "Saving is not about earning more. It is about keeping a small amount of what you already have.",
+            "Ten rupees a day is about 3,600 rupees in a year. Twenty is about 7,200. That is a real amount you could use for a school fee, a repair, or an emergency.",
+            "The easiest way to save is to decide on a day. When money arrives, move a fixed part of it into savings before you spend anything else.",
+            "Set a goal you can see. A goal with a name and a date is much easier to stick to than 'saving more'.",
+            "If you miss a day, do not stop. Restart the next day. A savings habit is not about never slipping, it is about coming back."
+          ]
+        },
+        "hi": {
+          "title": "थोड़ा-थोड़ा नियमित बचत",
+          "summary": "रोज़ दस रुपये कैसे बड़ी राशि बन जाते हैं, और इसे आसान बनाने का तरीक़ा।",
+          "body": [
+            "बचत का मतलब ज़्यादा कमाना नहीं है। इसका मतलब है कि आपके पास जो है, उसका थोड़ा हिस्सा रोक कर रखना।",
+            "रोज़ दस रुपये साल भर में लगभग 3,600 रुपये होते हैं। बीस रुपये लगभग 7,200। यह स्कूल की फ़ीस, मरम्मत या मुसीबत के लिए असली राशि है।",
+            "सबसे आसान तरीक़ा यह है कि एक दिन तय कर लें। पैसा आते ही उसे खर्च करने से पहले एक तय हिस्सा बचत में डाल दें।",
+            "ऐसा लक्ष्य बनाएँ जो दिखे। नाम और तारीख़ वाला लक्ष्य 'और ज़्यादा बचत' से कहीं ज़्यादा आसान है।",
+            "एक दिन छूट जाए तो रुकें मत। अगले दिन फिर शुरू करें। बचत की आदत का मतलब कभी न चूकना नहीं, बल्कि लौट आना है।"
+          ]
+        },
+        "kn": {
+          "title": "ಸಣ್ಣ ಮತ್ತನೆಯಲ್ಲಿ ನಿಯಮಿತವಾಗಿ ಉಳಿತಾಸು",
+          "summary": "ದಿನಕ್ಕೆ ಹತ್ತು ರೂಪಾಯಿ ಹೇಗೆ ದೊಡ್ಡದಾಗುತ್ತದೆ ಮತ್ತು ಅದನ್ನು ಸರಳವಾಗಿ ಮಾಡುವುದು.",
+          "body": [
+            "ಉಳಿತಾಸು ಎಂಬುದು ಹೆಚ್ಚು ಗಳಿಸುವುದಲ್ಲ. ನಿಮ್ಮಲ್ಲಿನ ಇರುವ ಹಣದ ಸಣ್ಣ ಭಾಗವನ್ನು ತಡೆದಿಡುವುದು.",
+            "ದಿನಕ್ಕೆ ಹತ್ತು ರೂಪಾಯಿ ವರ್ಷಕ್ಕೆ ಸುಮಾರು 3,600 ರೂಪಾಯಿ. ಇಪ್ಪತ್ತು ಸುಮಾರು 7,200. ಶಾಲಾ ಶುಲ್ಕ, ದುಡ್ಡೆ ಅಥವಾ ತುರ್ತುಗೆ ಬಳಸಬಹುದಾದ ನಿಜವಾದ ಮತ್ತ.",
+            "ಅತ್ಯಂತ ಸರಳ ವಿಧಾನವೇ ಒಂದು ದಿನ ನಿರ್ಧರಿಸುವುದು. ಹಣ ಬಂದಾಗ ಖರ್ಚು ಮಾಡುವ ಮೊದಲು ನಿರ್ಧಿತ ಭಾಗವನ್ನು ಉಳಿತಾಸಿಗೆ ಸೇರಿಸುವುದು.",
+            "ಕಾಣುವುದಾಗುವ ಗುರಿ ಹೊಡೆಯಿರಿ. ಹೆಸರು ಮತ್ತು ದಿನಾಂಕ ಇರುವ ಗುರಿ 'ಹೆಚ್ಚು ಉಳಿತಾಸು' ಇಗಿದಂತೆ ಬಹುತ ಸರಳ.",
+            "ಒಂದು ದಿನ ತಪ್ಪಿದರೆ ನಿಲ್ಲಬೇಡಿ. ಮುಂದಿನ ದಿನ ಮತ್ತೆ ಆರಂಭಿಸಿ. ಉಳಿತಾಸಿನ ಅಭ್ಯಾಸವೇ ಎಂದಿಗೂ ತಪ್ಪಿಸದಿರುವುದಲ್ಲ, ಮರಳಿ ಬರುವುದು."
+          ]
+        }
+      },
+      "quizzes": [
+        {
+          "order": 1,
+          "translations": {
+            "en": {
+              "question": "About how much is ten rupees a day over a year?",
+              "options": ["About 360 rupees", "About 3,600 rupees", "About 36,000 rupees", "It depends on the month"],
+              "answerIndex": 1,
+              "explanation": "Correct. 10 x 365 is 3,650, so roughly 3,600 rupees a year."
+            },
+            "hi": {
+              "question": "रोज़ दस रुपये साल भर में लगभग कितने होते हैं?",
+              "options": ["लगभग 360 रुपये", "लगभग 3,600 रुपये", "लगभग 36,000 रुपये", "यह महीने पर निर्भर करता है"],
+              "answerIndex": 1,
+              "explanation": "सही। 10 x 365 = 3,650, यानी साल भर में लगभग 3,600 रुपये।"
+            },
+            "kn": {
+              "question": "ದಿನಕ್ಕೆ ಹತ್ತು ರೂಪಾಯಿ ವರ್ಷಕ್ಕೆ ಸುಮಾರು ಎಷ್ಟು?",
+              "options": ["ಸುಮಾರು 360 ರೂಪಾಯಿ", "ಸುಮಾರು 3,600 ರೂಪಾಯಿ", "ಸುಮಾರು 36,000 ರೂಪಾಯಿ", "ಅದು ತಿಂಗಳನ್ನೂ ಅವಲಂಬಿಸುತ್ತದೆ"],
+              "answerIndex": 1,
+              "explanation": "ಸರಿ. 10 x 365 = 3,650, ಅಂದರೆ ವರ್ಷಕ್ಕೆ ಸುಮಾರು 3,600 ರೂಪಾಯಿ."
+            }
+          }
+        },
+        {
+          "order": 2,
+          "translations": {
+            "en": {
+              "question": "What is the best time to move money into savings?",
+              "options": [
+                "At the end of the month, if anything is left",
+                "As soon as money arrives, before spending",
+                "Only when you feel like it",
+                "After a large purchase"
+              ],
+              "answerIndex": 1,
+              "explanation": "Correct. Moving savings off first, out of every payment, is what makes saving automatic rather than a decision you have to keep making."
+            },
+            "hi": {
+              "question": "बचत में पैसा डालने का सबसे अच्छा समय कब है?",
+              "options": [
+                "महीने के अंत में, जो बचे",
+                "पैसा आते ही, खर्च करने से पहले",
+                "जब मन करे",
+                "बड़ी खरीद के बाद"
+              ],
+              "answerIndex": 1,
+              "explanation": "सही। हर भुगतान से पहले बचत अलग करना ही इसे स्वचालित बनाता है, वरना हर बार निर्णय लेना पड़ता है।"
+            },
+            "kn": {
+              "question": "ಉಳಿತಾಸಿಗೆ ಹಣ ಸೇರಿಸುವ ಅತ್ಯುತ್ತಮ ಸಮಯ ಯಾವುದು?",
+              "options": [
+                "ತಿಂಗಳಾದಾಗ ಉಳಿದಷ್ಟು",
+                "ಹಣ ಬಂದಾಗ ಖರ್ಚು ಮಾಡುವ ಮೊದಲು",
+                "ಮನಸ್ಸಿಗೆ ಬಂದಾಗ",
+                "ದೊಡ್ಡ ಖರೀದಿಯ ನಂತರ"
+              ],
+              "answerIndex": 1,
+              "explanation": "ಸರಿ. ಪ್ರತಿ ಪಾವತಿಯಲ್ಲಿ ಮೊದಲೇ ಉಳಿತಾಸು ಬೇರ್ಪಡಿಸುವುದೇ ಅದನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮಾಡುತ್ತದೆ."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slug": "what-interest-means",
+      "category": "saving",
+      "minutes": 3,
+      "order": 3,
+      "translations": {
+        "en": {
+          "title": "What interest actually means",
+          "summary": "Why interest is charged when you borrow and paid when you save.",
+          "body": [
+            "Interest is the cost of using someone else's money for a while.",
+            "When you borrow, you pay interest. When you deposit money in a savings account, the bank uses it and pays you interest. That is the same number seen from two sides.",
+            "Interest is usually shown as a percentage per year. So 8% a year on 1,000 rupees means about 80 rupees over a full year.",
+            "Interest charged on a loan is added to what you owe. If you miss a payment, the amount can grow.",
+            "That is why paying on time matters more than the interest rate itself. Missing a payment costs far more than the rate."
+          ]
+        },
+        "hi": {
+          "title": "ब्याज का असली मतलब",
+          "summary": "कर्ज़ लेने पर ब्याज क्यों लगता है और बचत पर क्यों मिलता है।",
+          "body": [
+            "ब्याज किसी के पैसे को कुछ समय इस्तेमाल करने की कीमत है।",
+            "कर्ज़ लेने पर आप ब्याज देते हैं। बचत खाते में पैसा रखने पर बैंक उसका उपयोग करता है और आपको ब्याज देता है। यह एक ही संख्या है, दोनों तरफ़ से देखी गई।",
+            "ब्याज आमतौर पर सालाना प्रतिशत में दिखाया जाता है। तो 1,000 रुपये पर 8% सालाना यानी पूरे साल लगभग 80 रुपये।",
+            "कर्ज़ पर लगा ब्याज आपकी क़र्ज़ राशि में जुड़ जाता है। एक भुगतान छूट जाए तो राशि बढ़ सकती है।",
+            "इसीलिए समय पर भुगतान ब्याज दर से ज़्यादा ज़रूरी है। भुगतान छूटने की कीमत ब्याज दर से कहीं ज़्यादा होती है।"
+          ]
+        },
+        "kn": {
+          "title": "ಬಡುವು ಅಂದರೆ ಏನು",
+          "summary": "ಸಾಲ ತೆಗೆದರೆ ಬಡುವು ಏಕೆ ಹಾಕುತ್ತಾರೆ ಮತ್ತು ಉಳಿತಾಸಿಗೆ ಏಕೆ ಸಿಗುತ್ತದೆ.",
+          "body": [
+            "ಬಡುವು ಎಂಬುದು ಇನ್ನರ ಹಣಕಾಸನ್ನು ಸ್ವಲ್ಪ ಸಮಯ ಬಳಸಿದಂತಿನ ವೆಚ್ಚ.",
+            "ಸಾಲ ತೆಗೆದಾಗ ನೀವು ಬಡುವು ಪಾವತಿಸುತ್ತೀರಿ. ಉಳಿತಾಸು ಖಾತೆಯಲ್ಲಿ ಹಣ ಇಟ್ಟಾಗ ಬ್ಯಾಂಕ್ ಅದನ್ನು ಬಳಸಿ ನಿಮಗೆ ಬಡುವು ಕೊಡುತ್ತದೆ. ಇದೇ ಸಂಖ್ಯೆ, ಎರಡು ಬದಿಯಿಂದ ನೋಡಿದರೆ.",
+            "ಬಡುವು ಸಾಮಾನ್ಯವಾಗಿ ವಾರ್ಷಿಕ ಶೇಕಡಾವಾರು ತೋರಿಸಲಾಗುತ್ತದೆ. 1,000 ರೂಪಾಯಿಗೆ 8% ವಾರ್ಷಿಕ ಎಂದರೆ ಒಂದು ವರ್ಷಕ್ಕೆ ಸುಮಾರು 80 ರೂಪಾಯಿ.",
+            "ಸಾಲಕ್ಕೆ ಹಾಕಿದ ಬಡುವು ನೀವು ಒಂದುಟ್ಟಿಗೆ ಸೇರುತ್ತದೆ. ಒಂದು ಪಾವತಿ ತಪ್ಪಿದರೆ ಮತ್ತನೆ ಬೆಳೆಯಬಹುದು.",
+            "ಹಾಗಾಗಿ ಸಮಯಕ್ಕೆ ಪಾವತಿಸುವುದು ಬಡುವಿನ ದರಕ್ಕಿಂತ ಹೆಚ್ಚು ಮುಖ್ಯ. ಪಾವತಿ ತಪ್ಪಿಸಿದಂತೆ ಆಗುವ ಹಾನಿ ದರಕ್ಕಿಂತ ತುಂಬಾ ಹೆಚ್ಚು."
+          ]
+        }
+      },
+      "quizzes": [
+        {
+          "order": 1,
+          "translations": {
+            "en": {
+              "question": "Interest on 1,000 rupees at 8% per year is about how much?",
+              "options": ["About 8 rupees", "About 80 rupees", "About 800 rupees", "About 1,080 rupees"],
+              "answerIndex": 1,
+              "explanation": "Correct. 8% of 1,000 is 80, so about 80 rupees over a year."
+            },
+            "hi": {
+              "question": "1,000 रुपये पर 8% सालाना ब्याज लगभग कितना होगा?",
+              "options": ["लगभग 8 रुपये", "लगभग 80 रुपये", "लगभग 800 रुपये", "लगभग 1,080 रुपये"],
+              "answerIndex": 1,
+              "explanation": "सही। 1,000 का 8% = 80, यानी साल भर में लगभग 80 रुपये।"
+            },
+            "kn": {
+              "question": "1,000 ರೂಪಾಯಿಗೆ 8% ವಾರ್ಷಿಕ ಬಡುವು ಸುಮಾರು ಎಷ್ಟು?",
+              "options": ["ಸುಮಾರು 8 ರೂಪಾಯಿ", "ಸುಮಾರು 80 ರೂಪಾಯಿ", "ಸುಮಾರು 800 ರೂಪಾಯಿ", "ಸುಮಾರು 1,080 ರೂಪಾಯಿ"],
+              "answerIndex": 1,
+              "explanation": "ಸರಿ. 1,000 ರ 8% = 80, ಅಂದರೆ ವರ್ಷಕ್ಕೆ ಸುಮಾರು 80 ರೂಪಾಯಿ."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slug": "borrowing-safely",
+      "category": "borrowing",
+      "minutes": 4,
+      "order": 4,
+      "translations": {
+        "en": {
+          "title": "Borrowing without getting trapped",
+          "summary": "What to check before you sign for any loan.",
+          "body": [
+            "Borrowing is not free. Someone is paying for the money you use, and that person is you.",
+            "Before you take a loan, check three things: the total amount you will repay, the interest rate, and what happens if you miss a payment.",
+            "The monthly instalment is the number to compare, not the interest rate. Two loans with different rates can cost very different amounts per month.",
+            "Never take a loan for something you consume and use up. Take one only for something that will still be worth something later.",
+            "If a lender asks for an advance payment to 'release' a loan, stop. That is the oldest trick there is."
+          ]
+        },
+        "hi": {
+          "title": "फँसाए बिना कर्ज़ लेना",
+          "summary": "कर्ज़ लेने से पहले क्या जाँचना ज़रूरी है।",
+          "body": [
+            "कर्ज़ मुफ़्त नहीं होता। जो पैसा आप इस्तेमाल कर रहे हैं उसकी कीमत कोई और दे रहा है, और वो आप हैं।",
+            "कर्ज़ लेने से पहले तीन बातें जाँचें: कुल कितना चुकाना है, ब्याज दर क्या है, और एक भुगतान छूटे तो क्या होगा।",
+            "तुलना महीने की किस्त से करें, ब्याज दर से नहीं। अलग दर वाले दो कर्ज़ महीने में बहुत अलग पैसा ले सकते हैं।",
+            "जिस चीज़ को ख़रीदकर तुरंत इस्तेमाल कर लें, उसके लिए कर्ज़ न लें। कर्ज़ सिर्फ़ उस चीज़ के लिए लें जो आगे भी कुछ कीमती रहे।",
+            "अगर कोई लेंडर 'लोन जारी करने' के लिए पहले पैसे माँगे, तो रुक जाइए। यह सबसे पुरानी ठगी है।"
+          ]
+        },
+        "kn": {
+          "title": "ಸಿಕ್ಕದೆ ಸಾಲ ಪಡೆಯದೆ",
+          "summary": "ಯಾವುದೇ ಸಾಲ ಸಹಿ ಮಾಡುವ ಮೊದಲು ಏನು ಪರಿಶೀಲಿಸಬೇಕು.",
+          "body": [
+            "ಸಾಲ ಉಚ್ಚಿತವಲ್ಲ. ನೀವು ಬಳಸುವ ಹಣಕಾಸಿನ ವೆಚ್ಚ ಯಾರು ಪಾವತಿಸುತ್ತಾರೆ — ಅದು ನೀವೇ.",
+            "ಸಾಲ ಪಡೆಯುವ ಮೊದಲು ಮೂರು ವಿಷಯ ಪರಿಶೀಲಿಸಿ: ಒಟ್ಟಿಗೆ ಎಷ್ಟು ಮಾಪಬೇಕು, ಬಡುವಿನ ದರ ಎಷ್ಟು, ಮತ್ತು ಒಂದು ಪಾವತಿ ತಪ್ಪಿದರೆ ಏನಾಗುತ್ತದೆ.",
+            "ಹೋಲಿಕೆ ಮಾಡುವುದು ಮಾಸಿಕ ಕಂಡಕಿಗೆ — ಬಡುವಿನ ದರಕ್ಕಲ್ಲ. ಬೇರೆ ದರಗಳ ಎರಡು ಸಾಲ ತಿಂಗಳಿಗೆ ತುಂಬಾ ಅದ್ದ ಹಣವನ್ನು ಪಾವತಿಸಬೇಕಾಗಬಹುದು.",
+            "ಕೊಂಡ ಕೂಗಲೇ ಬಳಸಿಮಾರುವ ವಸ್ತುಗಳಿಗೆ ಸಾಲ ತೆಗೆಯಬೇಡಿ. ಮುಂದೂ ಕನ್ನದಿರುವ ವಸ್ತುಗಳಿಗೆ ಮಾತ್ರ ಸಾಲ ತೆಗೆಯಿರಿ.",
+            "'ಸಾಲ ಬಿಡುಗಡೆ ಮಾಡಲು' ಮೊದಲು ಹಣ ಕೇಳುವ ಸಾಲದಾರ ಇದ್ದರೆ ನಿಲ್ಲಿ. ಇದು ಅತ್ಯಂತ ಹಳೆಯ ವಂಚನೆ."
+          ]
+        }
+      },
+      "quizzes": [
+        {
+          "order": 1,
+          "translations": {
+            "en": {
+              "question": "Which number should you compare two loans by?",
+              "options": [
+                "The interest rate only",
+                "The monthly instalment",
+                "The name of the lender",
+                "How quickly they approve"
+              ],
+              "answerIndex": 1,
+              "explanation": "Correct. The monthly instalment is what actually comes out of your pocket each month, so it is the only figure that lets you compare two offers fairly."
+            },
+            "hi": {
+              "question": "दो कर्ज़ों की तुलना किस संख्या से करनी चाहिए?",
+              "options": [
+                "केवल ब्याज दर से",
+                "महीने की किस्त से",
+                "लेंडर के नाम से",
+                "कितनी जल्दी मंज़ूरी मिलती है"
+              ],
+              "answerIndex": 1,
+              "explanation": "सही। महीने की किस्त ही वह राशि है जो आपके जेब से निकलती है, इसलिए दोनों प्रस्तावों की न्यायसंगत तुलना यही करता है।"
+            },
+            "kn": {
+              "question": "ಎರಡು ಸಾಲಗಳ ಹೋಲಿಕೆ ಯಾವ ಸಂಖ್ಯೆಯಿಂದ ಮಾಡಬೇಕು?",
+              "options": [
+                "ಕೇವಲ ಬಡುವಿನ ದರದಿಂದ",
+                "ಮಾಸಿಕ ಕಂಡಕಿಗೆಯಿಂದ",
+                "ಸಾಲದಾರರ ಹೆಸರಿನಿಂದ",
+                "ಎಷ್ಟು ಬೇಗ ಅನುಮೋದನೆ ಸಿಗುತ್ತದೆ ಎಂಬುದರಿಂದ"
+              ],
+              "answerIndex": 1,
+              "explanation": "ಸರಿ. ಮಾಸಿಕ ಕಂಡಕಿಗೆಯೇ ನಿಮ್ಮ ಜೇಬಿನಿಂದ ಹೊರಡುತ್ತದೆ, ಹಾಗಾಗಿ ಎರಡೂ ಕಡೆ ನ್ಯಾಯಯಂತ ಹೋಲಿಕೆ ಇದೇ ಮಾಡುತ್ತದೆ."
+            }
+          }
+        },
+        {
+          "order": 2,
+          "translations": {
+            "en": {
+              "question": "A lender asks you to pay a fee 'to release' the loan before you receive it. What should you do?",
+              "options": [
+                "Pay it quickly to avoid losing the offer",
+                "Pay it, but ask for a receipt",
+                "Stop. This is a well-known scam",
+                "Pay half now and half later"
+              ],
+              "answerIndex": 2,
+              "explanation": "Correct. No legitimate lender charges you before you have received the money. Refuse and report it."
+            },
+            "hi": {
+              "question": "लेंडर कहता है कि पैसा मिलने से पहले 'लोन जारी करने' के लिए शुल्क देना होगा। आपको क्या करना चाहिए?",
+              "options": [
+                "ऑफर हाथ से जाने से बचने के लिए जल्दी दे दें",
+                "दे दें, पर रसीद ले लें",
+                "रुक जाएँ। यह एक जानी-पहचानी ठगी है",
+                "आधा अभी दें, आधा बाद में"
+              ],
+              "answerIndex": 2,
+              "explanation": "सही। पैसा मिलने से पहले कोई सही लेंडर शुल्क नहीं लेता। मना करें और शिकायत करें।"
+            },
+            "kn": {
+              "question": "ಸಾಲದಾರ ಹಣ ಪಡೆಯುವ ಮೊದಲು 'ಸಾಲ ಬಿಡುಗಡೆ' ಶುಲ್ಕ ಕೇಳುತ್ತಾರೆ. ನೀವು ಏನು ಮಾಡಬೇಕು?",
+              "options": [
+                "ಆಫರ್ ಕಳೆದುಕೊಳ್ಳದೆ ಬೇಗ ಕೊಡಬೇಕು",
+                "ಕೊಡಬೇಕು, ಆದರೆ ರಸೀದಿ ಪಡೆಯಬೇಕು",
+                "ನಿಲ್ಲಬೇಕು. ಇದು ಗೊತ್ತಿರುವ ವಂಚನೆ",
+                "ಅರ್ಧ ಈಗ, ಅರ್ಧ ನಂತರ"
+              ],
+              "answerIndex": 2,
+              "explanation": "ಸರಿ. ಹಣ ಪಡೆಯುವ ಮೊದಲು ಯಾವುದೇ ಸರಿಯಾದ ಸಾಲದಾರ ಶುಲ್ಕ ಹಾಕುವುದಿಲ್ಲ. ನಿರಾಕರಿಸಿ ವರದಿ ಮಾಡಿ."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slug": "spotting-fraud",
+      "category": "fraud",
+      "minutes": 4,
+      "order": 5,
+      "translations": {
+        "en": {
+          "title": "Spotting fraud before it happens",
+          "summary": "The four questions to ask whenever someone wants your money or your code.",
+          "body": [
+            "Fraud usually relies on rushing you. If someone needs an answer in the next two minutes, slow down.",
+            "No bank, and nobody working for a bank, will ever ask for your OTP, your PIN, or your password. Not over the phone, not on WhatsApp, not in person. If someone does, it is fraud.",
+            "Be careful with links. A message that looks like it is from your bank may lead to a copy of the bank's website. If you are unsure, open the app yourself instead of tapping the link.",
+            "Never share your OTP with anyone, for any reason, including someone claiming to be from the bank, from the police, or from FinLeaf itself.",
+            "If something feels wrong, stop and ask someone you trust. Losing a small amount is better than losing your account."
+          ]
+        },
+        "hi": {
+          "title": "ठगी होने से पहले पहचानना",
+          "summary": "जब कोई आपका पैसा या कोड माँगे तो पूछने वाले चार सवाल।",
+          "body": [
+            "ठगी का आधार आमतौर पर आपको जल्दबाज़ी कराना होता है। अगर किसी को अगले दो मिनट में जवाब चाहिए, तो रुक कर सोचें।",
+            "कोई बैंक, और बैंक में काम करने वाला कोई भी व्यक्ति, आपका OTP, पिन या पासवर्ड कभी नहीं माँगेगा। न फ़ोन पर, न व्हाट्सएप पर, न सामने। अगर कोई माँगे तो वह ठगी है।",
+            "लिंक से सावधान रहें। बैंक का संदेश दिखने वाला संदेश भी बैंक की वेबसाइट की नकल पर ले जा सकता है। पक्का न हो तो लिंक दबाने के बजाय खुद ऐप खोलें।",
+            "किसी के साथ कभी भी अपना OTP साझा न करें — भले ही वह बैंक, पुलिस या फिनलीफ़ का कर्मचारी बताए।",
+            "कुछ गड़बड़ लगे तो रुकें और किसी भरोसेमंद से पूछें। थोड़ा पैसा खोना खाता खोने से बेहतर है।"
+          ]
+        },
+        "kn": {
+          "title": "ವಂಚನೆಯಾಗುವ ಮೊದಲು ಗುರುತಿಸುವುದು",
+          "summary": "ಯಾರಾದರ ಹಣ ಅಥವಾ ಕೋಡ್ ಕೇಳಿದಾಗ ಕೇಳಬೇಕಾದ ನಾಲ್ಕು ಪ್ರಶ್ನೆಗಳು.",
+          "body": [
+            "ವಂಚನೆ ಸಾಮಾನ್ಯವಾಗಿ ನಿಮ್ಮನ್ನು ತಡವಾಗಿ ಮಾಡುವುದರ ಮೇಲೆ ಆಧಾರಿತ. ಎರಡು ನಿಮಿಷಗಳಲ್ಲಿ ಉತ್ತರ ಬೇಕಾದರೆ, ನಿಲ್ಲಿ ಯೋಚಿಸಿ.",
+            "ಯಾವುದೇ ಬ್ಯಾಂಕ್, ಅಥವಾ ಬ್ಯಾಂಕ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುವ ಯಾರೂ, ನಿಮ್ಮ OTP, PIN ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಎಂದಿಗೂ ಕೇಳುವುದಿಲ್ಲ. ಫೋನ್‌ನಲ್ಲೂ, ವಾಟ್ಸಾಪ್‌ನಲ್ಲೂ, ಮುಖಾಮುಖಿಯಾಗೂ ಇಲ್ಲ. ಕೇಳಿದರೆ ಅದು ವಂಚನೆ.",
+            "ಲಿಂಕ್‌ಗಳ ಬಗ್ಗೆ ಎಚ್ಚರಿಕೆ. ಬ್ಯಾಂಕ್‌ನಿಂದ ಎಂದು ಕಾಣುವ ಸಂದೇಶವು ಬ್ಯಾಂಕ್ ವೆಬ್‌ಸೈಟ್‌ನ ನಕಲಿಗೆ ಕರಿಸಬಹುದು. ಖಚಿತವಿಲ್ಲದಿದ್ದರೆ ಲಿಂಕ್ ಒತ್ತುವ ಬದಲು ನಿಮ್ಮದೇ ಆ್ಯಪ್ ತೆರೆಯಿರಿ.",
+            "ಯಾವುದೇ ಕಾರಣಕ್ಕೂ ಯಾರಿಂದೂ ನಿಮ್ಮ OTP ಹಂಚಿಕೊಳ್ಳಬೇಡಿ — ಬ್ಯಾಂಕ್, ಪೊಲೀಸ್ ಅಥವಾ ಫಿನ್‌ಲೀಫ್ ಎಂದು ಹೇಳಿದರೂ.",
+            "ಏನೋ ತಪ್ಪಾಗಿ ಅನಿಸಿದರೆ ನಿಲ್ಲಿ ನಿಮ್ಮಗೆ ನಂಬಿರುವವರನ್ನು ಕೇಳಿ. ಸಣ್ಣ ಹಣ ಕಳೆದುಕೊಳ್ಳುವುದು ಖಾತೆ ಕಳೆದುಕೊಳ್ಳುವುದಕ್ಕಿಂತ ಉತ್ತಮ."
+          ]
+        }
+      },
+      "quizzes": [
+        {
+          "order": 1,
+          "translations": {
+            "en": {
+              "question": "Someone claiming to be from your bank calls and asks for your OTP. What do you do?",
+              "options": [
+                "Give it, because they are from the bank",
+                "Give it if they know your name",
+                "Refuse. No bank ever asks for an OTP",
+                "Ask them to call back in an hour and give it then"
+              ],
+              "answerIndex": 2,
+              "explanation": "Correct. Knowing your name proves nothing — names are easy to find. No bank will ever ask for your OTP."
+            },
+            "hi": {
+              "question": "आपका बैंक होने का दावा करने वाला व्यक्ति फ़ोन करके आपका OTP माँगता है। आप क्या करेंगे?",
+              "options": [
+                "दे दूँगा, क्योंकि वे बैंक से हैं",
+                "अगर उन्हें मेरा नाम पता है तो दे दूँगा",
+                "मना कर दूँगा। कोई बैंक OTP नहीं माँगता",
+                "कहूँगा कि एक घंटे बाद फ़ोन करें, तब दूँगा"
+              ],
+              "answerIndex": 2,
+              "explanation": "सही। नाम जानना कुछ नहीं दिखाता — नाम पता लगाना आसान है। कोई बैंक कभी OTP नहीं माँगेगा।"
+            },
+            "kn": {
+              "question": "ನಿಮ್ಮ ಬ್ಯಾಂಕ್‌ನಿಂದ ಎಂದು ಹೇಳುವ ವ್ಯಕ್ತಿ ಫೋನ್ ಮಾಡಿ OTP ಕೇಳಿದರೆ ನೀವು ಏನು ಮಾಡುತ್ತೀರಿ?",
+              "options": [
+                "ಕೊಡುತ್ತೇನೆ, ಅವರು ಬ್ಯಾಂಕ್‌ನಿಂದ ಎಂದು",
+                "ಅವರಿಗೆ ನನ್ನ ಹೆಸರು ಗೊತ್ತಿದ್ದರೆ ಕೊಡುತ್ತೇನೆ",
+                "ನಿರಾಕರಿಸುತ್ತೇನೆ. ಯಾವುದೇ ಬ್ಯಾಂಕ್ OTP ಕೇಳುವುದಿಲ್ಲ",
+                "ಒಂದು ಗಂಟೆ ನಂತರ ಕರಿ, ಅಪ್ಪಡು ಕೊಡುತ್ತೇನೆ"
+              ],
+              "answerIndex": 2,
+              "explanation": "ಸರಿ. ಹೆಸರು ಗೊತ್ತಿರುವುದು ಏನೂ ಸಾಬೀತು ಮಾಡುವುದಿಲ್ಲ — ಹೆಸರು ಕಂಪು ಹುಲ್ಲು. ಯಾವುದೇ ಬ್ಯಾಂಕ್ ಎಂದಿಗೂ OTP ಕೇಳುವುದಿಲ್ಲ."
+            }
+          }
+        },
+        {
+          "order": 2,
+          "translations": {
+            "en": {
+              "question": "You get a message saying your account will be blocked unless you click this link. What should you do?",
+              "options": [
+                "Click the link quickly before the account is blocked",
+                "Open the banking app yourself to check",
+                "Forward it to a friend for advice",
+                "Reply asking them to explain"
+              ],
+              "answerIndex": 1,
+              "explanation": "Correct. Never use a link from a message to reach your bank. Open the app or type the address yourself, so you know you are on the real site."
+            },
+            "hi": {
+              "question": "आपको संदेश मिलता है कि इस लिंक पर नहीं क्लिक किया तो खाता बंद हो जाएगा। आपको क्या करना चाहिए?",
+              "options": [
+                "खाता बंद होने से पहले जल्दी से लिंक खोलें",
+                "खुद बैंकिंग ऐप खोलकर जाँचें",
+                "सलाह के लिए किसी दोस्त को आगे भेजें",
+                "जवाब में लिखकर पूछें कि वे क्या हैं"
+              ],
+              "answerIndex": 1,
+              "explanation": "सही। बैंक तक पहुँचने के लिए संदेश वाला लिंक कभी न खोलें। ऐप खुद खोलें या पता खुद टाइप करें, तभी यकीनी रहेगा कि आप असली साइट पर हैं।"
+            },
+            "kn": {
+              "question": "ಈ ಲಿಂಕ್ ಒತ್ತದಿದ್ದರೆ ಖಾತೆ ನಿರ್ಬಂಧವಾಗುತ್ತದೆ ಎಂದು ಸಂದೇಶ ಬಂದಿದೆ. ನೀವು ಏನು ಮಾಡಬೇಕು?",
+              "options": [
+                "ಖಾತೆ ನಿರ್ಬಂಧವಾಗುವ ಮೊದಲು ಬೇಗ ಲಿಂಕ್ ತೆರೆಯಬೇಕು",
+                "ನಿಮ್ಮದೇ ಬ್ಯಾಂಕಿಂಗ್ ಆ್ಯಪ್ ತೆರೆದು ಪರಿಶೀಲಿಸಬೇಕು",
+                "ಸಲಹೆಗೆ ಸ್ನೇಹಿತರಿಗೆ ಮುಂದೆ ಮಾಡಬೇಕು",
+                "ಹಿಂದಕ್ಕೆ ಬರೆದು ಅವರು ಏನೆಂದು ಕೇಳಬೇಕು"
+              ],
+              "answerIndex": 1,
+              "explanation": "ಸರಿ. ಬ್ಯಾಂಕ್‌ಗೆ ತಲುಪಲು ಸಂದೇಶದಲ್ಲಿನ ಲಿಂಕ್ ಎಂದಿಗೂ ಬಳಸಬೇಡಿ. ಆ್ಯಪ್ ಅಥವಾ ವಿಳಾಸವನ್ನು ನಿಮ್ಮದೇ ತೆರೆದು, ನಿಜವಾದ ಸೈಟ್‌ನಲ್ಲಿದ್ದೀರಿ ಎಂದು ಖಚಿತವಾಗುತ್ತದೆ."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "slug": "checking-your-account",
+      "category": "basics",
+      "minutes": 2,
+      "order": 6,
+      "translations": {
+        "en": {
+          "title": "Checking what is really happening in your account",
+          "summary": "How to spot a transaction you do not recognise.",
+          "body": [
+            "Look at your account regularly. Once a week is enough.",
+            "Read the date, the amount and who it went to. If any of those look wrong, ask immediately — the earlier you ask, the easier it is to fix.",
+            "A real transaction always has a reference number you can check later.",
+            "If you see a payment you did not make, do not ignore it and do not be embarrassed. Tell someone. The longer you wait, the less can usually be recovered."
+          ]
+        },
+        "hi": {
+          "title": "अपने खाते में असल में क्या हो रहा है, यह जाँचना",
+          "summary": "ऐसा लेन-देन कैसे पहचानें जो आपने किया ही न हो।",
+          "body": [
+            "अपना खाता नियमित रूप से देखें। सप्ताह में एक बार काफ़ी है।",
+            "तारीख़, राशि और किसे भुगतान हुआ — यह तीनों पढ़ें। इनमें से कुछ भी गलत लगे तो तुरंत पूछें — जितनी जल्दी पूछेंगे, सुधार उतना आसान होगा।",
+            "हर असली लेन-देन में एक संदर्भ संख्या होती है जिसे आप बाद में जाँच सकते हैं।",
+            "अगर कोई भुगतान दिखे जो आपने नहीं किया, तो उसे अनदेखा मत करें और शर्मिंदा भी मत हों। किसी को बताएँ। जितना देर करोगे, उतना कम वापस मिल पाएगा।"
+          ]
+        },
+        "kn": {
+          "title": "ನಿಮ್ಮ ಖಾತೆಯಲ್ಲಿ ನಿಜವಾಗಿ ಏನಾಗುತ್ತಿದೆ ಎಂದು ಪರಿಶೀಲಿಸುವುದು",
+          "summary": "ನೀವು ಮಾಡದ ವ್ಯವಹಾರವನ್ನು ಹೇಗೆ ಗುರುತಿಸುತ್ತೀರಿ.",
+          "body": [
+            "ನಿಮ್ಮ ಖಾತೆಯನ್ನು ನಿಯಮಿತವಾಗಿ ನೋಡಿ. ವಾರಕ್ಕೊಮ್ಮೊಮ್ಮೆ ಸಾಕು.",
+            "ದಿನಾಂಕ, ಮತ್ತನೆ, ಮತ್ತು ಯಾರಿಗೆ ಹಣ ಹೋಗಿದೆ ಎಂಬ ಮೂರನ್ನೂ ಓದಿ. ಅವುಗಳಲ್ಲಿ ಏನಾದರೂ ತಪ್ಪಾಗಿದೆ ಎಂದು ಅನಿಸಿದರೆ ತಕ್ಷಣ ಕೇಳಿ — ಆದಷ್ಟು ಬೇಗ ಕೇಳಿದಷ್ಟು ಸರಿಪಡಿಸುವುದು ಸುಲಭ.",
+            "ನಿಜವಾದ ವ್ಯವಹಾರಕ್ಕೆ ಯಾವುದು ಆದರೂ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ ಇರುತ್ತದೆ, ನಂತರ ಪರಿಶೀಲಿಸಬಹುದು.",
+            "ನೀವು ಮಾಡದ ಪಾವತಿ ಕಂಡರೆ, ಅದನ್ನು ಕಡೆಯೊಡೆ ಬೇಡಿ ಮತ್ತು ಹೀಗೆ ನಿಂಡು ಅಸ್ವಸ್ತವಾಗಬೇಡಿ. ಯಾರಿಗೋ ತಿಳಿಸಿ. ಎಷ್ಟು ದಿನ ತಡಮಾಡಿದಷ್ಟು ಹಿಂತಿರುಗಿ ಪಡೆಯುವುದು ಕಡಿಮೆ."
+          ]
+        }
+      },
+      "quizzes": [
+        {
+          "order": 1,
+          "translations": {
+            "en": {
+              "question": "How often should you check your account?",
+              "options": ["Once a year", "Only if you think something is wrong", "About once a week", "Every hour"],
+              "answerIndex": 2,
+              "explanation": "Correct. Once a week catches an unfamiliar transaction early, which is when it is easiest to deal with."
+            },
+            "hi": {
+              "question": "अपना खाता कितनी बार देखना चाहिए?",
+              "options": ["साल में एक बार", "केवल जब लगे कि कुछ गड़बड़ है", "सप्ताह में लगभग एक बार", "हर घंटे"],
+              "answerIndex": 2,
+              "explanation": "सही। सप्ताह में एक बार जाँच से अनजाना लेन-देन जल्दी पकड़ में आता है, और तब ही उसे सुलझाना सबसे आसान होता है।"
+            },
+            "kn": {
+              "question": "ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಎಷ್ಟು ಬಾರಿ ನೋಡಬೇಕು?",
+              "options": ["ವರ್ಷಕ್ಕೊಮ್ಮೆ", "ಏನೋ ತಪ್ಪಾಗಿದೆ ಎಂದು ಅನಿಸಿದಾಗ ಮಾತ್ರ", "ವಾರಕ್ಕೊಮ್ಮೆ", "ಪ್ರತಿ ಗಂಟೆ"],
+              "answerIndex": 2,
+              "explanation": "ಸರಿ. ವಾರಕ್ಕೊಮ್ಮೆ ಪರಿಶೀಲಿಸಿದರೆ ಗೊತ್ತಿರದ ವ್ಯವಹಾರ ಬೇಗ ಸಿಗುತ್ತದೆ, ಆಗ ಅದನ್ನು ನಿರ್ವಹಿಸುವುದು ಸರಳ."
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

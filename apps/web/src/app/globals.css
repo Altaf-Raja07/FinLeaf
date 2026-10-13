@@ -1,0 +1,323 @@
+/**
+ * FinLeaf design tokens and base styles.
+ *
+ * Tailwind v4: the theme is declared in CSS with `@theme`, and there is no
+ * `tailwind.config.js`. Colour is expressed as OKLCH so the two greens and the
+ * neutral ramp stay legible as they shift toward white and black — sRGB HSL
+ * breaks down noticeably at the light and dark ends.
+ *
+ * The palette is deliberately narrow. The product is read by low-literacy and
+ * first-time users on cheap phone screens, so anything that is not green (the
+ * brand and the sustainability signal) or neutral (structure) is a status colour
+ * with one job.
+ */
+
+@import "tailwindcss";
+
+@theme {
+  /* Primary: FinLeaf green. Dark enough for white text at 4.5:1. */
+  --color-leaf-50: oklch(0.977 0.021 152.2);
+  --color-leaf-100: oklch(0.951 0.039 151.9);
+  --color-leaf-200: oklch(0.905 0.073 152.1);
+  --color-leaf-300: oklch(0.844 0.121 152.5);
+  --color-leaf-400: oklch(0.764 0.163 152.8);
+  --color-leaf-500: oklch(0.678 0.178 153.1);
+  --color-leaf-600: oklch(0.581 0.159 153.8);
+  --color-leaf-700: oklch(0.483 0.128 154.5);
+  --color-leaf-800: oklch(0.398 0.1 156.1);
+  --color-leaf-900: oklch(0.323 0.075 158.2);
+  --color-leaf-950: oklch(0.247 0.055 161.4);
+
+  /* Accent: warm amber, used sparingly for rewards and green points. */
+  --color-amber-soft: oklch(0.97 0.035 85);
+  --color-amber-base: oklch(0.87 0.11 80);
+  --color-amber-strong: oklch(0.55 0.13 60);
+
+  /* Status. Each has one meaning and is not reused decoratively. */
+  --color-risk-low: oklch(0.678 0.178 153.1);
+  --color-risk-mid: oklch(0.818 0.155 85);
+  --color-risk-high: oklch(0.645 0.197 25.4);
+  --color-risk-crit: oklch(0.528 0.192 22.6);
+
+  /* Surfaces. A very small warm-grey ramp. */
+  --color-surface: oklch(0.995 0.002 150);
+  --color-surface-raised: oklch(1 0 0);
+  --color-surface-sunken: oklch(0.968 0.004 155);
+  --color-rule: oklch(0.912 0.008 158);
+
+  /* Text. */
+  --color-ink: oklch(0.213 0.012 160.5);
+  --color-ink-soft: oklch(0.447 0.017 158.6);
+  --color-ink-faint: oklch(0.597 0.017 156.5);
+
+  /* Typography. */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Radii — soft, but not so round that a low-vision reader loses corners. */
+  --radius-card: 1.25rem;
+  --radius-control: 0.875rem;
+
+  /* Motion. Short, and the whole set respects prefers-reduced-motion. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/*
+ * Dark mode is a media query rather than a class. The primary users are on
+ * cheap LCD panels in daylight, where a light UI is more legible; dark mode is
+ * honoured when the device asks for it, and nothing in the code reads a
+ * `.dark` class.
+ */
+:root {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: oklch(0.178 0.008 160.5);
+    --color-surface-raised: oklch(0.226 0.011 160.8);
+    --color-surface-sunken: oklch(0.145 0.007 161.2);
+    --color-rule: oklch(0.301 0.012 161.2);
+    --color-ink: oklch(0.961 0.005 158);
+    --color-ink-soft: oklch(0.762 0.015 158.5);
+    --color-ink-faint: oklch(0.642 0.018 156.6);
+  }
+}
+
+@layer base {
+  html {
+    /* Plain scroll behaviour by default; Next.no longer sets this itself. */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    /* A little more leading than the default: long labels in three languages
+       need the air more than a dense enterprise UI does. */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The accent colour for every input and button, so the platform grey on
+     low-end Android is replaced by the brand green. */
+  :focus-visible {
+    outline: 2px solid var(--color-leaf-600);
+    outline-offset: 2px;
+  }
+
+  /* Respect a user's preference for reduced motion across the board, not only
+     on the components that remembered to check it. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* --- Buttons ---------------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.875rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-control);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.25rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 140ms var(--ease-out-soft),
+      border-color 140ms var(--ease-out-soft), color 140ms var(--ease-out-soft);
+    /* Touch target: comfortably above the 44px minimum on cheap phones. */
+    min-width: 6rem;
+  }
+
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--color-leaf-700);
+    color: white;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-leaf-800);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-surface-raised);
+    color: var(--color-ink);
+    border-color: var(--color-rule);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-sunken);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-ink-soft);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink);
+  }
+
+  .btn-danger {
+    background-color: var(--color-risk-high);
+    color: white;
+  }
+
+  /* --- Form controls ---------------------------------------------------- */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .field-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .field-help {
+    font-size: 0.8125rem;
+    color: var(--color-ink-faint);
+    line-height: 1.375;
+  }
+
+  .field-error {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-risk-high);
+  }
+
+  .input {
+    width: 100%;
+    min-height: 2.875rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-rule);
+    background-color: var(--color-surface-raised);
+    color: var(--color-ink);
+    font-size: 1rem;
+    /* 16px: below this, iOS Safari zooms on focus and disorients a
+       first-time user who does not know not to pinch. */
+    transition: border-color 120ms var(--ease-out-soft);
+  }
+
+  .input:focus {
+    border-color: var(--color-leaf-500);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-leaf-500) 22%, transparent);
+  }
+
+  .input[aria-invalid="true"] {
+    border-color: var(--color-risk-high);
+  }
+
+  .input::placeholder {
+    color: var(--color-ink-faint);
+  }
+
+  /* --- Cards ------------------------------------------------------------ */
+  .card {
+    background-color: var(--color-surface-raised);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    padding: 1.25rem;
+  }
+
+  .card-quiet {
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    padding: 1rem;
+  }
+
+  /* --- Badges ----------------------------------------------------------- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    padding: 0.1875rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .pill-good {
+    background-color: var(--color-leaf-50);
+    color: var(--color-leaf-800);
+  }
+  .pill-neutral {
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink-soft);
+  }
+  .pill-warn {
+    background-color: var(--color-amber-soft);
+    color: var(--color-amber-strong);
+  }
+  .pill-bad {
+    background-color: color-mix(in oklab, var(--color-risk-high) 12%, transparent);
+    color: var(--color-risk-crit);
+  }
+
+  /* --- Tables ----------------------------------------------------------- */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  .table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-faint);
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .table td {
+    padding: 0.75rem 0.875rem;
+    border-bottom: 1px solid var(--color-rule);
+    vertical-align: middle;
+  }
+  .table tbody tr:hover {
+    background-color: var(--color-surface-sunken);
+  }
+}
+
+@layer utilities {
+  /* Screen-reader-only, the standard visually-hidden clip. */
+  .sr-only-focus:not(:focus) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Tabular figures for all monetary columns so digits line up. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}

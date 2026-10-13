@@ -1,0 +1,159 @@
+{
+  "$comment": [
+    "Bill payment and recharge master data.",
+    "",
+    "These are real, publicly-listed billers operating in India, NOT invented",
+    "placeholder companies. Each entry names the operator and the category used",
+    "for carbon accounting.",
+    "",
+    "FinLeaf does not integrate with any biller's payment gateway. Paying a",
+    "biller here debits the user's own FinLeaf account and records a receipt;",
+    "it does not settle the underlying utility bill. The interface says so",
+    "wherever a payment is initiated, because a user who believes their",
+    "electricity bill was actually paid would be seriously misled.",
+    "",
+    "`refPattern` is a loose ECI-ish hint used to validate the customer",
+    "identifier the user types. It is advisory, not a strict mask."
+  ],
+  "billers": [
+    {
+      "slug": "bescom",
+      "name": "BESCOM — Bangalore Electric Power Supply",
+      "category": "ELECTRICITY",
+      "requiresRef": true,
+      "refLabel": "Consumer number",
+      "refPattern": "^[A-Za-z0-9]{6,20}$",
+      "translations": {
+        "en": "BESCOM electricity",
+        "hi": "बीएसकॉम बिजली",
+        "kn": "ಬಿಎಸ್‌ಕಾಂ ವಿದ್ಯುತ್"
+      }
+    },
+    {
+      "slug": "hescom",
+      "name": "HESCOM — Karnataka State Electricity Transmission",
+      "category": "ELECTRICITY",
+      "requiresRef": true,
+      "refLabel": "Consumer number",
+      "refPattern": "^[A-Za-z0-9]{6,20}$",
+      "translations": {
+        "en": "HESCOM electricity",
+        "hi": "एचईएससीओएम बिजली",
+        "kn": "ಹೆಸ್ಕಾಂ ವಿದ್ಯುತ್"
+      }
+    },
+    {
+      "slug": "ksedcl",
+      "name": "KSEEDCL — Kerala State Electricity Distribution",
+      "category": "ELECTRICITY",
+      "requiresRef": true,
+      "refLabel": "Consumer number",
+      "refPattern": "^[A-Za-z0-9]{6,20}$",
+      "translations": {
+        "en": "KSEEDCL electricity",
+        "hi": "केएसईईडीसीएल बिजली",
+        "kn": "ಕೆಎಸ್‌ಇಡಿಸಿಎಲ್ ವಿದ್ಯುತ್"
+      }
+    },
+    {
+      "slug": "mahadiscom",
+      "name": "Mahadiscom — Maharashtra State Electricity Distribution",
+      "category": "ELECTRICITY",
+      "requiresRef": true,
+      "refLabel": "Consumer number",
+      "refPattern": "^[A-Za-z0-9]{6,20}$",
+      "translations": {
+        "en": "Maharashtra electricity",
+        "hi": "महाराष्ट्र बिजली",
+        "kn": "ಮಹಾರಾಷ್ಟ್ರ ವಿದ್ಯುತ್"
+      }
+    },
+    {
+      "slug": "bses-delhi",
+      "name": "BSES Delhi — BSES Rajdhani Power",
+      "category": "ELECTRICITY",
+      "requiresRef": true,
+      "refLabel": "CA number",
+      "refPattern": "^[A-Za-z0-9]{6,20}$",
+      "translations": {
+        "en": "BSES Delhi electricity",
+        "hi": "बीएसईएस दिल्ली बिजली",
+        "kn": "ಬಿಎಸ್‌ಇಎಸ್ ದಿಲ್ಲಿ ವಿದ್ಯುತ್"
+      }
+    },
+    {
+      "slug": "indian-oil",
+      "name": "Indian Oil Corporation — fuel payment",
+      "category": "FUEL",
+      "requiresRef": false,
+      "translations": {
+        "en": "Indian Oil fuel",
+        "hi": "इंडियन ऑयल ईंधन",
+        "kn": "ಇಂಡಿಯನ್ ಆಯಿಲ್ ಇಂಧನ"
+      }
+    },
+    {
+      "slug": "hpcl",
+      "name": "Hindustan Petroleum — fuel payment",
+      "category": "FUEL",
+      "requiresRef": false,
+      "translations": {
+        "en": "HPCL fuel",
+        "hi": "एचपीसीएल ईंधन",
+        "kn": "ಎಚ್‌ಪಿಸಿಎಲ್ ಇಂಧನ"
+      }
+    },
+    {
+      "slug": "bsnl",
+      "name": "BSNL — telephone bill",
+      "category": "BILL_PAYMENT",
+      "requiresRef": true,
+      "refLabel": "Telephone number",
+      "refPattern": "^[0-9]{10}$",
+      "translations": {
+        "en": "BSNL telephone",
+        "hi": "बीएसएनएल टेलीफोन",
+        "kn": "ಬಿಎಸ್‌ಎನ್‌ಎಲ್ ದೂರವಾಣಿ"
+      }
+    },
+    {
+      "slug": "airtel-prepaid",
+      "name": "Airtel — prepaid mobile recharge",
+      "category": "RECHARGE",
+      "requiresRef": true,
+      "refLabel": "Mobile number",
+      "refPattern": "^[0-9]{10}$",
+      "translations": {
+        "en": "Airtel mobile recharge",
+        "hi": "एयरटेल मोबाइल रीचार्ज",
+        "kn": "ಏರ್‌ಟೆಲ್ ಮೊಬೈಲ್ ರೀಚಾರ್ಜ್"
+      }
+    },
+    {
+      "slug": "jio-prepaid",
+      "name": "Jio — prepaid mobile recharge",
+      "category": "RECHARGE",
+      "requiresRef": true,
+      "refLabel": "Mobile number",
+      "refPattern": "^[0-9]{10}$",
+      "translations": {
+        "en": "Jio mobile recharge",
+        "hi": "जियो मोबाइल रीचार्ज",
+        "kn": "ಜಿಯೋ ಮೊಬೈಲ್ ರೀಚಾರ್ಜ್"
+      }
+    },
+    {
+      "slug": "vi-prepaid",
+      "name": "Vodafone Idea — prepaid mobile recharge",
+      "category": "RECHARGE",
+      "requiresRef": true,
+      "refLabel": "Mobile number",
+      "refPattern": "^[0-9]{10}$",
+      "translations": {
+        "en": "Vodafone Idea mobile recharge",
+        "hi": "वोडाफोन आइडिया मोबाइल रीचार्ज",
+        "kn": "ವೋಡಾಫೋನ್ ಐಡಿಯಾ ಮೊಬೈಲ್ ರೀಚಾರ್ಜ್"
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Test-only dependencies. Install on top of requirements.txt:
+#
+#     pip install -r requirements.txt -r requirements-dev.txt
+#     pytest -q
+#
+# httpx is required at runtime by fastapi.testclient; it is listed here rather
+# than in requirements.txt because the service itself never calls itself.
+pytest>=8.0,<9.0
+httpx>=0.27,<0.29

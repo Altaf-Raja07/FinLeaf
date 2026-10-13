@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+
+# env — never commit; .env.example documents every variable
+.env
+.env.build
+.env.development
+!.env.example
+
+# next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+
+# prisma — generated client, local migration logs
+src/generated/
+*.tsbuildinfo
+prisma/dev.db*
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# os + editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# logs + coverage
+npm-debug.log*
+yarn-error.log*
+coverage/
+
+# docker
+docker-compose.override.yml
+
+# os/editor metadata from this workspace
+.husky/

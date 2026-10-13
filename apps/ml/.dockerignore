@@ -1,0 +1,12 @@
+# Keep the build context small and the image free of local state. .venv in
+# particular is hundreds of megabytes and is not copied by the Dockerfile, but
+# it would still be uploaded to the daemon on every build.
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+tests
+.git
+.gitignore
+README.md
+requirements-dev.txt

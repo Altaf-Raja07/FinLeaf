@@ -1,0 +1,140 @@
+{
+  "$comment": [
+    "Badge definitions.",
+    "",
+    "A badge is awarded by the rules in lib/badges when the user's real",
+    "activity satisfies the criteria. They are never granted directly, so a",
+    "badge always reflects something that actually happened.",
+    "",
+    "  slug       - stable key",
+    "  icon       - name from the icon set used by src/components/Icon.tsx",
+    "  criteria   - the rule, interpreted by lib/badges.awardable()",
+    "  translations[locale] = { name, description }",
+    "",
+    "Criteria types:",
+    "  lesson_completed       -> criteria.lesson = lesson slug",
+    "  category_complete      -> criteria.category, criteria.count = all lessons in it",
+    "  total_lessons          -> criteria.count",
+    "  quiz_score             -> criteria.minPct on a single attempt",
+    "  goal_created           -> criteria.count",
+    "  goal_completed         -> criteria.count",
+    "  transaction_count      -> criteria.count",
+    "  offset_contributions   -> criteria.count",
+    "  green_points           -> criteria.threshold",
+    "  trust_score            -> criteria.threshold",
+    "  voucher_redeemed       -> criteria.count",
+    "  days_active            -> criteria.count"
+  ],
+  "badges": [
+    {
+      "slug": "first-lesson",
+      "icon": "book-open-check",
+      "criteria": { "type": "total_lessons", "count": 1 },
+      "translations": {
+        "en": { "name": "First lesson done", "description": "Finished your first financial literacy lesson." },
+        "hi": { "name": "पहला पाठ पूरा", "description": "अपना पहला वित्तीय साक्षरता पाठ पूरा किया।" },
+        "kn": { "name": "ಮೊದಲ ಪಾಠ ಪೂರ್ಣ", "description": "ನಿಮ್ಮ ಮೊದಲ ಹಣಕಾಸು ಸಾಕ್ಷರತಾ ಪಾಠವನ್ನು ಪೂರ್ಣ ಮಾಡಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "curious-student",
+      "icon": "graduation-cap",
+      "criteria": { "type": "total_lessons", "count": 3 },
+      "translations": {
+        "en": { "name": "Curious student", "description": "Completed three financial literacy lessons." },
+        "hi": { "name": "ज़्यादा उत्सुक छात्र", "description": "तीन वित्तीय साक्षरता पाठ पूरे किए।" },
+        "kn": { "name": "ಜ್ಞಾನ ಉತ್ಸುಕ ವಿದ್ಯಾರ್ಥಿ", "description": "ಮೂರು ಹಣಕಾಸು ಸಾಕ್ಷರತಾ ಪಾಠಗಳನ್ನು ಪೂರ್ಣ ಮಾಡಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "scholar-of-the-basics",
+      "icon": "library",
+      "criteria": { "type": "category_complete", "category": "basics" },
+      "translations": {
+        "en": { "name": "Basics scholar", "description": "Completed every lesson in the banking basics module." },
+        "hi": { "name": "बुनियादी विद्वान", "description": "बैंकिंग बुनियादें मॉड्यूल का हर पाठ पूरा किया।" },
+        "kn": { "name": "ಮೂಲಭೂತ ವಿದ್ವಾಂಸ", "description": "ಬ್ಯಾಂಕಿಂಗ್ ಮೂಲಭೂತ ಘಟಕದ ಪ್ರತಿ ಪಾಠವನ್ನು ಪೂರ್ಣ ಮಾಡಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "saver-of-saver",
+      "icon": "piggy-bank",
+      "criteria": { "type": "goal_created", "count": 1 },
+      "translations": {
+        "en": { "name": "Goal setter", "description": "Created your first savings goal." },
+        "hi": { "name": "लक्ष्य निर्धारक", "description": "अपना पहला बचत लक्ष्य बनाया।" },
+        "kn": { "name": "ಗುರಿ ನಿರ್ಧಾರಿ", "description": "ನಿಮ್ಮ ಮೊದಲ ಉಳಿತಾಸಿನ ಗುರಿಯನ್ನು ರಚಿಸಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "goal-reacher",
+      "icon": "target",
+      "criteria": { "type": "goal_completed", "count": 1 },
+      "translations": {
+        "en": { "name": "Goal reached", "description": "Fully funded a savings goal." },
+        "hi": { "name": "लक्ष्य प्राप्त", "description": "एक बचत लक्ष्य पूरी तरह पूरा किया।" },
+        "kn": { "name": "ಗುರಿ ಸಾಧಿಸಲಾಯಿತು", "description": "ಒಂದು ಉಳಿತಾಸಿನ ಗುರಿಯನ್ನು ಸಂಪೂರ್ಣ ಪೂರೈಸಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "quiz-perfect",
+      "icon": "sparkles",
+      "criteria": { "type": "quiz_score", "minPct": 100 },
+      "translations": {
+        "en": { "name": "Perfect answer", "description": "Scored full marks on a lesson quiz." },
+        "hi": { "name": "सही उत्तर", "description": "पाठ प्रश्नोत्तरी में पूरे नंबर लिए।" },
+        "kn": { "name": "ಪರಿಪೂರ್ಣ ಉತ್ತರ", "description": "ಪಾಠದ ಪ್ರಶ್ನೋತ್ತರಿಯಲ್ಲಿ ಸಂಪೂರ್ಣ ಅಂಕ ಪಡೆದಿರಿ." }
+      }
+    },
+    {
+      "slug": "first-transaction",
+      "icon": "send",
+      "criteria": { "type": "transaction_count", "count": 1 },
+      "translations": {
+        "en": { "name": "First money moved", "description": "Sent your first transaction." },
+        "hi": { "name": "पहला पैसा भेजा", "description": "अपना पहला लेन-देन भेजा।" },
+        "kn": { "name": "ಮೊದಲ ಹಣ ಸಾಧಿಸಲಾಯಿತು", "description": "ನಿಮ್ಮ ಮೊದಲ ವ್ಯವಹಾರವನ್ನು ಕಳಿಸಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "regular-user",
+      "icon": "repeat",
+      "criteria": { "type": "transaction_count", "count": 20 },
+      "translations": {
+        "en": { "name": "Regular user", "description": "Made twenty transactions." },
+        "hi": { "name": "नियमित उपयोगकर्ता", "description": "बीस लेन-देन किए।" },
+        "kn": { "name": "ನಿಯಮಿತ ಬಳಕೆದಾರ", "description": "ಇಪ್ಪತ್ತು ವ್ಯವಹಾರಗಳನ್ನು ಮಾಡಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "trust-earned",
+      "icon": "shield-check",
+      "criteria": { "type": "trust_score", "threshold": 70 },
+      "translations": {
+        "en": { "name": "Trust earned", "description": "Reached a trust score of 70." },
+        "hi": { "name": "भरोसा अर्जित", "description": "ट्रस्ट स्कोर 70 तक पहुँचे।" },
+        "kn": { "name": "ವಿಶ್ವಾಸ ಗಳಿಸಿದ್ದು", "description": "ವಿಶ್ವಾಸ ಸ್ಕೋರ್ 70 ತಲುಪಿದ್ದು." }
+      }
+    },
+    {
+      "slug": "offset-starter",
+      "icon": "sprout",
+      "criteria": { "type": "offset_contributions", "count": 1 },
+      "translations": {
+        "en": { "name": "Offset starter", "description": "Funded your first carbon offset project." },
+        "hi": { "name": "ऑफसेट शुरू", "description": "अपना पहला कार्बन ऑफसेट प्रोजेक्ट निधित किया।" },
+        "kn": { "name": "ಆಫ್‌ಸೆಟ್ ಪ್ರಾರಂಭಕ", "description": "ನಿಮ್ಮ ಮೊದಲ ಕಾರ್ಬನ ಆಫ್‌ಸೆಟ್ ಯೋಜನೆಯ ಆಸ್ಪದ ನೀಡಿದಿರಿ." }
+      }
+    },
+    {
+      "slug": "eco-champion",
+      "icon": "leaf",
+      "criteria": { "type": "green_points", "threshold": 500 },
+      "translations": {
+        "en": { "name": "Eco champion", "description": "Earned 500 green points." },
+        "hi": { "name": "पर्यावरण चैंपियन", "description": "500 हरित अंक अर्जित किए।" },
+        "kn": { "name": "ಪರಿಸರ ಚಾಂಪಿಯನ್", "description": "500 ಹಸಿರು ಅಂಕ ಗಳಿಸಿದಿರಿ." }
+      }
+    }
+  ]
+}

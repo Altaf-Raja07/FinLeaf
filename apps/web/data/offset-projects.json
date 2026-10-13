@@ -1,0 +1,110 @@
+{
+  "$comment": [
+    "Carbon offset projects users can fund with green points.",
+    "",
+    "EVERY NUMBER HERE IS AN ESTIMATE FROM A PUBLISHED METHODOLOGY, NOT A",
+    "VERIFIED MEASUREMENT, AND IS PRESENTED AS SUCH IN THE UI.",
+    "",
+    "`co2ePerUnitKg` and `methodologySource` describe what the project operator",
+    "claims and the basis for the claim. FinLeaf has not independently audited",
+    "any of these projects. `methodologySource` is surfaced to the user verbatim",
+    "so a contributor can see exactly what the number rests on.",
+    "",
+    "`costPoints` is how many green points one unit costs. Green points are",
+    "earned from spending choices, so this prices a tree against, say, choosing",
+    "public transport over a cab.",
+    "",
+    "If you add a project, keep `co2ePerUnitKg` defensible and name the source.",
+    "A number with no stated basis should not be in this file."
+  ],
+  "projects": [
+    {
+      "slug": "cookstove",
+      "icon": "flame",
+      "costPoints": 200,
+      "co2ePerUnitKg": 120.0,
+      "unit": "clean cookstove",
+      "methodologySource": "Eden Project / Gold Standard CDM methodology for improved cookstoves; ~120 kg CO2e avoided per stove-year replacing an open-fire or kerosene stove",
+      "translations": {
+        "en": {
+          "name": "Clean cookstoves",
+          "description": "Replaces open-fire and kerosene cooking with a high-efficiency stove, which uses roughly a third of the fuel for the same meal. Cuts both household smoke and the CO2e from burning biomass."
+        },
+        "hi": {
+          "name": "स्वच्छ चूल्हे",
+          "description": "खुले आग या मिट्टी के तेल के चूल्हे की जगह ऊर्जा-कुशल चूल्हा। एक ही भोजन के लिए लगभग एक-तिहाई ईंधन। घर के धुएँ और CO2e दोनों कम होते हैं।"
+        },
+        "kn": {
+          "name": "ಸ್ವಚ್ಛ ಅಟ್ಟಿಗಳು",
+          "description": "ತೆರೆದ ಕಿಚ್ಚಣೆ ಅಥವಾ ಕೆರೋಸಿನ್ ಅಟ್ಟಿಯ ಬದಲು ಹೆಚ್ಚು ದಕ್ಷತಾವಳ್ಳದ ಅಟ್ಟಿ. ಒಂದೇ ಊಟಕ್ಕೆ ಸುಮಾರು ಒಂದು-ಮೂರರಲ್ಲಿ ಇಂಧನ ಬಳಸುತ್ತದೆ. ಮನೆಯ ಹೊಗೆ ಮತ್ತು CO2e ಎರಡೂ ಕಡಿಮೆಯಾಗುತ್ತವೆ."
+        }
+      }
+    },
+    {
+      "slug": "tree-plantation",
+      "icon": "tree-pine",
+      "costPoints": 150,
+      "co2ePerUnitKg": 22.0,
+      "unit": "native tree planted and cared for",
+      "methodologySource": "Indian afforestation programme estimate; ~22 kg CO2e sequestered per tree per year over a 10-year rotation at Indian mixed-species growth rates",
+      "translations": {
+        "en": {
+          "name": "Native tree planting",
+          "description": "Funds planting and two years of aftercare for native Indian species, which is what makes a sapling survive. Growth rates are species- and region-dependent, so the sequestration estimate is an average."
+        },
+        "hi": {
+          "name": "स्थानीय पेड़ लगाना",
+          "description": "भारत की स्थानीय प्रजातियों के रोपण और दो वर्ष की देखभाल का खर्च। स्थानीय प्रजातियाँ ही पौधे को बचाती हैं। वृद्धि दर क्षेत्र और प्रजाति पर निर्भर है, इसलिए अनुमान औसत है।"
+        },
+        "kn": {
+          "name": "ಸ್ವದೇಶಿಯ ಮರ ನೆಡುವಿಕೆ",
+          "description": "ಭಾರತದ ಸ್ವದೇಶಿಯ ಜಾತಿಗಳ ನೆಡುವಿಕೆ ಮತ್ತು ಎರಡು ವರ್ಷದ ಆರೈಕೆಗೆ ಹಣಕಾಸು. ಸ್ವದೇಶಿಯ ಜಾತಿಗಳೇ ಸಸಿಯನ್ನು ಉಳಿಸುತ್ತವೆ. ಬೆಳವಣಿಗೆಯ ಪ್ರಮಾಣ ಪ್ರದೇಶ ಮತ್ತು ಜಾತಿಗೆ ಅನುಗಣಿಸಿ, ಅಂದಾಜು ಸರಾಸರಿ."
+        }
+      }
+    },
+    {
+      "slug": "solar-lamp",
+      "icon": "sun",
+      "costPoints": 400,
+      "co2ePerUnitKg": 45.0,
+      "unit": "solar lamp distributed",
+      "methodologySource": "Off-grid solar lighting programme estimate; ~45 kg CO2e avoided per lamp-year replacing kerosene lighting",
+      "translations": {
+        "en": {
+          "name": "Solar lamp distribution",
+          "description": "A solar lamp replaces kerosene lighting for a household that would otherwise buy paraffin. That removes both the CO2e and the indoor smoke exposure."
+        },
+        "hi": {
+          "name": "सोलर लैंप वितरण",
+          "description": "सोलर लैंप उस घर के लिए मिट्टी के तेल की रोशनी की जगह लेता है जो पैराफिन खरीदता। इससे CO2e और घर के भीतर का धुआँ दोनों दूर होते हैं।"
+        },
+        "kn": {
+          "name": "ಸೋಲಾರ್ ದೀಪ ವಿತರಣೆ",
+          "description": "ಸೋಲಾರ್ ದೀಪವು ಪ್ಯಾರಾಫಿನ್ ಖರೀದಿಸುವ ಮನೆಗೆ ದೀಪದ ಬದಲಾಗುತ್ತದೆ. CO2e ಮತ್ತು ಮನೆಯೊಳಗಿನ ಹೊಗೆ ಎರಡೂ ತೊಳೆಯುತ್ತವೆ."
+        }
+      }
+    },
+    {
+      "slug": "biogas",
+      "icon": "flask-conical",
+      "costPoints": 900,
+      "co2ePerUnitKg": 350.0,
+      "unit": "household biogas plant",
+      "methodologySource": "National Biogas Programme (DBT) reference figures; ~350 kg CO2e avoided per plant-year by displacing LPG and firewood cooking",
+      "translations": {
+        "en": {
+          "name": "Household biogas plants",
+          "description": "A household digester turns cooking waste and dung into cooking gas, displacing both LPG and firewood. The single largest per-unit reduction of any project listed here."
+        },
+        "hi": {
+          "name": "घरेलू बायोगैस संयंत्र",
+          "description": "घरेलू डाइजेस्टर रसोई के कचरे और गोबर से रसोई गैस बनाता है, जिससे एलपीजी और लकड़ी दोनों की जरूरत घटती है। सूचीबद्ध परियोजनाओं में प्रति इकाई सबसे बड़ी कमी।"
+        },
+        "kn": {
+          "name": "ಮನೆ ಬಯೋಗ್ಯಾಸ್ ಘಟಕ",
+          "description": "ಮನೆಯ ಡೈಜೆಸ್ಟರ್ ಅಡುಗೆ ಮತ್ತು ಗೋಮೂತ್ರದಿಂದ ಅಡುಗೆ ಅನಿಲ ತಯಾರಿಸುತ್ತದೆ, ಎಲ್ಪಿಜಿ ಮತ್ತು ಕಾಟಿ ಎರಡನ್ನೂ ಬದಲಾಯಿಸುತ್ತದೆ. ಪಟ್ಟಿಯಲ್ಲಿನ ಅತಿ ದೊಡ್ಡ ಇಳಿತು."
+        }
+      }
+    }
+  ]
+}

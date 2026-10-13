@@ -1,0 +1,109 @@
+name: finleaf
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: finleaf-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-finleaf}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finleaf}
+      POSTGRES_DB: ${POSTGRES_DB:-finleaf}
+      # Reject unencrypted password auth so a misconfigured client fails loudly.
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - finleaf_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-finleaf} -d ${POSTGRES_DB:-finleaf}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  ml:
+    build:
+      context: ./apps/ml
+    container_name: finleaf-ml
+    restart: unless-stopped
+    environment:
+      # Point the service at the Postgres container so it can read its own
+      # training reference data when retraining.
+      ML_LOG_LEVEL: ${ML_LOG_LEVEL:-INFO}
+      ML_MODEL_DIR: /app/models
+    ports:
+      - "${ML_PORT:-8000}:8000"
+    volumes:
+      - ./apps/ml/models:/app/models
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import urllib.request,sys;
+          sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=3).status==200 else 1)"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  web:
+    build:
+      context: ./apps/web
+      target: runner
+    container_name: finleaf-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      ml:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-finleaf}:${POSTGRES_PASSWORD:-finleaf}@db:5432/${POSTGRES_DB:-finleaf}?schema=public
+      APP_SECRET: ${APP_SECRET:?APP_SECRET is required}
+      APP_URL: ${APP_URL:?APP_URL is required}
+      SMS_PROVIDER: ${SMS_PROVIDER:-twilio}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM_NUMBER: ${TWILIO_FROM_NUMBER:-}
+      MSG91_AUTH_KEY: ${MSG91_AUTH_KEY:-}
+      MSG91_SENDER_ID: ${MSG91_SENDER_ID:-}
+      MSG91_TEMPLATE_ID: ${MSG91_TEMPLATE_ID:-}
+      ML_SERVICE_URL: http://ml:8000
+      CLIMATIQ_API_KEY: ${CLIMATIQ_API_KEY:-}
+      DEFAULT_LOCALE: ${DEFAULT_LOCALE:-en}
+      SUPPORTED_LOCALES: ${SUPPORTED_LOCALES:-en,hi,kn}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  migrate:
+    build:
+      context: ./apps/web
+      target: migrate
+    container_name: finleaf-migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-finleaf}:${POSTGRES_PASSWORD:-finleaf}@db:5432/${POSTGRES_DB:-finleaf}?schema=public
+    # Applies migrations and seeds reference data, then exits. `web` waits for
+    # this to finish successfully before serving traffic.
+    command: >
+      sh -c "npx prisma migrate deploy && npm run db:seed"
+
+volumes:
+  finleaf_pgdata:
