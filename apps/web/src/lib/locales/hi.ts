@@ -582,5 +582,12 @@ export const hi: TranslationTree = {
   "home.features.link": "सुविधाएँ देखें",
   "home.legal": "पढ़ाई का प्रोजेक्ट। कोई आर्थिक सेवा नहीं।",
   "dashboard.subtitle": "आपका बैलेंस, आपके स्कोर और आपके खर्च का पर्यावरण पर असर।",
-  "transfer.flagBody": "आपके हाल के {count} लेन-देन असामान्य लगे और आपकी पुष्टि का इंतज़ार कर रहे हैं।"
+  "transfer.flagBody": "आपके हाल के {count} लेन-देन असामान्य लगे और आपकी पुष्टि का इंतज़ार कर रहे हैं।",
+  "loans.instalments": "किस्तें",
+  "loans.status": "स्थिति",
+  "loans.pending": "बाकी",
+  "loans.instalmentAmount": "किस्त की राशि",
+  "loans.payNext": "अगली किस्त चुकाएँ",
+  "savings.goalReached": "आपने {count} लक्ष्य पूरी तरह पूरा किए हैं।",
+  "savings.contributions": "हालिया योगदान"
 };

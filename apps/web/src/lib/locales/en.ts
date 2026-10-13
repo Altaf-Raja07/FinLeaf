@@ -579,5 +579,12 @@ export const en = {
   "home.features.link": "Explore the features",
   "home.legal": "Academic project. Not a financial service.",
   "dashboard.subtitle": "Your balance, your scores and what your spending is doing to the planet.",
-  "transfer.flagBody": "{count} of your recent transactions looked unusual and are waiting for your confirmation."
+  "transfer.flagBody": "{count} of your recent transactions looked unusual and are waiting for your confirmation.",
+  "loans.instalments": "Instalments",
+  "loans.status": "Status",
+  "loans.pending": "Pending",
+  "loans.instalmentAmount": "Instalment amount",
+  "loans.payNext": "Pay next instalment",
+  "savings.goalReached": "You have fully funded {count} goal(s).",
+  "savings.contributions": "Recent contributions"
 } as const;

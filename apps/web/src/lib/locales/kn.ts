@@ -568,5 +568,12 @@ export const kn: TranslationTree = {
   "misc.neutral": "ತಟಸ್ಥ",
   "admin.backToApp": "ಆ್ಯಪ್‌ಗೆ ಹಿಂತಿರುಗಿ",
   "dashboard.subtitle": "ನಿಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್, ನಿಮ್ಮ ಅಂಕಗಳು ಮತ್ತು ನಿಮ್ಮ ಖರ್ಚು ಗ್ರಹಕ್ಕೆ ಏನು ಮಾಡುತ್ತಿದೆ.",
-  "transfer.flagBody": "ನಿಮ್ಮ ಇತ್ತೀಚಿನ {count} ವ್ಯವಹಾರಗಳು ಅಸಾಮಾನ್ಯವಾಗಿ ಕಾಣಿಸಿದ್ದು ನಿಮ್ಮ ಖಚಿತಪಡಿಸುವಿಕೆಗಾಗಿ ಕಾಯುತ್ತಿವೆ."
+  "transfer.flagBody": "ನಿಮ್ಮ ಇತ್ತೀಚಿನ {count} ವ್ಯವಹಾರಗಳು ಅಸಾಮಾನ್ಯವಾಗಿ ಕಾಣಿಸಿದ್ದು ನಿಮ್ಮ ಖಚಿತಪಡಿಸುವಿಕೆಗಾಗಿ ಕಾಯುತ್ತಿವೆ.",
+  "loans.instalments": "ಕಡ್ಡಾಯಗಳು",
+  "loans.status": "ಸ್ಥಿತಿ",
+  "loans.pending": "ಬಾಕಿ",
+  "loans.instalmentAmount": "ಕಡ್ಡಾಯದ ಮತ್ತನೆ",
+  "loans.payNext": "ಮುಂದಿನ ಕಡ್ಡಾಯ ಪಾವತಿಸಿ",
+  "savings.goalReached": "ನೀವು {count} ಗುರಿ(ಗಳನ್ನು) ಸಂಪೂರ್ಣ ಪೂರೈಸಿದ್ದೀರಿ.",
+  "savings.contributions": "ಇತ್ತೀಚಿನ ಕೊಡುಗೆಗಳು"
 };
