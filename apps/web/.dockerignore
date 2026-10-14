@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env
+.env.build
+.env.development
+*.log
+coverage
+src/generated
