@@ -70,6 +70,14 @@ ARTEFACT_FILES = {
 
 TRUST_MODELS = ("gb", "lr")
 
+# The artefacts `_load_models_locked()` reads to be able to serve traffic.
+# `metrics.json` is deliberately absent: it is a reporting artefact, and its
+# absence must degrade `/model/metrics` alone rather than making the service
+# unready. Keeping this as a named set, rather than an inline list inside
+# `artefacts_present`, means the readiness check and the loader share one
+# definition and cannot drift apart again.
+SERVING_ARTEFACTS = ("trust_lr", "trust_gb", "anomaly", "mean_vector")
+
 _store: dict[str, Any] = {}
 _store_lock = threading.Lock()
 
@@ -108,9 +116,20 @@ def fit_count() -> int:
 
 
 def artefacts_present(model_dir: str | None = None) -> bool:
-    """True when every model artefact exists on disk."""
+    """True when every artefact needed to *serve traffic* exists on disk.
+
+    The set is the files `_load_models_locked()` actually reads, not a subset of
+    them. An earlier version omitted `mean_vector`, which meant `/health`
+    reported "loaded" while every scoring request then failed on the missing
+    cache — a healthcheck that lies is worse than no healthcheck, because the
+    operator sees green and the user sees a 500.
+
+    `metrics.json` is deliberately excluded: it is an artefact for reporting, not
+    for scoring. Its absence degrades `/model/metrics` alone and should not make
+    the service unready.
+    """
     paths = artefact_paths(model_dir)
-    return all(os.path.exists(paths[k]) for k in ("trust_lr", "trust_gb", "anomaly"))
+    return all(os.path.exists(paths[k]) for k in SERVING_ARTEFACTS)
 
 
 def load_models() -> dict[str, Any]:

@@ -183,15 +183,61 @@ def invalid_feature_handler(request: Request, exc: ValueError) -> JSONResponse:
 def health():
     """Liveness. Always 200 while the process is up.
 
-    Model readiness is reported in the body rather than in the status code:
-    this endpoint is the container healthcheck, so returning 503 here for a
-    missing artefact would stop the whole stack (which waits on this service)
-    and hide the cause behind a generic "dependency unhealthy".
+    Liveness and readiness are deliberately separate signals, and this is the
+    liveness one. A process that is up but missing model artefacts is *alive*;
+    it should stay serving (and reporting) so an operator can see and fix the
+    cause. Reporting 503 from here would let a supervisor restart a container in
+    a loop against a state a restart cannot fix, and would take the whole stack
+    down with it.
+
+    Use `/ready` to gate traffic.
     """
     return {
         "status": "ok",
         "service": "finleaf-ml",
         "models": "loaded" if ml.artefacts_present() else "missing",
+    }
+
+
+@app.get("/ready")
+def readiness():
+    """Readiness. 200 only when the service can actually score.
+
+    This is what a container healthcheck should call, and it is the endpoint
+    that caught a real deployment bug: `artefacts_present()` used to omit
+    `mean_vector.json`, so a container could pass its healthcheck while every
+    scoring request failed. It loads the artefacts for real rather than
+    checking for files, so a corrupt or version-skewed artefact is caught here
+    too rather than on the first user request.
+    """
+    try:
+        ml.load_models()
+    except ml.ModelsUnavailableError:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "not_ready",
+                "service": "finleaf-ml",
+                "models": "missing",
+                "fix": "Run `python -m app.train --force` in apps/ml before serving traffic.",
+            },
+        )
+    except Exception as exc:  # a broken artefact must be visible, not swallowed
+        logger.exception("ML service failed its readiness check")
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "not_ready",
+                "service": "finleaf-ml",
+                "models": "unreadable",
+                "fix": f"The model artefacts could not be loaded: {exc}",
+            },
+        )
+
+    return {
+        "status": "ready",
+        "service": "finleaf-ml",
+        "models": "loaded",
     }
 
 

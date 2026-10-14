@@ -1,0 +1,23 @@
+{
+  "features": [
+    "savings_regularity",
+    "on_time_bill_ratio",
+    "txn_consistency",
+    "account_age_days",
+    "group_activity",
+    "avg_balance_stability",
+    "monthly_txn_count",
+    "repayment_history"
+  ],
+  "values": [
+    0.5104755847,
+    0.5704357918,
+    0.5019091453,
+    0.2885876606,
+    0.5879850907,
+    0.6237461018,
+    0.4244168129,
+    0.5065834066
+  ],
+  "note": "Population mean of the synthetic training data; baseline for the per-factor explanation."
+}
