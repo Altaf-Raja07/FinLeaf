@@ -259,6 +259,30 @@ export const familyAcceptSchema = z.object({
   token: z.string().trim().min(16).max(128),
 });
 
+/**
+ * Owner-only change to a member's spending permission.
+ *
+ * `groupId` and `memberId` are validated as ids here and re-checked against the
+ * database in the action: an id from a form is not evidence of ownership, so
+ * the group must be read back and confirmed to belong to the caller.
+ */
+export const familyToggleSpendSchema = z.object({
+  groupId: cuidSchema,
+  memberId: cuidSchema,
+  canSpend: z.boolean(),
+});
+
+/** Owner-only removal of a member. Same re-check as above. */
+export const familyRemoveMemberSchema = z.object({
+  groupId: cuidSchema,
+  memberId: cuidSchema,
+});
+
+/** A non-owner leaving a group they were invited into. */
+export const familyLeaveSchema = z.object({
+  groupId: cuidSchema,
+});
+
 export const circleCreateSchema = z.object({
   name: z.string().trim().min(2).max(80),
   village: z.string().trim().min(2).max(80),
