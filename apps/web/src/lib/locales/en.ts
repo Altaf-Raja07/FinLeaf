@@ -612,5 +612,13 @@ export const en = {
   "family.inviteHeading": "Join {group}",
   "family.inviteHeadingNote": "You have been invited to a FinLeaf family group.",
   "family.inviteCanSpend": "The account holder has also allowed you to record spending.",
-  "family.acceptInvite": "Accept the invite"
+  "family.acceptInvite": "Accept the invite",
+  "agents.operatorNote": "Nothing here is invented: FinLeaf holds no agent records of its own, and a made-up agent would point you at a stranger's phone number.",
+  "agents.phone": "Phone",
+  "agents.directions": "Get directions",
+  "agents.contactNote": "Confirm the shop accepts deposits before visiting.",
+  "profile.greenPoints": "Green points",
+  "profile.accountNumber": "Account number",
+  "profile.lastSeen": "Last used {date}",
+  "profile.signOutEverywhereNote": "This signs this device out too. You will need your password to sign back in.",
 } as const;

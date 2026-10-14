@@ -601,5 +601,13 @@ export const kn: TranslationTree = {
   "family.inviteHeading": "{group} ಗೆ ಸೇರಿ",
   "family.inviteHeadingNote": "ನಿಮಗೆ ಫಿನ್‌ಲೀಫ್ ಕುಟುಂಬ ಗುಂಪಿಗೆ ಆಹ್ವಾನಿಸಲಾಗಿದೆ.",
   "family.inviteCanSpend": "ಖಾತಾಧಾರರು ಖರ್ಚ ದಾಖಲಿಸಲೂ ನಿಮ್ಮಿಗೆ ಅನುಮತಿ ನೀಡಿದ್ದಾರೆ.",
-  "family.acceptInvite": "ಆಹ್ವಾನ ಸ್ವೀಕರಿಸಿ"
+  "family.acceptInvite": "ಆಹ್ವಾನ ಸ್ವೀಕರಿಸಿ",
+  "agents.operatorNote": "ಇಲ್ಲಿ ಏನ್ನೂ ಕೃತಕವಲ್ಲ: ಫಿನ್‌ಲೀಫ್‌ಗೆ ಸ್ವಂತ ಏಜೆಂಟ್ ದಾಖಲೆಗಳಿಲ್ಲ, ಮತ್ತು ಆವಿಷ್ಕಾರದ ಏಜೆಂಟ್ ನಿಮ್ಮನ್ನು ಪರಕಿಯ ಫೋನ್ ಸಂಖ್ಯೆಗೆ ಕರೆದೊಯ್ಯುತ್ತದೆ.",
+  "agents.phone": "ಫೋನ್",
+  "agents.directions": "ದಿಕ್ಕು ತೋರಿಸಿ",
+  "agents.contactNote": "ಹೋಗುವ ಮೊದಲು ಅಂಗಡಿ ಠೇವಣಿ ಸ್ವೀಕರಿಸುತ್ತದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+  "profile.greenPoints": "ಹಸಿರು ಅಂಕಗಳು",
+  "profile.accountNumber": "ಖಾತೆ ಸಂಖ್ಯೆ",
+  "profile.lastSeen": "ಕೊನೆಯದಾಗಿ ಬಳಸಿದ್ದು {date}",
+  "profile.signOutEverywhereNote": "ಇದು ಈ ಸಾಧನವನ್ನೂ ಸೈನ್ ಔಟ್ ಮಾಡುತ್ತದೆ. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಲು ನಿಮಗೆ ಪಾಸ್‌ವರ್ಡ್ ಬೇಕಾಗುತ್ತದೆ.",
 };

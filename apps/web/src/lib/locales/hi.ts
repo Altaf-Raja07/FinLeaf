@@ -615,5 +615,13 @@ export const hi: TranslationTree = {
   "family.inviteHeading": "{group} में शामिल हों",
   "family.inviteHeadingNote": "आपको फिनलीफ़ परिवार समूह में आमंत्रित किया गया है।",
   "family.inviteCanSpend": "खाताधारी ने आपको खर्च दर्ज करने की अनुमति भी दी है।",
-  "family.acceptInvite": "आमंत्रण स्वीकार करें"
+  "family.acceptInvite": "आमंत्रण स्वीकार करें",
+  "agents.operatorNote": "यहाँ कुछ भी गढ़ा नहीं गया है: फिनलीफ़ के पास अपने कोई एजेंट रिकॉर्ड नहीं हैं, और गढ़ा हुआ एजेंट आपको किसी अजनबी के फ़ोन नंबर पर भेजता।",
+  "agents.phone": "फ़ोन",
+  "agents.directions": "रास्ता देखें",
+  "agents.contactNote": "जाने से पहले पुष्टि करें कि दुकान जमा स्वीकार करती है।",
+  "profile.greenPoints": "हरित अंक",
+  "profile.accountNumber": "खाता संख्या",
+  "profile.lastSeen": "अंतिम बार उपयोग {date}",
+  "profile.signOutEverywhereNote": "इससे इस डिवाइस भी साइन आउट हो जाएगा। वापस साइन इन करने के लिए आपको पासवर्ड चाहिए।",
 };
