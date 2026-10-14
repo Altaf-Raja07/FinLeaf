@@ -1,23 +1,19 @@
 import { redirect } from "next/navigation";
-import { Alert, Card, CardHeader, EmptyState, PageHeader, Pill } from "@/components/ui";
+import { Home, Users } from "lucide-react";
+import { PageHeader, Card, CardHeader, EmptyState, Alert, Field, Button, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
-import { formatDate } from "@/lib/i18n";
-import { listFamilyGroups } from "./family-action";
-import { CreateFamilyForm } from "./CreateFamilyForm";
-import { InviteMemberForm } from "./InviteMemberForm";
-import { LeaveGroupButton, RemoveMemberButton, ToggleSpendButton } from "./MemberActions";
+import { listMyFamilyGroups } from "@/lib/groups";
+import { createFamilyAction, inviteMemberAction, leaveGroupAction, removeMemberAction, setSpendPermissionAction } from "./family-actions";
+import { InviteForm } from "./InviteForm";
 
 /**
- * Family / shared-visibility groups.
+ * Family group.
  *
- * The honesty problem this page has to solve is the word "spend". The schema has
- * a `canSpend` flag and the interface must show it, because a household that
- * agreed on permissions is owed to see them. But FinLeaf implements no shared
- * spending: there is no linked account, no delegation and no second card. So the
- * flag is labelled as the agreement it is and never as a capability, and the
- * banner at the top of the page says the same thing once, plainly, before
- * anyone reaches for the toggle.
+ * Shared *visibility*, not shared spending. The permission flag is recorded on
+ * the household record, but the platform does not implement a joint account: no
+ * member can move money from the holder's balance. The page says so where the
+ * permission is shown rather than letting the label imply otherwise.
  */
 
 export default async function FamilyPage() {
@@ -25,182 +21,120 @@ export default async function FamilyPage() {
   if (!user) redirect("/sign-in");
 
   const { t, locale } = await translator();
-  const groups = await listFamilyGroups(user.id);
+  const groups = await listMyFamilyGroups(user.id);
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={t("family.title")} subtitle={t("family.subtitle")} />
 
-      <Alert tone="warning" title={t("family.canSpend")}>
-        {/* Written out rather than keyed: nothing in the locale files says this,
-            and it is the most important sentence on the page. */}
-        FinLeaf does not implement shared spending. This permission records what
-        your household agreed; it does not let anyone move money through FinLeaf.
-        Nobody can spend from your account here — you send money to them yourself,
-        as a normal transfer.
-      </Alert>
+      <Alert tone="info">{t("family.notSharedSpending")}</Alert>
 
-      <Card>
-        <CardHeader title={t("family.create")} subtitle={t("family.inviteHelp")} />
-        <CreateFamilyForm labels={{ name: t("family.name"), submit: t("family.create") }} />
-      </Card>
+      {groups.owned.length === 0 && groups.memberOf.length === 0 ? (
+        <EmptyState
+          title={t("family.empty")}
+          body={t("family.noteVisibility")}
+          icon={<Home className="h-8 w-8" />}
+        />
+      ) : null}
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold tracking-tight">{t("family.members")}</h2>
-
-        {groups.length === 0 ? (
-          <EmptyState
-            title={t("family.empty")}
-            body={t("family.subtitle")}
-            icon={<span className="text-3xl" aria-hidden="true">🏠</span>}
+      {/*
+        Groups are split into owned and member-of because the two are different
+        authority levels, and mixing them would present permissions a member does
+        not have.
+      */}
+      {groups.owned.map((group) => (
+        <Card as="section" key={group.id} className="flex flex-col gap-4">
+          <CardHeader
+            title={group.name}
+            subtitle={t("family.owner")}
+            action={<Pill status="good">{t("family.owner")}</Pill>}
           />
-        ) : (
-          groups.map((group) => (
-            <Card as="li" key={group.id} className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="text-lg font-bold tracking-tight truncate">
-                    {group.name}
-                  </h3>
-                  <p className="field-help">
-                    {t("family.members", { count: group.members.length + 1 })} ·{" "}
-                    {formatDate(group.createdAt, locale)}
-                  </p>
-                </div>
-                <Pill status={group.isOwner ? "good" : "neutral"}>
-                  {group.isOwner ? t("family.owner") : t("family.member")}
-                </Pill>
-              </div>
 
-              <ul className="flex flex-col divide-y divide-rule">
-                {/* The owner is not a membership row — they are the account
-                    holder — so they are rendered from the group, not the list. */}
-                <li className="flex flex-wrap items-center justify-between gap-3 py-2.5">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold">
-                      {group.ownerName}
-                      {group.ownerId === user.id ? (
-                        <span className="field-help"> ({t("circles.you")})</span>
-                      ) : null}
-                    </p>
-                    <p className="field-help">{t("family.owner")}</p>
-                  </div>
-                  <Pill status="good">{t("family.canSpend")}</Pill>
-                </li>
+          <ul className="flex flex-col divide-y divide-rule">
+            {group.members.map((member) => (
+              <li key={member.id} className="flex flex-wrap items-center gap-3 py-3">
+                <span className="flex-1 min-w-0">
+                  <span className="block truncate font-semibold">
+                    {member.isMe ? t("misc.you") : member.name}
+                  </span>
+                  <span className="field-help">
+                    {member.isMe
+                      ? t("family.accountHolder")
+                      : member.canSpend
+                        ? t("family.canSpend")
+                        : t("family.spendOnly")}
+                  </span>
+                </span>
 
-                {group.members.map((member) => (
-                  <li
-                    key={member.id}
-                    className="flex flex-wrap items-center justify-between gap-3 py-2.5"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold">
-                        {member.name}
-                        {member.userId === user.id ? (
-                          <span className="field-help"> ({t("circles.you")})</span>
-                        ) : null}
-                      </p>
-                      <p className="field-help">
-                        {t("circles.memberSince", {
-                          date: formatDate(member.joinedAt, locale),
-                        })}
-                        {/* Only the owner is shown a phone number: they invited
-                            the person, so it is not new information, while a
-                            fellow member has no reason to hold it. */}
-                        {member.phone ? ` · ${member.phone}` : ""}
-                      </p>
-                    </div>
+                <form action={setSpendPermissionAction} className="flex items-center gap-2">
+                  <input type="hidden" name="groupId" value={group.id} />
+                  <input type="hidden" name="membershipId" value={member.id} />
+                  <input type="hidden" name="canSpend" value={member.canSpend ? "false" : "true"} />
+                  <Button type="submit" variant="ghost" disabled={member.isMe}>
+                    {member.canSpend ? t("family.revokeSpend") : t("family.grantSpend")}
+                  </Button>
+                </form>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Pill status={member.canSpend ? "warn" : "neutral"}>
-                        {member.canSpend ? t("family.canSpend") : t("family.spendOnly")}
-                      </Pill>
+                <form action={removeMemberAction}>
+                  <input type="hidden" name="groupId" value={group.id} />
+                  <input type="hidden" name="membershipId" value={member.id} />
+                  <Button type="submit" variant="ghost" disabled={member.isMe}>
+                    {t("family.remove")}
+                  </Button>
+                </form>
+              </li>
+            ))}
+          </ul>
 
-                      {group.isOwner ? (
-                        <>
-                          <ToggleSpendButton
-                            groupId={group.id}
-                            memberId={member.id}
-                            canSpend={member.canSpend}
-                            labels={{
-                              giveSpend: "Give spending permission",
-                              makeViewOnly: "Make view only",
-                              updated: t("family.spendUpdated"),
-                            }}
-                          />
-                          <RemoveMemberButton
-                            groupId={group.id}
-                            memberId={member.id}
-                            labels={{
-                              remove: t("family.remove"),
-                              removed: t("family.removed"),
-                            }}
-                          />
-                        </>
-                      ) : null}
-                    </div>
+          <InviteForm groupId={group.id} locale={locale} />
+
+          {group.pendingInvites.length > 0 ? (
+            <div>
+              <p className="field-label">{t("family.pending")}</p>
+              <ul className="mt-1 flex flex-col gap-1">
+                {group.pendingInvites.map((invite) => (
+                  <li key={invite.id} className="field-help">
+                    {invite.phone} — {t("family.expiresOn", { date: invite.expiresAt.toLocaleDateString("en-IN") })}
                   </li>
                 ))}
               </ul>
+            </div>
+          ) : null}
+        </Card>
+      ))}
 
-              {!group.isOwner && group.myCanSpend === false ? (
-                <Alert tone="info">{t("family.cannotSpend")}</Alert>
-              ) : null}
+      {groups.memberOf.map((group) => (
+        <Card as="section" key={group.id} className="flex flex-col gap-3">
+          <CardHeader
+            title={group.name}
+            subtitle={`${t("family.accountHolder")}: ${group.ownerName}`}
+            action={
+              <Pill status="neutral">
+                {group.canSpend ? t("family.canSpend") : t("family.spendOnly")}
+              </Pill>
+            }
+          />
 
-              {group.isOwner ? (
-                <div className="flex flex-col gap-4 rounded-card border border-rule bg-surface-sunken p-3">
-                  <CardHeader title={t("family.invite")} subtitle={t("family.inviteHelp")} />
-                  <InviteMemberForm
-                    groupId={group.id}
-                    labels={{
-                      invite: t("family.invite"),
-                      inviteHelp: t("family.inviteHelp"),
-                      phone: t("family.enterPhone"),
-                      allowSpend: t("family.changeSpend"),
-                      allowSpendHelp:
-                        "Optional. FinLeaf has no shared spending, so this records what you agreed — it is not a way for them to spend.",
-                      linkTitle: "Share this invite link",
-                      linkHelpSms:
-                        "FinLeaf's SMS channel carries one-time verification codes only, so the link was not sent by SMS.",
-                      linkHelpNoSms:
-                        "This deployment has no SMS provider set up, so the link was not sent by SMS.",
-                      copy: t("action.copy"),
-                      copied: t("action.copied"),
-                    }}
-                  />
+          <form action={leaveGroupAction}>
+            <input type="hidden" name="groupId" value={group.id} />
+            <Button type="submit" variant="ghost">
+              {t("family.leave")}
+            </Button>
+          </form>
+        </Card>
+      ))}
 
-                  {group.pendingInvites.length > 0 ? (
-                    <div className="flex flex-col gap-2">
-                      <p className="text-sm font-bold">{t("family.inviteSent")}</p>
-                      <ul className="flex flex-col divide-y divide-rule">
-                        {group.pendingInvites.map((invite) => (
-                          <li
-                            key={invite.id}
-                            className="flex flex-wrap items-center justify-between gap-3 py-2 text-sm"
-                          >
-                            <span className="tnum">{invite.phone}</span>
-                            <span className="field-help">
-                              Expires {formatDate(invite.expiresAt, locale)} ·{" "}
-                              {invite.canSpend ? t("family.canSpend") : t("family.spendOnly")}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                </div>
-              ) : (
-                <div className="flex flex-wrap items-center justify-end gap-3">
-                  <LeaveGroupButton
-                    groupId={group.id}
-                    labels={{ leave: t("family.leave"), left: t("family.left") }}
-                  />
-                </div>
-              )}
-            </Card>
-          ))
-        )}
-      </section>
+      <Card>
+        <CardHeader title={t("family.create")} />
+        <form action={createFamilyAction} className="flex flex-wrap items-end gap-3">
+          <Field label={t("family.name")} htmlFor="family-name" className="min-w-64 flex-1">
+            <input id="family-name" name="name" type="text" maxLength={80} className="input" required minLength={2} />
+          </Field>
+          <Button type="submit">{t("family.create")}</Button>
+        </form>
+      </Card>
     </div>
   );
 }
+
+export { Users };

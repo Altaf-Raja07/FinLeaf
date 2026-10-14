@@ -1,169 +1,147 @@
 import { redirect } from "next/navigation";
-import { Alert, Card, CardHeader, EmptyState, PageHeader, Pill, Stat } from "@/components/ui";
+import { Users } from "lucide-react";
+import { PageHeader, Card, CardHeader, EmptyState, Alert, Field, Button, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
-import { formatDate } from "@/lib/i18n";
-import { listCircles } from "./circle-action";
-import { CreateCircleForm } from "./CreateCircleForm";
-import { JoinCircleList } from "./JoinCircleList";
+import { listMyCircles, listJoinableCircles, listVouches } from "@/lib/groups";
 import { VouchButton } from "./VouchButton";
+import { createCircleAction, joinCircleAction } from "./actions";
 
 /**
- * Trust circles.
+ * Community trust circles.
  *
- * The two things this page has to be honest about, stated rather than implied:
- *
- *  1. These groups mirror how microfinance self-help groups already work —
- *     a handful of people from one village who vouch for each other because
- *     they know each other. FinLeaf did not invent the mechanism.
- *  2. A vouch is not a score. It moves nothing by itself. The only path from
- *     circle participation to the trust score is the group-activity feature,
- *     which is derived from the groups a user actually belongs to. Anyone
- *     promising otherwise is selling a fake credit history.
- *
- * The copy on this page says both, in those words, because the incentive to
- * imply the second is exactly what makes trust-circle features go wrong.
+ * The honest copy on this page matters more than the feature itself. A circle
+ * mirrors a microfinance self-help group: a small number of people who know each
+ * other. Its effect on a trust score is indirect — the score reads actual
+ * participation, so vouching for a dormant stranger changes nothing. Saying so
+ * keeps the feature from becoming a metric to game.
  */
 
 export default async function CirclesPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const { t, locale } = await translator();
-  const { circles, joinable, vouchesGiven, vouchesReceived } = await listCircles(
-    user.id,
-    user.village,
-  );
+  const { t } = await translator();
+
+  const [mine, joinable, vouches] = await Promise.all([
+    listMyCircles(user.id),
+    listJoinableCircles(user.id, user.village),
+    listVouches(user.id),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t("circles.title")} subtitle={t("circles.subtitle")} />
+      <PageHeader
+        title={t("circles.title")}
+        subtitle={t("circles.subtitle")}
+        action={
+          <Pill status="neutral">
+            {t("circles.vouchGiven")} {vouches.given.length} · {t("circles.vouchReceived")}{" "}
+            {vouches.received.length}
+          </Pill>
+        }
+      />
 
-      <Alert tone="info" title={t("circles.feedsTrust")}>
-        {/* No key covers the "indirect" part of this, so it is written out
-            plainly here rather than left to the subtitle to imply. */}
-        A vouch does not add points to anyone&rsquo;s trust score. It is one
-        neighbour confirming another, and it reaches the score only through the
-        group-activity measure, which comes from the groups you actually belong
-        to. Joining or leaving a circle is what changes it.
+      <Alert tone="info">
+        {t("circles.noteIndirect")}
       </Alert>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Stat
-          label={t("circles.vouchGiven")}
-          value={`${vouchesGiven}`}
-          hint={t("circles.feedsTrust")}
+      {mine.length === 0 ? (
+        <EmptyState
+          title={t("circles.empty")}
+          body={t("circles.emptyHelp")}
+          icon={<Users className="h-8 w-8" />}
         />
-        <Stat
-          label={t("circles.vouchReceived")}
-          value={`${vouchesReceived}`}
-          hint={t("circles.emptyHelp")}
-        />
-        <Stat
-          label={t("circles.mine")}
-          value={`${circles.length}`}
-          hint={t("circles.emptyHelp")}
-        />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader title={t("circles.create")} subtitle={t("circles.emptyHelp")} />
-          <CreateCircleForm
-            defaultVillage={user.village}
-            labels={{
-              name: t("circles.circleName"),
-              namePlaceholder: "Rampur self-help group",
-              village: t("circles.village"),
-              submit: t("circles.create"),
-            }}
-          />
-        </Card>
-
-        <Card>
-          <CardHeader
-            title={t("circles.join")}
-            subtitle={`${t("circles.village")}: ${user.village}`}
-          />
-          <JoinCircleList
-            circles={joinable}
-            labels={{
-              join: t("circles.join"),
-              members: t("circles.members"),
-              empty: t("circles.empty"),
-            }}
-          />
-        </Card>
-      </div>
-
-      <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold tracking-tight">{t("circles.mine")}</h2>
-
-        {circles.length === 0 ? (
-          <EmptyState
-            title={t("circles.empty")}
-            body={t("circles.emptyHelp")}
-            icon={<span className="text-3xl" aria-hidden="true">🤝</span>}
-          />
-        ) : (
-          circles.map((circle) => (
+      ) : (
+        <section className="flex flex-col gap-4">
+          {mine.map(({ circle, role, joinedAt }) => (
             <Card as="li" key={circle.id} className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="text-lg font-bold tracking-tight truncate">
-                    {circle.name}
-                  </h3>
-                  <p className="field-help">
-                    {circle.village} ·{" "}
-                    {t("circles.members", { count: circle.members.length })} ·{" "}
-                    {t("circles.vouchGiven")} {circle.vouchesGiven} ·{" "}
-                    {t("circles.vouchReceived")} {circle.vouchesReceived}
-                  </p>
-                </div>
-                <Pill status="neutral">
-                  {t("circles.members", { count: circle.members.length })}
-                </Pill>
-              </div>
+              <CardHeader
+                title={circle.name}
+                subtitle={`${circle.village} · ${t("circles.members", { count: circle.members.length })} · $`}
+                action={
+                  <Pill status="neutral">
+                    {role === "ADMIN" ? t("circles.role.admin") : t("circles.role.member")}
+                  </Pill>
+                }
+              />
 
               <ul className="flex flex-col divide-y divide-rule">
                 {circle.members.map((member) => (
-                  <li
-                    key={member.userId}
-                    className="flex flex-wrap items-center justify-between gap-3 py-2.5"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold">
-                        {member.name}{" "}
-                        {member.isMe ? (
-                          <span className="field-help">({t("circles.you")})</span>
-                        ) : null}
-                      </p>
-                      <p className="field-help">
-                        {t("circles.memberSince", {
-                          date: formatDate(member.joinedAt, locale),
-                        })}
-                      </p>
-                    </div>
+                  <li key={member.id} className="flex flex-wrap items-center gap-3 py-3">
+                    <span className="flex-1 min-w-0">
+                      <span className="block truncate font-semibold">
+                        {member.isMe ? t("misc.you") : member.name}
+                      </span>
+                      <span className="field-help">
+                        {member.role === "ADMIN" ? t("circles.role.admin") : t("circles.role.member")}
+                      </span>
+                    </span>
 
-                    {member.isMe ? null : (
+                    {!member.isMe ? (
                       <VouchButton
                         circleId={circle.id}
                         toUserId={member.userId}
-                        alreadyVouched={member.vouchedByMe}
-                        label={
-                          member.vouchedByMe
-                            ? t("circles.vouched", { name: member.name })
-                            : t("circles.vouch")
-                        }
+                        toName={member.name}
+                        canVouch
+                        reason={t("circles.vouched", { name: member.name })}
                       />
-                    )}
+                    ) : null}
                   </li>
                 ))}
               </ul>
             </Card>
-          ))
-        )}
-      </section>
+          ))}
+        </section>
+      )}
+
+      {/* Join an existing circle in the same village. */}
+      {joinable.length > 0 ? (
+        <Card>
+          <CardHeader title={t("circles.joinTitle")} />
+          <ul className="flex flex-col divide-y divide-rule">
+            {joinable.map((circle) => (
+              <li key={circle.id} className="flex flex-wrap items-center gap-3 py-3">
+                <span className="flex-1 min-w-0">
+                  <span className="block font-semibold">{circle.name}</span>
+                  <span className="field-help">
+                    {circle.village} · {t("circles.members", { count: circle.memberCount })}
+                  </span>
+                </span>
+                <form action={joinCircleAction.bind(null, circle.id)}>
+                  <Button type="submit" variant="secondary">
+                    {t("circles.join")}
+                  </Button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
+
+      {/* Start one. */}
+      <Card>
+        <CardHeader title={t("circles.create")} />
+        <form action={createCircleAction} className="grid gap-4 sm:grid-cols-[2fr_1fr_auto] sm:items-end">
+          <Field label={t("circles.circleName")} htmlFor="circle-name">
+            <input id="circle-name" name="name" type="text" maxLength={80} className="input" required minLength={2} />
+          </Field>
+          <Field label={t("circles.village")} htmlFor="circle-village">
+            <input
+              id="circle-village"
+              name="village"
+              type="text"
+              defaultValue={user.village}
+              maxLength={80}
+              className="input"
+              required
+              minLength={2}
+            />
+          </Field>
+          <Button type="submit">{t("circles.create")}</Button>
+        </form>
+      </Card>
     </div>
   );
 }
+

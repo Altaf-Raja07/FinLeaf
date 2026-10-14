@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createHash, randomBytes } from "node:crypto";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@/generated/prisma/client";
 import { currentUser } from "@/lib/auth/session";
 import { createNotification } from "@/lib/notify";
 import { appUrl, env, log } from "@/lib/env";
 import {
+  familyAcceptSchema,
   familyCreateSchema,
   familyInviteSchema,
   familyLeaveSchema,
@@ -15,6 +16,7 @@ import {
   familyToggleSpendSchema,
   fieldErrors,
 } from "@/lib/validation";
+import { generateInviteToken, hashInviteToken } from "./invite-token";
 
 /**
  * Family / shared-visibility groups.
@@ -70,6 +72,35 @@ export interface FamilyGroupView {
     canSpend: boolean;
     expiresAt: Date;
   }>;
+}
+
+/** Why a token did not open an invitation. Shown to the visitor verbatim. */
+export type FamilyInviteProblem =
+  /** No row with this digest. The link was mistyped, or never existed. */
+  | "missing"
+  /** Past its seven-day window. */
+  | "expired"
+  /** Already accepted: an invite link is single-use. */
+  | "used"
+  /** The visitor is the owner of the group, so there is nothing to join. */
+  | "owner"
+  /** The visitor is already a member. */
+  | "member"
+  /** Something went wrong reading or writing. Never shown with detail. */
+  | "error";
+
+export interface FamilyInviteView {
+  id: string;
+  groupId: string;
+  groupName: string;
+  ownerId: string;
+  ownerName: string;
+  /** The number the invitation was addressed to. */
+  phone: string;
+  canSpend: boolean;
+  expiresAt: Date;
+  alreadyMember: boolean;
+  isOwner: boolean;
 }
 
 /**
@@ -246,10 +277,10 @@ export async function inviteMemberAction(
     }
   }
 
-  // 256 bits of CSPRNG entropy, URL-safe. Hashed before it is stored, so the
-  // only place the raw token ever exists is the response below.
-  const token = randomBytes(32).toString("base64url");
-  const tokenHash = createHash("sha256").update(token).digest("hex");
+  // 256 bits of CSPRNG entropy. Hashed before it is stored, so the only place
+  // the raw token ever exists is the response below.
+  const token = generateInviteToken();
+  const tokenHash = hashInviteToken(token);
   const expiresAt = new Date(
     Date.now() + INVITE_TTL_DAYS * 24 * 60 * 60 * 1000,
   );
@@ -348,7 +379,7 @@ export async function setMemberCanSpendAction(
   });
 
   await createNotification({
-    userId: member.userId ?? "",
+    userId: member.userId,
     type: "SYSTEM",
     title: "Your permission in a family group changed",
     body: `Your access to ${group.name} is now ${canSpend ? "spend permission" : "view only"}.`,
@@ -448,6 +479,208 @@ export async function leaveFamilyGroupAction(
 
   revalidatePath(FAMILY_PATH, "page");
   return { message: "You left the group." };
+}
+
+/**
+ * Reads an invitation from a token.
+ *
+ * The lookup is by digest, so the raw token never reaches the database as a
+ * search key — the row is found by the same value that is stored, and there is
+ * no column holding the secret.
+ *
+ * `viewerId` is the signed-in user, or null on a public render. It only decides
+ * which of the "you cannot take this any further" cases is reported, never
+ * whether the invitation itself is valid.
+ */
+export async function findFamilyInvitation(
+  token: string,
+  viewerId: string | null,
+): Promise<
+  | { ok: true; invite: FamilyInviteView }
+  | { ok: false; problem: FamilyInviteProblem }
+> {
+  const invitation = await prisma.familyInvitation.findUnique({
+    where: { tokenHash: hashInviteToken(token) },
+    select: {
+      id: true,
+      phone: true,
+      canSpend: true,
+      acceptedAt: true,
+      expiresAt: true,
+      group: {
+        select: {
+          id: true,
+          name: true,
+          ownerId: true,
+          owner: { select: { name: true } },
+          members: {
+            select: { userId: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!invitation) return { ok: false, problem: "missing" };
+  if (invitation.acceptedAt) return { ok: false, problem: "used" };
+  if (invitation.expiresAt <= new Date()) return { ok: false, problem: "expired" };
+
+  return {
+    ok: true,
+    invite: {
+      id: invitation.id,
+      groupId: invitation.group.id,
+      groupName: invitation.group.name,
+      ownerId: invitation.group.ownerId,
+      ownerName: invitation.group.owner.name,
+      phone: invitation.phone,
+      canSpend: invitation.canSpend,
+      expiresAt: invitation.expiresAt,
+      // Both are answered rather than left to the write: telling the owner they
+      // are already inside their own group is kinder than a unique-constraint
+      // error, and it is the same question either way.
+      alreadyMember: invitation.group.members.some((m) => m.userId === viewerId),
+      isOwner: invitation.group.ownerId === viewerId,
+    },
+  };
+}
+
+/**
+ * Accepts an invitation: joins the group and burns the link.
+ *
+ * Every check is made against a row read from the database. Nothing that arrives
+ * in the form is evidence of anything — the token is a secret, the group is
+ * re-read through it, and the caller is re-read from the session.
+ *
+ * On failure the visitor is sent back to the same link with a reason code, so
+ * the page can explain itself rather than failing silently. On success they land
+ * in the group they just joined.
+ */
+export async function acceptFamilyInviteAction(formData: FormData): Promise<void> {
+  const rawToken = String(formData.get("token") ?? "").trim();
+  const parsed = familyAcceptSchema.safeParse({ token: rawToken });
+
+  if (!parsed.success) {
+    redirect(inviteErrorPath(rawToken, "missing"));
+  }
+
+  const token = parsed.data.token;
+
+  // Signed in yet? Send them through sign-in first and bring them back to this
+  // exact link, which is still valid for the seven days it was issued for.
+  const user = await currentUser();
+  if (!user) {
+    redirect(`/sign-in?next=${encodeURIComponent(`${INVITE_PATH}?token=${token}`)}`);
+  }
+
+  const found = await findFamilyInvitation(token, user.id);
+
+  if (!found.ok) {
+    redirect(inviteErrorPath(token, found.problem));
+  }
+
+  const { invite } = found;
+
+  if (invite.isOwner) {
+    redirect(inviteErrorPath(token, "owner"));
+  }
+
+  if (invite.alreadyMember) {
+    redirect(inviteErrorPath(token, "member"));
+  }
+
+  let outcome: InviteClaim | "error";
+  try {
+    outcome = await claimFamilyInvitation(invite, user.id);
+  } catch (error) {
+    // Logged server-side, and the visitor is told to try again rather than
+    // being shown a failure they can do nothing about.
+    log("error", "family invitation acceptance failed", {
+      groupId: invite.groupId,
+      reason: error instanceof Error ? error.message : String(error),
+    });
+    outcome = "error";
+  }
+
+  if (outcome === "error") redirect(inviteErrorPath(token, "error"));
+  // Already a member: the transaction rolled back, so the link is still live
+  // for the person it was actually sent to.
+  if (outcome.status === "member") redirect(inviteErrorPath(token, "member"));
+  if (outcome.status === "used") redirect(inviteErrorPath(token, "used"));
+
+  await createNotification({
+    userId: invite.ownerId,
+    type: "SYSTEM",
+    title: "Someone joined your family group",
+    body: `${user.name} is now a member of ${invite.groupName}.`,
+    href: FAMILY_PATH,
+  });
+
+  revalidatePath(FAMILY_PATH, "page");
+  redirect(FAMILY_PATH);
+}
+
+type InviteClaim =
+  | { status: "joined" }
+  /** Another device claimed the link first, or it expired mid-transaction. */
+  | { status: "used" }
+  /** The visitor is already a member of this group. */
+  | { status: "member" };
+
+/**
+ * Claims an invitation and writes the membership, in one transaction.
+ *
+ * The single-use rule is enforced by a guarded UPDATE rather than a read
+ * followed by a write. Two taps on one link, or two devices opening it at the
+ * same moment, both find `acceptedAt: null` on a read and both would succeed on
+ * a blind write; with the guard inside the statement, exactly one of them claims
+ * the row and the other is told the link has been used.
+ *
+ * Writing both in one transaction means an invitation is never spent without a
+ * member to show for it.
+ */
+async function claimFamilyInvitation(
+  invitation: { id: string; groupId: string; canSpend: boolean },
+  userId: string,
+): Promise<InviteClaim> {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const claimed = await tx.familyInvitation.updateMany({
+        where: { id: invitation.id, acceptedAt: null, expiresAt: { gt: new Date() } },
+        data: { acceptedAt: new Date() },
+      });
+
+      if (claimed.count === 0) {
+        return { status: "used" } as const;
+      }
+
+      await tx.familyMember.create({
+        data: {
+          groupId: invitation.groupId,
+          userId,
+          // The permission the owner negotiated travels with the invitation, so
+          // a member cannot arrive with a flag nobody agreed to.
+          canSpend: invitation.canSpend,
+        },
+        select: { id: true },
+      });
+
+      return { status: "joined" } as const;
+    });
+  } catch (error) {
+    // The transaction is rolled back, so the claim is undone and the link stays
+    // live. This is the backstop for the membership read that happens before
+    // the claim: a slower path can still have written the row first.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return { status: "member" };
+    }
+    throw error;
+  }
+}
+
+/** Where a failed acceptance lands: the same link, with a reason code. */
+function inviteErrorPath(token: string, problem: string): string {
+  return `${INVITE_PATH}?token=${encodeURIComponent(token)}&error=${problem}`;
 }
 
 /**

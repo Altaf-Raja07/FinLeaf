@@ -121,7 +121,8 @@ export function InviteMemberForm({
             {state.smsConfigured
               ? labels.linkHelpSms
               : labels.linkHelpNoSms}{" "}
-            This link expires in 7 days and works once.
+            This link expires in 7 days and works once. Anyone who has it can
+            join your household group, so send it to one person, directly.
           </p>
         </div>
       ) : null}

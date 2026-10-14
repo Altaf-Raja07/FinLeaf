@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@/generated/prisma/client";
 import { currentUser } from "@/lib/auth/session";
 import { createNotification } from "@/lib/notify";
 import { refreshTrustScore } from "@/lib/trust";
@@ -269,10 +270,19 @@ export async function joinCircleAction(
     return { error: "You are already in that circle." };
   }
 
-  await prisma.circleMember.create({
-    data: { circleId: circle.id, userId: user.id },
-    select: { id: true },
-  });
+  try {
+    await prisma.circleMember.create({
+      data: { circleId: circle.id, userId: user.id },
+      select: { id: true },
+    });
+  } catch (error) {
+    // A double-tap sends a second POST that passes the read above. The unique
+    // index makes the second harmless, and saying so is better than failing.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return { error: "You are already in that circle." };
+    }
+    throw error;
+  }
 
   await refreshTrustScore(user.id);
 
@@ -297,8 +307,9 @@ export interface VouchActionState {
  *  3. One vouch per (circle, from, to). The unique index is the backstop; the
  *     read before the write is what makes the common case a clean message.
  *
- * The score is refreshed afterwards rather than adjusted by a weight, which is
- * the point: see the note at the top of this file.
+ * No score is written by this action, and none is refreshed either: the score
+ * reads circle membership, not vouches, so there is nothing here for it to
+ * learn. See the note at the top of this file.
  */
 export async function vouchForMemberAction(
   _prev: VouchActionState,
@@ -365,7 +376,7 @@ export async function vouchForMemberAction(
   } catch (error) {
     // A double-tap produces a second POST that passes the read above. The unique
     // index makes it harmless, and saying so is better than failing.
-    if (isUniqueViolation(error)) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { error: "You have already vouched for this member in this circle." };
     }
     throw error;
@@ -386,18 +397,12 @@ export async function vouchForMemberAction(
     href: CIRCLES_PATH,
   });
 
-  await refreshTrustScore(user.id);
+  // No trust-score refresh here, deliberately. A vouch changes nothing the
+  // score reads: `group_activity` is derived from CircleMember rows, and no
+  // membership was added or removed by this write. Refreshing anyway would
+  // record a snapshot with identical features, which is audit noise, and it
+  // would imply a link between flattery and score that does not exist.
 
   revalidatePath(CIRCLES_PATH, "page");
   return { message: "Vouch recorded." };
-}
-
-/** Prisma's unique-constraint error code, without importing the client runtime. */
-function isUniqueViolation(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    (error as { code?: unknown }).code === "P2002"
-  );
 }
