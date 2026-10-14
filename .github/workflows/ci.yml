@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # The web app refuses to boot without a secret; a fixed test value keeps the
+  # pipeline from depending on a real credential.
+  APP_SECRET: ci-only-secret-not-a-real-credential-32
+
+jobs:
+  web:
+    name: web (lint, types, tests, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: finleaf
+          POSTGRES_PASSWORD: finleaf
+          POSTGRES_DB: finleaf_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U finleaf -d finleaf_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The Prisma client is generated TypeScript checked into src/generated.
+      # Generating it in CI keeps it in step with the schema instead of relying
+      # on a stale checked-in copy.
+      - name: Resolve dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Ledger integration tests
+        run: npm run db:deploy && npm run test:integration
+        env:
+          DATABASE_URL: postgresql://finleaf:finleaf@localhost:5432/finleaf_test?schema=public
+
+  ml:
+    name: ml (tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/ml
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Train once, so the artefact-dependent tests can run
+        run: python -m app.train --force
+
+      - name: Tests
+        run: python -m pytest tests/ -q
