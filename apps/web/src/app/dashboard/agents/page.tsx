@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { MapPin } from "lucide-react";
-import { PageHeader, Card, CardHeader, EmptyState, Alert, Field } from "@/components/ui";
+import { PageHeader, Card, CardHeader, EmptyState } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { listAgents } from "@/lib/agents";
@@ -25,7 +25,7 @@ export default async function AgentsPage({
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const { t, locale } = await translator();
+  const { t } = await translator();
   const params = await searchParams;
 
   const query = typeof params.q === "string" ? params.q : "";

@@ -7,7 +7,7 @@ import { prisma } from "@/lib/db";
 import { currentUser } from "@/lib/auth/session";
 import { requireAccount } from "@/lib/auth/guard";
 import { postTransaction } from "@/lib/banking/ledger";
-import { findBiller, listBillers } from "@/lib/banking/bills";
+import { findBiller } from "@/lib/banking/bills";
 import { estimateCo2e } from "@/lib/carbon";
 import { greenPointsFor } from "@/lib/carbon/factors";
 import { PAPERLESS_SHEETS_PER_BILL } from "@/lib/carbon/factors";
@@ -165,7 +165,6 @@ export async function payBill(
   };
 }
 
-export { listBillers };
 
 /** Maps a biller-file category onto the ledger's enum, defaulting to OTHER. */
 function toCategory(value: string): TxCategory {

@@ -5,9 +5,6 @@ import { LeafMark } from "@/components/LeafMark";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { requireAccount } from "@/lib/auth/guard";
-import { formatMoney } from "@/lib/i18n";
-import { listBillers } from "@/lib/banking/bills";
-import { deriveAnomalyFeatures } from "@/lib/banking/transfer";
 import { TransferForm } from "./TransferForm";
 
 /**
@@ -25,7 +22,6 @@ export default async function TransferPage() {
 
   const { t } = await translator();
   const account = await requireAccount(user.id);
-  const billers = await listBillers();
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,7 +41,6 @@ export default async function TransferPage() {
         balance={account.balance.toString()}
         accountId={account.id}
         accountNumber={account.number}
-        billers={billers.map((b) => ({ slug: b.slug, name: b.name, category: b.category }))}
       />
 
       <p className="field-help text-balance">
@@ -55,4 +50,3 @@ export default async function TransferPage() {
   );
 }
 
-export { formatMoney };

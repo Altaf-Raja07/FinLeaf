@@ -47,8 +47,7 @@ export async function registerUser(
     };
   }
 
-  const { name, phone, village, password, preferredLang, otpCode, locale } =
-    parsed.data;
+  const { name, phone, village, password, preferredLang, otpCode } = parsed.data;
 
   const ip = clientIp(await headers());
   const limited = await rateLimit(`signup:ip:${ip}`, RATE_LIMITS.signUp);

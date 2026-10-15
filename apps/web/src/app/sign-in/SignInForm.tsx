@@ -1,12 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button, Field, Alert } from "@/components/ui";
-import { requestOtp } from "./otp-actions";
-import { verifyOtpCode } from "./otp-actions";
-import { passwordLogin, otpLogin } from "./otp-actions";
-import { Spinner } from "@/components/ui";
+import { requestOtp, passwordLogin, otpLogin } from "./otp-actions";
 
 type Method = "password" | "otp";
 
@@ -33,19 +29,11 @@ export function SignInForm({ locale }: { locale: string }) {
   const [phone, setPhone] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const router = useRouter();
 
   async function onSendCode() {
     setNotice(null);
     const result = await requestOtp(phone, "LOGIN", locale);
     if (result.ok) setCodeSent(true);
-    else setNotice(result.message);
-  }
-
-  async function onVerifyCode(code: string) {
-    setNotice(null);
-    const result = await verifyOtpCode(phone, "LOGIN", code, locale);
-    if (result.ok) router.push("/dashboard");
     else setNotice(result.message);
   }
 

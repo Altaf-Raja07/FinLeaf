@@ -11,7 +11,7 @@ import {
   sustainabilityScore,
   villageLeaderboard,
 } from "@/lib/sustainability";
-import { estimateCo2e, factorTable } from "@/lib/carbon";
+import { factorTable } from "@/lib/carbon";
 import { formatCo2e, formatMoney } from "@/lib/i18n";
 import { CategoryChart } from "./CategoryChart";
 import { CarbonTrendChart } from "./CarbonTrendChart";

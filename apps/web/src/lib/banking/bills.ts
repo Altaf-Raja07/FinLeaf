@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@/lib/db";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { PAPERLESS_SHEETS_PER_BILL } from "@/lib/carbon/factors";
 
 /**
  * Bill payments and recharges.
@@ -112,13 +111,3 @@ export function billerLabel(biller: Biller, locale: string): string {
   return biller.translations[locale] ?? biller.name;
 }
 
-/**
- * Sheets of paper avoided by paying this bill online.
- *
- * Stated as a constant, not inferred: this is the only figure in the
- * sustainability section that is not a modelled estimate, and it should be
- * audited rather than derived and then presented as if it were measured.
- */
-export function paperlessForBill(_billerSlug: string): number {
-  return PAPERLESS_SHEETS_PER_BILL;
-}

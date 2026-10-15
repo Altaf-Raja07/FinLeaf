@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/db";
 import { PageHeader, Card, CardHeader, Alert, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { requireAdmin } from "@/lib/auth/guard";

@@ -70,7 +70,7 @@ async function main() {
   const receiverAccount = await openAccount(receiver.id);
 
   // --- 1. Deposit cash ---------------------------------------------------
-  const deposit = await postTransaction({
+  await postTransaction({
     reference: `smoke-deposit-${Date.now()}`,
     type: "DEPOSIT",
     category: "SALARY",

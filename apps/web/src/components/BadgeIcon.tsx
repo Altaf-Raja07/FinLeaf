@@ -45,11 +45,9 @@ const ICONS: Record<string, ComponentType<{ className?: string; "aria-hidden"?: 
 export function BadgeIcon({
   name,
   className = "h-5 w-5",
-  locked = false,
 }: {
   name: string;
   className?: string;
-  locked?: boolean;
 }) {
   const Icon = ICONS[name] ?? Award;
 

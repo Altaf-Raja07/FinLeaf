@@ -10,10 +10,6 @@ import { z } from "zod";
  * `server-only` guard makes that a build error rather than a runtime leak.
  */
 
-const booleanish = z
-  .enum(["true", "false"])
-  .transform((v) => v === "true");
-
 const schema = z
   .object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/db";
-import { formatMoney, formatCo2e, formatDateTime, formatDate } from "@/lib/i18n";
+import { formatMoney, formatCo2e, formatDate } from "@/lib/i18n";
 import { sustainabilityScore, monthlyCarbon } from "@/lib/sustainability";
 import { loanEligibility } from "@/lib/trust";
 import type { Locale } from "@/lib/i18n";

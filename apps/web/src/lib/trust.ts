@@ -226,7 +226,7 @@ export async function refreshTrustScore(
       select: { trustScore: true, name: true },
     });
 
-    const snapshot = await prisma.trustScoreSnapshot.create({
+    await prisma.trustScoreSnapshot.create({
       data: {
         userId,
         model: result.source,

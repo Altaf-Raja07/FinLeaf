@@ -6,7 +6,6 @@ import {
   type OtpDelivery,
   type SmsTransport,
 } from "./transport";
-import type { OtpPurpose } from "@/generated/prisma/enums";
 
 /**
  * Twilio SMS transport.

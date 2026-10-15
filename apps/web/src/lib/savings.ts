@@ -3,7 +3,6 @@ import { prisma } from "@/lib/db";
 import { Prisma } from "@/generated/prisma/client";
 import { postTransaction } from "@/lib/banking/ledger";
 import { requireAccount } from "@/lib/auth/guard";
-import { greenPointsFor } from "@/lib/carbon/factors";
 import { refreshTrustScore } from "@/lib/trust";
 import { recordAudit } from "@/lib/audit";
 import { log } from "@/lib/env";

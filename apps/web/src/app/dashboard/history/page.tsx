@@ -208,4 +208,3 @@ function buildQuery(params: Record<string, string | string[] | undefined>, page:
   return `&${search.toString()}`;
 }
 
-export { formatMoney };

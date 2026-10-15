@@ -68,7 +68,7 @@ export default async function MethodologyPage() {
                 factor.
               </li>
               <li>
-                Monthly totals are the sum of a month's transactions, shown as a
+                Monthly totals are the sum of a month&apos;s transactions, shown as a
                 trend.
               </li>
               <li>
@@ -98,7 +98,7 @@ export default async function MethodologyPage() {
             <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm text-ink-soft">
               <li>
                 <strong className="text-ink">Electricity</strong> is based on
-                India's Central Electricity Authority CO₂ Baseline Database.
+                India&apos;s Central Electricity Authority CO₂ Baseline Database.
               </li>
               <li>
                 <strong className="text-ink">Fuel and travel</strong> come from
@@ -121,7 +121,7 @@ export default async function MethodologyPage() {
           <p className="leading-relaxed text-ink-soft text-pretty">
             FinLeaf has no credit-bureau history for a new user, so the score is
             computed from how the account is actually used. Eight behavioural
-            features are read from the platform's own records — regular saving,
+            features are read from the platform&apos;s own records — regular saving,
             on-time bill payments, consistent activity, account age, group
             participation, balance stability, monthly transaction volume and
             prior repayment behaviour.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { LeafMark } from "@/components/LeafMark";
 
 /**
@@ -34,8 +35,8 @@ export default function GlobalError({
         <h1 className="text-2xl font-bold tracking-tight">Something went wrong</h1>
 
         <p className="max-w-md text-sm leading-relaxed text-ink-soft text-pretty">
-          This is a problem on our side, not something you did. You can try
-          again, and if it keeps happening the reference below helps us find it.
+          This is a problem on our side. You can try again, and if it keeps
+          happening the reference below helps us find it.
         </p>
 
         {error.digest ? (
@@ -48,9 +49,9 @@ export default function GlobalError({
           <button type="button" onClick={reset} className="btn btn-primary">
             Try again
           </button>
-          <a href="/" className="btn btn-secondary no-underline">
+          <Link href="/" className="btn btn-secondary no-underline">
             Go to the home page
-          </a>
+          </Link>
         </div>
       </body>
     </html>

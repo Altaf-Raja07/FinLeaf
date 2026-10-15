@@ -29,13 +29,11 @@ export function TransferForm({
   balance,
   accountId,
   accountNumber,
-  billers,
   locale,
 }: {
   balance: string;
   accountId: string;
   accountNumber: string;
-  billers: Array<{ slug: string; name: string; category: string }>;
   locale: string;
 }) {
   const [state, formAction, pending] = useActionState(executeTransfer, initialState);

@@ -4,7 +4,6 @@ import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { requireAccount } from "@/lib/auth/guard";
 import { listBillers } from "@/lib/banking/bills";
-import { formatMoney } from "@/lib/i18n";
 import { BillPaymentForm } from "./BillPaymentForm";
 
 /**
@@ -68,4 +67,3 @@ export default async function BillsPage() {
   );
 }
 
-export { formatMoney };

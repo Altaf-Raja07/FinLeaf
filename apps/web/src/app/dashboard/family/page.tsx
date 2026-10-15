@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import { Home, Users } from "lucide-react";
+import { Home } from "lucide-react";
 import { PageHeader, Card, CardHeader, EmptyState, Alert, Field, Button, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { listMyFamilyGroups } from "@/lib/groups";
-import { createFamilyAction, inviteMemberAction, leaveGroupAction, removeMemberAction, setSpendPermissionAction } from "./family-actions";
+import { createFamilyAction, leaveGroupAction, removeMemberAction, setSpendPermissionAction } from "./family-actions";
 import { InviteForm } from "./InviteForm";
 
 /**
@@ -137,4 +137,3 @@ export default async function FamilyPage() {
   );
 }
 
-export { Users };

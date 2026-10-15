@@ -34,7 +34,7 @@ export const POST = handleRoute(async (request: Request) => {
     );
   }
 
-  const { name, phone, village, password, preferredLang, otpCode, locale } = parsed.data;
+  const { name, phone, village, password, preferredLang, otpCode } = parsed.data;
 
   const verified = await verifyOtp({ phone, purpose: "REGISTRATION", code: otpCode });
   if (!verified.ok) {

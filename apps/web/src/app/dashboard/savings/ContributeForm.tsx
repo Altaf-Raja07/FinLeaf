@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 import { Alert, Button, Field } from "@/components/ui";
 import { contributeAction } from "./contribute-action";
-import { formatMoney } from "@/lib/i18n";
 
 /**
  * Add money to a goal.

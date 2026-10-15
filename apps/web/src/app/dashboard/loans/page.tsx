@@ -5,7 +5,7 @@ import { currentUser } from "@/lib/auth/session";
 import { loanEligibility } from "@/lib/trust";
 import { listLoans } from "@/lib/banking/loans";
 import { formatDate, formatMoney } from "@/lib/i18n";
-import { PageHeader, Card, CardHeader, EmptyState, Pill, Alert, Button } from "@/components/ui";
+import { PageHeader, Card, CardHeader, EmptyState, Pill, Alert } from "@/components/ui";
 import { LoanForm } from "./LoanForm";
 
 /**

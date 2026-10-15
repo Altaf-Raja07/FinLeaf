@@ -53,7 +53,7 @@ describe("emission factors", () => {
   });
 
   it("exposes every factor with a label and a note in all three locales", () => {
-    for (const [key, entry] of Object.entries(EMISSION_FACTORS)) {
+    for (const key of Object.keys(EMISSION_FACTORS)) {
       for (const locale of ["en", "hi", "kn"]) {
         expect(labelFor(key, locale), `${key}/${locale}`).not.toBe(key);
         expect(noteFor(key, locale).length).toBeGreaterThan(5);

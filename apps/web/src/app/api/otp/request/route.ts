@@ -1,6 +1,6 @@
 import { rateLimit, RATE_LIMITS, clientIp, rateLimitHeaders } from "@/lib/rate-limit";
-import { requestOtpSchema, verifyOtpSchema } from "@/lib/validation";
-import { requestOtp, verifyOtp, OTP_TTL_MINUTES } from "@/lib/auth/otp";
+import { requestOtpSchema } from "@/lib/validation";
+import { requestOtp, OTP_TTL_MINUTES } from "@/lib/auth/otp";
 import { ok, fail, handleRoute } from "@/lib/api";
 import { log } from "@/lib/env";
 

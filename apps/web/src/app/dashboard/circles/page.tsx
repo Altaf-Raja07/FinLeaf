@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
 import { PageHeader, Card, CardHeader, EmptyState, Alert, Field, Button, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
+import { formatDate } from "@/lib/i18n";
 import { currentUser } from "@/lib/auth/session";
 import { listMyCircles, listJoinableCircles, listVouches } from "@/lib/groups";
 import { VouchButton } from "./VouchButton";
@@ -21,7 +22,7 @@ export default async function CirclesPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const { t } = await translator();
+  const { t, locale } = await translator();
 
   const [mine, joinable, vouches] = await Promise.all([
     listMyCircles(user.id),
@@ -58,7 +59,7 @@ export default async function CirclesPage() {
             <Card as="li" key={circle.id} className="flex flex-col gap-4">
               <CardHeader
                 title={circle.name}
-                subtitle={`${circle.village} · ${t("circles.members", { count: circle.members.length })} · $`}
+                subtitle={`${circle.village} · ${t("circles.members", { count: circle.members.length })} · ${t("circles.joinedAt", { date: formatDate(joinedAt, locale) })}`}
                 action={
                   <Pill status="neutral">
                     {role === "ADMIN" ? t("circles.role.admin") : t("circles.role.member")}

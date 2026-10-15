@@ -1,6 +1,6 @@
 import "server-only";
 import { translate } from "@/lib/i18n";
-import { requestLocale, setRequestLocale } from "@/lib/locale";
+import { requestLocale } from "@/lib/locale";
 
 /**
  * The request-scoped translator.

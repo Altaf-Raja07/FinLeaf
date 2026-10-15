@@ -1,15 +1,13 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { PageHeader, Card, CardHeader, Alert, Pill, Stat, Button } from "@/components/ui";
+import { PageHeader, Card, CardHeader, Pill, Stat, Button } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { formatDate, formatMoney } from "@/lib/i18n";
 import { ProfileForm } from "./ProfileForm";
 import {
-  changePasswordAction,
   listSessions,
   signOutEverywhere,
-  updateProfileAction,
 } from "./profile-actions";
 import { PasswordForm } from "./PasswordForm";
 import { TrustBreakdown } from "./TrustBreakdown";

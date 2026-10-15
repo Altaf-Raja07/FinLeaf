@@ -1,5 +1,6 @@
 /// <reference types="vitest/config" />
 import { pathToFileURL } from "node:url";
+import { join } from "node:path";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -22,7 +23,7 @@ export default defineConfig({
     // ledger/audit modules it guards cannot be imported by a test. The test
     // process has no browser output, so the guard is stubbed. See
     // scripts/server-only-stub.ts for why this is safe.
-    alias: { "server-only": pathToFileURL(require("node:path").join(process.cwd(), "scripts/server-only-stub.ts")).pathname },
+    alias: { "server-only": pathToFileURL(join(process.cwd(), "scripts/server-only-stub.ts")).pathname },
   },
   // Replaced as a literal so `env()` sees a test build without assigning to the
   // read-only `process.env.NODE_ENV`.
