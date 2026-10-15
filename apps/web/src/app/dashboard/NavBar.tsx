@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { Route } from "next";
 import { useState } from "react";
 import {
   ArrowLeftRight,
@@ -37,7 +38,9 @@ import { SignOutButton } from "./sign-out-button";
  */
 
 interface NavItem {
-  href: string;
+  // Typed routes: every entry below is checked against the route table at
+  // compile time, so a renamed page cannot leave a dead link in the nav.
+  href: Route;
   label: string;
   icon: typeof LayoutDashboard;
 }
@@ -84,9 +87,12 @@ export function NavBar({
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 
-  const items = role === "ADMIN"
-    ? [...NAV, { href: "/admin", label: "Admin", icon: Settings as never }]
-    : NAV;
+  // Annotated so the admin entry's href is checked against the route table
+  // too, instead of widening to `string` inside the ternary.
+  const items: NavItem[] =
+    role === "ADMIN"
+      ? [...NAV, { href: "/admin", label: "Admin", icon: Settings }]
+      : NAV;
 
   return (
     <header className="sticky top-0 z-40 border-b border-rule bg-surface/95 backdrop-blur">

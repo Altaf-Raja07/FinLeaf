@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 import {
   ArrowDownLeft,
   ArrowLeftRight,
@@ -114,12 +115,14 @@ export default async function DashboardPage() {
       <section aria-label={t("dashboard.quickActions")}>
         <h2 className="sr-only">{t("dashboard.quickActions")}</h2>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { href: "/dashboard/transfer", label: t("transfer.title"), icon: ArrowLeftRight },
-            { href: "/dashboard/bills", label: t("bills.title"), icon: HandCoins },
-            { href: "/dashboard/savings", label: t("savings.title"), icon: PiggyBank },
-            { href: "/dashboard/loans", label: t("loans.title"), icon: Shield },
-          ].map((action) => (
+          {(
+            [
+              { href: "/dashboard/transfer", label: t("transfer.title"), icon: ArrowLeftRight },
+              { href: "/dashboard/bills", label: t("bills.title"), icon: HandCoins },
+              { href: "/dashboard/savings", label: t("savings.title"), icon: PiggyBank },
+              { href: "/dashboard/loans", label: t("loans.title"), icon: Shield },
+            ] satisfies Array<{ href: Route; label: string; icon: typeof ArrowLeftRight }>
+          ).map((action) => (
             <li key={action.href}>
               <Link
                 href={action.href}

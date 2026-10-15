@@ -28,11 +28,12 @@ const nextConfig: NextConfig = {
     "/**": ["./data/**/*.json"],
   },
 
-  // Typed routes are enabled for `next dev`/`next build` only once every route in
-  // the nav exists; leaving them on while routes are still being built makes
-  // `tsc --noEmit` fail on links to pages that do not exist yet, which masks
-  // real type errors. Flip to true before shipping.
-  typedRoutes: false,
+  // Typed routes: every `<Link href>` and `redirect()` is checked against the
+  // route table at compile time. The flag was held off while routes were still
+  // being built, because links to not-yet-written pages would fail `tsc` and
+  // mask real errors. Every route in the nav now exists, so it is on — a typo
+  // in a link is a build failure instead of a 404 in front of a user.
+  typedRoutes: true,
 
   async headers() {
     return [

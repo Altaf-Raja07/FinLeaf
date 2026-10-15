@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { redirect } from "next/navigation";
 import {
   AlertTriangle,
@@ -141,7 +142,10 @@ export default async function NotificationsPage() {
                     <div className="mt-2 flex flex-wrap items-center gap-3">
                       {item.href ? (
                         <Link
-                          href={item.href}
+                          // Written as a typed route (see
+                          // NotificationInput.href); the database round-trip
+                          // is where the type is lost.
+                          href={item.href as Route}
                           className="text-sm font-semibold text-leaf-700 underline"
                         >
                           {t("notifications.open")}

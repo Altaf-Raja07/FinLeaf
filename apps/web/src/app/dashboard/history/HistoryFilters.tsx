@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import type { Route } from "next";
 import { useTransition } from "react";
 import { Button, Field } from "@/components/ui";
 
@@ -41,7 +42,6 @@ export function HistoryFilters({
   };
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const params = useSearchParams();
   const [pending, startTransition] = useTransition();
 
@@ -58,12 +58,14 @@ export function HistoryFilters({
     search.delete("page");
 
     startTransition(() => {
-      router.push(`${pathname}?${search.toString()}`);
+      // Typed routes verify the path, and this is the history page; the query
+      // string is the filter the user just changed, which cannot be a literal.
+      router.push(`/dashboard/history?${search.toString()}` as Route);
     });
   }
 
   function reset() {
-    startTransition(() => router.push(pathname));
+    startTransition(() => router.push("/dashboard/history"));
   }
 
   return (

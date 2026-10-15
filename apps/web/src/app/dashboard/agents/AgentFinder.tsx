@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import type { Route } from "next";
 import { Button, Field } from "@/components/ui";
 
 /**
@@ -21,7 +22,6 @@ export function AgentFinder({
   initialVillage: string;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const params = useSearchParams();
 
   function submit(formData: FormData) {
@@ -33,7 +33,9 @@ export function AgentFinder({
       else search.delete(key);
     }
 
-    router.push(`${pathname}?${search.toString()}`);
+    // Typed routes verify the path, and this is the agents page; the query
+    // string is the filter the user just typed, which cannot be a literal.
+    router.push(`/dashboard/agents?${search.toString()}` as Route);
   }
 
   return (

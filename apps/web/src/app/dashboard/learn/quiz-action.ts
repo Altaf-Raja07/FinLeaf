@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 import { prisma } from "@/lib/db";
 import { currentUser } from "@/lib/auth/session";
 import { requestLocale } from "@/lib/locale";
@@ -167,7 +168,9 @@ export async function submitQuizAction(
       type: "LESSON",
       title: translate(locale, "learn.lessonComplete"),
       body: translate(locale, "learn.pointsEarned", { points: POINTS_PER_LESSON }),
-      href: `/dashboard/learn/${anchor.lesson.slug}`,
+      // The lesson was read from the database by id, so its slug addresses a
+      // live route; typed routes cannot see a value that arrives at runtime.
+      href: `/dashboard/learn/${anchor.lesson.slug}` as Route,
     });
   }
 

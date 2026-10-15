@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 import { prisma } from "@/lib/db";
 import { Prisma } from "@/generated/prisma/client";
 import { currentUser } from "@/lib/auth/session";
@@ -556,12 +557,24 @@ export async function findFamilyInvitation(
  * the page can explain itself rather than failing silently. On success they land
  * in the group they just joined.
  */
+/**
+ * `redirect()` for invitation links.
+ *
+ * An invitation carries a token in its query string, so the destination cannot
+ * be a literal route for typed routes to verify — the argument is computed from
+ * the token. The *path* is always a real route (`/invite`); only the query
+ * string is data.
+ */
+function inviteRedirect(path: string): never {
+  return redirect(path as Route);
+}
+
 export async function acceptFamilyInviteAction(formData: FormData): Promise<void> {
   const rawToken = String(formData.get("token") ?? "").trim();
   const parsed = familyAcceptSchema.safeParse({ token: rawToken });
 
   if (!parsed.success) {
-    redirect(inviteErrorPath(rawToken, "missing"));
+    inviteRedirect(inviteErrorPath(rawToken, "missing"));
   }
 
   const token = parsed.data.token;
@@ -576,17 +589,17 @@ export async function acceptFamilyInviteAction(formData: FormData): Promise<void
   const found = await findFamilyInvitation(token, user.id);
 
   if (!found.ok) {
-    redirect(inviteErrorPath(token, found.problem));
+    inviteRedirect(inviteErrorPath(token, found.problem));
   }
 
   const { invite } = found;
 
   if (invite.isOwner) {
-    redirect(inviteErrorPath(token, "owner"));
+    inviteRedirect(inviteErrorPath(token, "owner"));
   }
 
   if (invite.alreadyMember) {
-    redirect(inviteErrorPath(token, "member"));
+    inviteRedirect(inviteErrorPath(token, "member"));
   }
 
   let outcome: InviteClaim | "error";
@@ -602,11 +615,11 @@ export async function acceptFamilyInviteAction(formData: FormData): Promise<void
     outcome = "error";
   }
 
-  if (outcome === "error") redirect(inviteErrorPath(token, "error"));
+  if (outcome === "error") inviteRedirect(inviteErrorPath(token, "error"));
   // Already a member: the transaction rolled back, so the link is still live
   // for the person it was actually sent to.
-  if (outcome.status === "member") redirect(inviteErrorPath(token, "member"));
-  if (outcome.status === "used") redirect(inviteErrorPath(token, "used"));
+  if (outcome.status === "member") inviteRedirect(inviteErrorPath(token, "member"));
+  if (outcome.status === "used") inviteRedirect(inviteErrorPath(token, "used"));
 
   await createNotification({
     userId: invite.ownerId,

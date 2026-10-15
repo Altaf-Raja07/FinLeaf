@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { log } from "@/lib/env";
+import type { Route } from "next";
 import type { NotificationType } from "@/generated/prisma/enums";
 
 /**
@@ -9,6 +10,12 @@ import type { NotificationType } from "@/generated/prisma/enums";
  * Titles and bodies are built by the caller in the user's preferred language.
  * A notification failure never blocks the action that triggered it, so writes
  * are caught and logged rather than thrown.
+ *
+ * `href` is a `Route`, not a string: every notification in the platform is
+ * written with a literal destination, and typing it here means a renamed page
+ * fails the build instead of producing a notification that leads nowhere. The
+ * type is lost on the round-trip through the database, so the one place that
+ * reads it back (the notifications page) restores it deliberately.
  */
 
 export interface NotificationInput {
@@ -16,7 +23,7 @@ export interface NotificationInput {
   type: NotificationType;
   title: string;
   body: string;
-  href?: string;
+  href?: Route;
 }
 
 export async function createNotification(
