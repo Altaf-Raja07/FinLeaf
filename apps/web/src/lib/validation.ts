@@ -314,12 +314,39 @@ export const offsetContributeSchema = z.object({
   reference: z.string().trim().min(8).max(64),
 });
 
-export const redeemVoucherSchema = z.object({
-  voucherId: cuidSchema,
-});
-
 export const anomalyResolveSchema = z.object({
   flagId: cuidSchema,
+});
+
+/**
+ * A banking agent, as the operator's directory records it.
+ *
+ * Coordinates are coerced because a form submits them as strings. The ranges
+ * are the actual definitions of latitude and longitude; values outside them are
+ * rejected here rather than stored and left to break a distance sort later.
+ *
+ * The phone number is the *operator's* contact number for the agent, not
+ * something collected from the agent directly — a record is published only with
+ * the operator's confirmation, which the admin copy states.
+ */
+export const adminAgentCreateSchema = z.object({
+  name: z.string().trim().min(2, "Enter the agent's name").max(80),
+  shopName: z.string().trim().min(2, "Enter the shop or kiosk name").max(120),
+  village: z.string().trim().min(2, "Enter the village or locality").max(80),
+  phone: phoneSchema,
+  latitude: z.coerce
+    .number()
+    .min(-90, "Latitude must be between -90 and 90")
+    .max(90, "Latitude must be between -90 and 90"),
+  longitude: z.coerce
+    .number()
+    .min(-180, "Longitude must be between -180 and 180")
+    .max(180, "Longitude must be between -180 and 180"),
+  openHours: z.string().trim().min(2, "Enter the opening hours").max(80),
+});
+
+export const adminAgentDeactivateSchema = z.object({
+  agentId: cuidSchema,
 });
 
 // ---------------------------------------------------------------------------

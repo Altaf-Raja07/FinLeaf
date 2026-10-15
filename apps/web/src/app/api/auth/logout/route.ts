@@ -21,5 +21,5 @@ export const POST = handleRoute(async () => {
 export function GET() {
   // Reached by a user navigating to /api/auth/logout directly. Sign-out is a
   // state change, so a GET must not perform it; redirect instead.
-  return Response.redirect(new URL("/profile", process.env.APP_URL ?? "http://localhost:3000"));
+  return Response.redirect(new URL("/dashboard/profile", process.env.APP_URL ?? "http://localhost:3000"));
 }

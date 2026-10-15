@@ -104,10 +104,12 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-finleaf}:${POSTGRES_PASSWORD:-finleaf}@db:5432/${POSTGRES_DB:-finleaf}?schema=public
-    # Applies migrations and seeds reference data, then exits. `web` waits for
-    # this to finish successfully before serving traffic.
+    # Applies migrations, seeds reference data, then verifies that every record
+    # in data/ actually landed. `web` waits for this to succeed before serving
+    # traffic, so a seed that silently did nothing fails the deployment instead
+    # of surfacing later as an empty curriculum.
     command: >
-      sh -c "npx prisma migrate deploy && npm run db:seed"
+      sh -c "npx prisma migrate deploy && npm run db:seed && npm run smoke:seed"
 
 volumes:
   finleaf_pgdata:

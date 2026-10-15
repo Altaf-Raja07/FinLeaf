@@ -36,7 +36,8 @@ cost of spending visible.
 - **Registration and sign-in** by phone number and a one-time code, with a
   password. OTPs are delivered through a pluggable SMS transport (Twilio or
   MSG91); `console` is available for development and is **refused** in
-  production, both at boot and at send time.
+  production at the point an OTP is sent, so a deployment without SMS
+  credentials runs normally and only the OTP flows return a clear error.
 - **Dashboard** with balance, recent activity, scores and quick actions.
 - **Transfers** between accounts or phone numbers, with the recipient's name
   confirmed before you send.
@@ -294,8 +295,9 @@ production:
 ### Containers
 
 `docker-compose.yml` runs Postgres, the ML service and the web app. A one-shot
-`migrate` container applies migrations and seeds reference data; the web app waits
-for it to complete successfully before serving traffic.
+`migrate` container applies migrations, seeds reference data and then verifies
+that every record in `data/` actually landed; the web app waits for it to
+complete successfully before serving traffic.
 
 The ML service uses `/ready` for its healthcheck, not `/health`. That distinction
 is deliberate and was the fix for a real bug — see

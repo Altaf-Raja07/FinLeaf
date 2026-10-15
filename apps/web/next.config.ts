@@ -19,6 +19,15 @@ const nextConfig: NextConfig = {
   // load native addons and read files from disk at runtime.
   serverExternalPackages: ["pg", "@prisma/client", "@prisma/adapter-pg"],
 
+  // The curated reference data is read from disk at request time
+  // (`readFile(process.cwd()/data/...)`), which output file tracing cannot see:
+  // the path is built at runtime. Without this, the standalone build — and so
+  // the production Docker image — would ship an app whose biller, agent and
+  // offset pages fail with ENOENT on first request.
+  outputFileTracingIncludes: {
+    "/**": ["./data/**/*.json"],
+  },
+
   // Typed routes are enabled for `next dev`/`next build` only once every route in
   // the nav exists; leaving them on while routes are still being built makes
   // `tsc --noEmit` fail on links to pages that do not exist yet, which masks

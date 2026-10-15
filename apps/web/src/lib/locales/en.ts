@@ -652,5 +652,15 @@ export const en = {
   "about.methodology.body": "Every estimate — the carbon factors, the trust score and its training data — is documented, with sources, on the methodology page.",
   "about.methodology.link": "Read the methodology",
   "about.contact.title": "Contact",
-  "about.contact.body": "This project has no support desk and no production operation. For questions about it, contact the Department of Computer Science at IIIT Dharwad."
+  "about.contact.body": "This project has no support desk and no production operation. For questions about it, contact the Department of Computer Science at IIIT Dharwad.",
+  "admin.agentPhoneHelp": "The operator's contact number for this agent, in E.164 format.",
+  "admin.agentsEmpty": "No agents loaded. The directory is operator-supplied, so it starts empty; add a record above or POST to /api/admin/agents.",
+  "admin.agentActive": "Active",
+  "admin.agentInactive": "Inactive",
+  "admin.deactivateAgent": "Deactivate",
+  "admin.auditHelp": "Every security- and money-relevant event, newest first.",
+  "admin.auditWhen": "Time",
+  "admin.auditWho": "User",
+  "admin.auditAction": "Action",
+  "admin.auditDetail": "Detail"
 } as const;

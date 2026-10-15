@@ -58,64 +58,17 @@ const schema = z
     /**
      * Set to "1" by the `build` script in package.json.
      *
-     * `next build` evaluates route modules to collect page data, with
-     * NODE_ENV=production, on a machine that has no SMS credentials. Detecting
-     * that reliably from inside the module is fragile, so the build script
-     * declares it explicitly and the SMS checks below are skipped when it is
-     * set. The check that actually matters runs at request time in
-     * `assertSmsConfigured()`.
+     * `next build` evaluates route modules with NODE_ENV=production on a
+     * machine that has no environment configured at all — the production image
+     * is hermetic. Detecting that reliably from inside the module is fragile,
+     * so the build script declares it explicitly and {@link load} fills in
+     * inert placeholders for the two values a build cannot proceed without.
+     *
+     * It deliberately disables no check that runs at request time: the SMS
+     * configuration is enforced by `assertSmsConfigured()` when an OTP is
+     * actually sent, not here and not at boot.
      */
     NEXT_BUILDING: z.string().optional(),
-  })
-  .superRefine((value, ctx) => {
-    // A console transport would print live OTPs to the process log. That is
-    // acceptable while developing and unacceptable in production, so the
-    // combination is rejected outright rather than silently downgraded.
-    //
-    // These checks are skipped while the production bundle is being *built*:
-    // `next build` runs with NODE_ENV=production but on a machine that has no
-    // SMS credentials, so enforcing them there would make the app unbuildable
-    // for reasons unrelated to the code. They are enforced instead by
-    // `assertSmsConfigured()`, at the moment an OTP is actually sent, which is
-    // the only point at which the misconfiguration could do harm.
-    if (isProductionBuild(value)) return;
-
-    if (value.NODE_ENV === "production" && value.SMS_PROVIDER === "console") {
-      ctx.addIssue({
-        code: "custom",
-        path: ["SMS_PROVIDER"],
-        message:
-          "SMS_PROVIDER=console would log live OTPs to stdout. Set SMS_PROVIDER to twilio or msg91 in production.",
-      });
-    }
-
-    if (value.SMS_PROVIDER === "twilio") {
-      const missing = (
-        [
-          ["TWILIO_ACCOUNT_SID", value.TWILIO_ACCOUNT_SID],
-          ["TWILIO_AUTH_TOKEN", value.TWILIO_AUTH_TOKEN],
-          ["TWILIO_FROM_NUMBER", value.TWILIO_FROM_NUMBER],
-        ] as const
-      )
-        .filter(([, v]) => !v)
-        .map(([k]) => k);
-
-      if (missing.length) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["SMS_PROVIDER"],
-          message: `SMS_PROVIDER=twilio requires ${missing.join(", ")}`,
-        });
-      }
-    }
-
-    if (value.SMS_PROVIDER === "msg91" && !value.MSG91_AUTH_KEY) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["SMS_PROVIDER"],
-        message: "SMS_PROVIDER=msg91 requires MSG91_AUTH_KEY",
-      });
-    }
   });
 
 /**
@@ -132,8 +85,35 @@ function isProductionBuild(value: { NEXT_BUILDING?: string }): boolean {
 
 export type Env = z.infer<typeof schema>;
 
+/**
+ * Inert values used only while `next build` evaluates server modules.
+ *
+ * `next build` imports every route to collect page data on a machine that, in
+ * the container case, has no `.env` and no environment variables at all — the
+ * build is hermetic by design. Supplying these lets configuration validation
+ * run unchanged everywhere else while a build that never opens a connection and
+ * never signs a token still completes.
+ *
+ * They replace nothing: a real value in the environment wins. And they cannot
+ * mask a production misconfiguration, because `NEXT_BUILDING` is set only by
+ * the `build` script — the production server runs `node server.js` and goes
+ * through the schema with no placeholders and full enforcement.
+ */
+const BUILD_PLACEHOLDERS: Record<string, string> = {
+  DATABASE_URL: "postgresql://build:build@127.0.0.1:5432/build?schema=public",
+  APP_SECRET: "build-time-placeholder-value-not-a-secret-and-never-used",
+};
+
 function load(): Env {
-  const parsed = schema.safeParse(process.env);
+  const source: Record<string, string | undefined> = { ...process.env };
+
+  if (isProductionBuild(source)) {
+    for (const [key, placeholder] of Object.entries(BUILD_PLACEHOLDERS)) {
+      source[key] ??= placeholder;
+    }
+  }
+
+  const parsed = schema.safeParse(source);
 
   if (!parsed.success) {
     const details = parsed.error.issues
@@ -177,13 +157,15 @@ export function isProduction(): boolean {
  * Enforces the OTP transport configuration at the moment an OTP is about to be
  * sent.
  *
- * The build-time check in {@link env} cannot run this: `next build` executes
- * with NODE_ENV=production but on a machine with no SMS credentials, so failing
- * there would make the app unbuildable. The consequence of skipping the check
- * is therefore pushed to the only place it is meaningful — an actual send
- * attempt — where it returns a 503 rather than silently logging a live OTP.
+ * This is the single enforcement point, and it is deliberately here rather than
+ * at boot. A deployment with no SMS credentials must still serve accounts,
+ * balances and password sign-in — everything that does not send a message. The
+ * one feature that cannot work without a provider fails with a clear 503 the
+ * moment it is used, and there is no fallback transport: an OTP is either
+ * delivered by a real provider or not delivered at all.
  *
- * Called by `deliverOtp()` in src/lib/sms.
+ * Called by `deliverOtp()` in src/lib/sms, the choke point every OTP passes
+ * through.
  */
 export function assertSmsConfigured(): void {
   const config = env();

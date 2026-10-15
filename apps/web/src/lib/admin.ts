@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/db";
+import { AuthError } from "@/lib/auth/guard";
 import { mlHealth, fetchModelMetrics } from "@/lib/ml/client";
 import { checkDatabase } from "@/lib/db";
 import { log } from "@/lib/env";
@@ -11,7 +12,28 @@ import { log } from "@/lib/env";
  * points at rows that already exist, because a production console with a "delete
  * all data" button is a foot-gun, and because operations that destructive have no
  * business being one click away from a search field.
+ *
+ * ## Why every write re-checks the role
+ *
+ * The admin page and the admin API check the caller with `requireAdmin()`. That
+ * is not enough on its own, because the console's buttons call **server
+ * actions**, which are POST endpoints a signed-in user can invoke directly
+ * without ever loading the page. A role check that lives only in the page is
+ * decoration. Every function here that can affect another account therefore
+ * re-reads the actor's role from the database first.
  */
+
+/** Confirms the acting user is a live administrator, or throws a 403. */
+async function assertAdminActor(adminId: string): Promise<void> {
+  const actor = await prisma.user.findUnique({
+    where: { id: adminId },
+    select: { role: true, status: true },
+  });
+
+  if (!actor || actor.role !== "ADMIN" || actor.status !== "ACTIVE") {
+    throw new AuthError(403, "Administrator access required", "forbidden");
+  }
+}
 
 export interface AdminUserRow {
   id: string;
@@ -68,6 +90,8 @@ export async function updateUser(input: {
   status?: "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED" | "CLOSED";
   role?: "USER" | "ADMIN";
 }): Promise<{ ok: boolean; message?: string }> {
+  await assertAdminActor(input.adminId);
+
   // An administrator cannot change their own role or status. Self-service here
   // would let one compromised account escalate to permanent.
   if (input.userId === input.adminId) {
@@ -141,6 +165,8 @@ export async function resolveFlag(input: {
   adminId: string;
   flagId: string;
 }): Promise<void> {
+  await assertAdminActor(input.adminId);
+
   const flag = await prisma.anomalyFlag.update({
     where: { id: input.flagId },
     data: { resolved: true, resolvedAt: new Date() },
@@ -151,6 +177,109 @@ export async function resolveFlag(input: {
     adminId: input.adminId,
     action: "ANOMALY_REVIEWED",
     detail: { flagId: input.flagId, userId: flag.userId },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Agent directory
+// ---------------------------------------------------------------------------
+
+export interface AdminAgentRow {
+  id: string;
+  name: string;
+  shopName: string;
+  village: string;
+  phone: string;
+  openHours: string;
+  active: boolean;
+}
+
+/**
+ * Every agent, active or not.
+ *
+ * The public locator filters to `active: true`; an operator needs to see the
+ * whole directory, including entries they have deactivated, to be able to audit
+ * what was once published.
+ */
+export async function listAgentsForAdmin(): Promise<AdminAgentRow[]> {
+  const rows = await prisma.agent.findMany({
+    orderBy: [{ active: "desc" }, { village: "asc" }, { name: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      shopName: true,
+      village: true,
+      phone: true,
+      openHours: true,
+      active: true,
+    },
+  });
+
+  return rows;
+}
+
+/**
+ * Adds an agent to the published directory.
+ *
+ * The input must already be validated by the caller — the server action or the
+ * API route — because the shape of an agent record (a real phone number in
+ * E.164, coordinates inside their actual ranges) is what the validation layer
+ * exists for.
+ */
+export async function createAgentAsAdmin(
+  adminId: string,
+  input: {
+    name: string;
+    shopName: string;
+    village: string;
+    phone: string;
+    latitude: number;
+    longitude: number;
+    openHours: string;
+  },
+): Promise<AdminAgentRow> {
+  await assertAdminActor(adminId);
+
+  const { createAgent } = await import("@/lib/agents");
+  const agent = await createAgent(input);
+
+  await recordAdminAudit({
+    adminId,
+    action: "ADMIN_ACTION",
+    detail: { createdAgent: agent.id, village: agent.village },
+  });
+
+  return {
+    id: agent.id,
+    name: agent.name,
+    shopName: agent.shopName,
+    village: agent.village,
+    phone: agent.phone,
+    openHours: agent.openHours,
+    active: true,
+  };
+}
+
+/**
+ * Removes an agent from the published directory.
+ *
+ * Deactivation rather than deletion: a phone number that was once published
+ * cannot be un-published, and keeping the row means the audit trail can still
+ * name the record that was live.
+ */
+export async function deactivateAgentAsAdmin(
+  adminId: string,
+  agentId: string,
+): Promise<void> {
+  await assertAdminActor(adminId);
+
+  const { deactivateAgent } = await import("@/lib/agents");
+  await deactivateAgent(agentId);
+
+  await recordAdminAudit({
+    adminId,
+    action: "ADMIN_ACTION",
+    detail: { deactivatedAgent: agentId },
   });
 }
 

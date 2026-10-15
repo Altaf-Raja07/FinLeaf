@@ -3,8 +3,17 @@ import Link from "next/link";
 import { PageHeader, Card, CardHeader, Alert, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { requireAdmin } from "@/lib/auth/guard";
-import { listUsers, listUnresolvedFlags, modelMetrics, systemHealth } from "@/lib/admin";
-import { resolveFlagAction } from "./admin-actions";
+import {
+  listAgentsForAdmin,
+  listAuditLogs,
+  listUnresolvedFlags,
+  listUsers,
+  modelMetrics,
+  systemHealth,
+} from "@/lib/admin";
+import { formatDateTime } from "@/lib/i18n";
+import { deactivateAgentAction, resolveFlagAction } from "./admin-actions";
+import { AgentForm } from "./AgentForm";
 import { UserTable } from "./UserTable";
 
 /**
@@ -28,17 +37,19 @@ export default async function AdminPage({
   // read.
   const admin = await requireAdmin();
 
-  const { t } = await translator();
+  const { t, locale } = await translator();
   const params = await searchParams;
 
   const query = typeof params.q === "string" ? params.q : "";
   const village = typeof params.village === "string" ? params.village : "";
 
-  const [users, flags, metrics, health] = await Promise.all([
+  const [users, flags, metrics, health, agents, auditLogs] = await Promise.all([
     listUsers({ query: query || undefined, village: village || undefined, limit: 50 }),
     listUnresolvedFlags(20),
     modelMetrics(),
     systemHealth(),
+    listAgentsForAdmin(),
+    listAuditLogs(30),
   ]);
 
   return (
@@ -205,6 +216,128 @@ export default async function AdminPage({
             adminId={admin.id}
           />
         </div>
+      </Card>
+
+      {/* Agent directory. Empty until the operator loads it, and the copy says
+          so rather than shrugging at an empty table. */}
+      <Card>
+        <CardHeader
+          title={t("admin.agents")}
+          subtitle={t("admin.agentHelp")}
+          action={
+            <Pill status={agents.length > 0 ? "good" : "neutral"}>
+              {agents.filter((a) => a.active).length} / {agents.length}
+            </Pill>
+          }
+        />
+
+        <AgentForm
+          labels={{
+            addAgent: t("admin.addAgent"),
+            agentName: t("admin.agentName"),
+            shopName: t("admin.shopName"),
+            village: t("admin.chooseVillage"),
+            agentPhone: t("admin.agentPhone"),
+            latitude: t("admin.latitude"),
+            longitude: t("admin.longitude"),
+            openHours: t("admin.openHours"),
+            agentHelp: t("admin.agentHelp"),
+            phoneHelp: t("admin.agentPhoneHelp"),
+          }}
+        />
+
+        {agents.length === 0 ? (
+          <p className="field-help mt-4">{t("admin.agentsEmpty")}</p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">{t("admin.agentName")}</th>
+                  <th scope="col">{t("admin.shopName")}</th>
+                  <th scope="col">{t("admin.chooseVillage")}</th>
+                  <th scope="col">{t("admin.agentPhone")}</th>
+                  <th scope="col">{t("admin.openHours")}</th>
+                  <th scope="col">{t("admin.status")}</th>
+                  <th scope="col">{t("action.apply")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {agents.map((agent) => (
+                  <tr key={agent.id} className={agent.active ? "" : "opacity-60"}>
+                    <th scope="row" className="font-semibold">
+                      {agent.name}
+                    </th>
+                    <td>{agent.shopName}</td>
+                    <td>{agent.village}</td>
+                    <td className="tnum">{agent.phone}</td>
+                    <td>{agent.openHours}</td>
+                    <td>
+                      <Pill status={agent.active ? "good" : "neutral"}>
+                        {agent.active ? t("admin.agentActive") : t("admin.agentInactive")}
+                      </Pill>
+                    </td>
+                    <td>
+                      {agent.active ? (
+                        <form action={deactivateAgentAction.bind(null, agent.id)}>
+                          <button type="submit" className="btn btn-ghost">
+                            {t("admin.deactivateAgent")}
+                          </button>
+                        </form>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+      {/* Audit log: every security- and money-relevant event, newest first. */}
+      <Card>
+        <CardHeader
+          title={t("admin.auditLog")}
+          subtitle={t("admin.auditHelp")}
+          action={<Pill status="neutral">{auditLogs.length}</Pill>}
+        />
+
+        {auditLogs.length === 0 ? (
+          <p className="field-help">{t("admin.auditEmpty")}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">{t("admin.auditWhen")}</th>
+                  <th scope="col">{t("admin.auditWho")}</th>
+                  <th scope="col">{t("admin.auditAction")}</th>
+                  <th scope="col">{t("admin.auditDetail")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {auditLogs.map((entry) => (
+                  <tr key={entry.id}>
+                    <td className="whitespace-nowrap field-help">
+                      {formatDateTime(entry.createdAt, locale)}
+                    </td>
+                    <td>{entry.user?.name ?? "—"}</td>
+                    <td>
+                      <span className="font-mono text-xs">
+                        {entry.action.toLowerCase().replace(/_/g, " ")}
+                      </span>
+                    </td>
+                    <td className="max-w-md">
+                      <span className="field-help block truncate" title={JSON.stringify(entry.detail)}>
+                        {entry.detail ? JSON.stringify(entry.detail) : "—"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       <p className="field-help">

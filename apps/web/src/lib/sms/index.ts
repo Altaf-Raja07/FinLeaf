@@ -39,9 +39,10 @@ export async function deliverOtp(input: {
   ttlMinutes: number;
   locale: string;
 }): Promise<{ delivered: true; provider: string }> {
-  // The real production guard. `env()` cannot enforce this during a build
-  // (no credentials on the build machine), so it runs here instead, where a
-  // misconfiguration becomes a 503 rather than an OTP in a production log.
+  // The only production guard on OTP delivery, and it runs at the moment of
+  // the send, not at boot: a missing provider must not take down the rest of
+  // the platform. A misconfiguration becomes a 503 here rather than an OTP in
+  // a production log.
   assertSmsConfigured();
 
   const transport = getSmsTransport();

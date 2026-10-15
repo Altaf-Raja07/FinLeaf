@@ -37,9 +37,17 @@ COPY package.json ./
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 COPY tsconfig.json ./
-COPY src/generated ./src/generated
+# `smoke:seed` passes this explicitly, and a script that silently used a
+# different compiler configuration than the one it ships with would be a trap.
+COPY tsconfig.scripts.json ./
 COPY data ./data
 COPY scripts ./scripts
+# The seed imports src/lib modules (the password hasher and the badge-criteria
+# parser) and the generated Prisma client. `src/generated` is excluded from the
+# build context — it is a build artefact — so the client is regenerated here,
+# which also guarantees it matches the checked-in schema.
+COPY src ./src
+RUN npx prisma generate
 
 # ---------------------------------------------------------------------------
 # runner — the production server.
