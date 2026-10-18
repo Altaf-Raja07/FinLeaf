@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   MapPin,
   Languages,
+  CheckCircle2,
 } from "lucide-react";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
@@ -389,7 +390,43 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Visual Editorial Feature Banner */}
+            <div className="mt-10 overflow-hidden rounded-3xl border border-[#b7ecda] bg-white shadow-sm lg:grid lg:grid-cols-12 lg:items-center">
+              <div className="relative h-64 sm:h-80 lg:col-span-7 lg:h-[380px]">
+                <Image
+                  src="/landing/sustainable-community.webp"
+                  alt="Rural Indian farmer holding a smartphone with FinLeaf digital banking app in a solar-powered organic farm in Karnataka"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent lg:hidden" />
+                <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 px-3.5 py-1.5 text-xs font-bold text-[#006642] shadow-sm backdrop-blur-sm">
+                  📍 Raichur District, Karnataka · Solar Farm Network
+                </div>
+              </div>
+              <div className="p-6 sm:p-8 lg:col-span-5">
+                <span className="inline-block rounded-full bg-[#effcf8] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#008254]">
+                  Real-World Impact
+                </span>
+                <h3 className="mt-3 text-xl font-bold text-[#071929] sm:text-2xl">
+                  Digital Banking in the Palm of Every Farmer’s Hand
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                  Over 1.3 billion people worldwide lack access to formal credit and banking. FinLeaf brings double-entry ledger security and transparent credit scoring directly to rural communities—empowering women, farmers, and self-help groups.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2 text-xs">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#b7ecda] bg-[#effcf8] px-3 py-1.5 font-semibold text-[#006642]">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#008254]" aria-hidden="true" /> Paperless & Zero KYC Friction
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#b7ecda] bg-[#effcf8] px-3 py-1.5 font-semibold text-[#006642]">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[#008254]" aria-hidden="true" /> Solar & Agro-Offset Rewards
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col justify-between rounded-2xl border border-[#d8d9da] bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-md">
                 <div>
                   <div className="flex items-center justify-between">
@@ -543,6 +580,42 @@ export default async function HomePage() {
               <p className="mx-auto mt-2 max-w-2xl text-base text-[#55606C]">
                 Built as a public-good academic innovation project for IIIT Dharwad, putting community security and honesty above all else.
               </p>
+            </div>
+
+            {/* Community Self-Help & Village Trust Circles Feature */}
+            <div className="mt-10 overflow-hidden rounded-3xl border border-[#d8d9da] bg-white shadow-sm lg:grid lg:grid-cols-12 lg:items-center">
+              <div className="order-2 p-6 sm:p-8 lg:order-1 lg:col-span-5">
+                <span className="inline-block rounded-full bg-[#effcf8] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#008254]">
+                  Social Capital as Collateral
+                </span>
+                <h3 className="mt-3 text-xl font-bold text-[#071929] sm:text-2xl">
+                  Village Trust Circles: Neighbors Vouching for Neighbors
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                  Borrowing without traditional credit history shouldn’t mean turning to predatory local moneylenders. With FinLeaf Trust Circles, 4 to 8 peers form a self-help circle, vouch for each other’s financial character, and build collective borrowing reputation.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2 text-xs">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#ebebec] bg-[#f7f7f7] px-3 py-1.5 font-semibold text-[#3D4751]">
+                    <Users className="h-3.5 w-3.5 text-[#008254]" aria-hidden="true" /> Microfinance SHG Compatible
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#ebebec] bg-[#f7f7f7] px-3 py-1.5 font-semibold text-[#3D4751]">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#008254]" aria-hidden="true" /> Zero Joint Liability Risk
+                  </span>
+                </div>
+              </div>
+              <div className="relative order-1 h-64 sm:h-80 lg:order-2 lg:col-span-7 lg:h-[380px]">
+                <Image
+                  src="/landing/trust-circles.webp"
+                  alt="Rural Indian village self-help group and banking correspondent reviewing digital records together under sunlight"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent lg:hidden" />
+                <div className="absolute bottom-4 right-4 rounded-xl bg-white/95 px-3.5 py-1.5 text-xs font-bold text-[#006642] shadow-sm backdrop-blur-sm">
+                  🤝 Village Self-Help Trust Circle · Dharwad
+                </div>
+              </div>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
