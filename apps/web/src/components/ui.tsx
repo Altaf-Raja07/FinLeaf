@@ -175,7 +175,13 @@ export function Field({
       {help ? <p className="field-help">{help}</p> : null}
       {children}
       {error ? (
-        <p className="field-error">{error}</p>
+        // The error mounts after the submit that caused it, so a live region is
+        // what gets it announced — nothing else on the page changes for a
+        // screen reader. Polite rather than assertive: sign-up can surface five
+        // field errors at once and interrupting for each would be unreadable.
+        <p className="field-error" aria-live="polite">
+          {error}
+        </p>
       ) : null}
     </div>
   );

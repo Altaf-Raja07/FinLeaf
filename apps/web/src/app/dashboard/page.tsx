@@ -24,7 +24,7 @@ import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { requireAccount } from "@/lib/auth/guard";
-import { formatDateTime, formatMoney, formatCo2e } from "@/lib/i18n";
+import { formatDateTime, formatMoney, formatCo2e, formatNumber } from "@/lib/i18n";
 import { monthlyCarbon, paperlessImpact, sustainabilityScore } from "@/lib/sustainability";
 import { loanEligibility } from "@/lib/trust";
 import { CarbonTrend } from "./CarbonTrend";
@@ -167,7 +167,7 @@ export default async function DashboardPage() {
               <Link
                 key={action.href}
                 href={action.href}
-                className="group flex items-center gap-2.5 rounded-2xl bg-white/10 p-3 backdrop-blur-md no-underline transition-all hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98]"
+                className="group flex items-center gap-2.5 rounded-2xl bg-white/10 p-3 backdrop-blur-md no-underline transition-[background-color,transform] duration-150 hover:bg-white/20 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors">
                   <action.icon className="h-4 w-4" />
@@ -256,7 +256,7 @@ export default async function DashboardPage() {
           </div>
           <div className="mt-2 flex items-baseline gap-1.5">
             <span className="text-2xl font-black tracking-tight text-ink tnum">
-              {paperless.sheets.toLocaleString("en-IN")}
+              {formatNumber(paperless.sheets, locale)}
             </span>
             <span className="text-xs text-ink-faint">sheets</span>
           </div>
@@ -471,7 +471,7 @@ export default async function DashboardPage() {
               }
             />
             <p className="text-xs text-ink-soft leading-relaxed">
-              Form or join a village peer savings circle. Vouch for neighbors, build credit reputation collectively, and unlock larger micro-loans.
+              Form or join a village peer savings circle. Vouch for neighbors, build credit reputation collectively, and qualify for larger micro-loans.
             </p>
             <Link
               href="/dashboard/circles"

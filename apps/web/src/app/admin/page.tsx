@@ -214,6 +214,7 @@ export default async function AdminPage({
               createdAt: user.createdAt.toISOString(),
             }))}
             adminId={admin.id}
+            locale={locale}
           />
         </div>
       </Card>

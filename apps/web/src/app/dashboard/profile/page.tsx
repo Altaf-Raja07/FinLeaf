@@ -66,7 +66,7 @@ export default async function ProfilePage() {
         <Stat
           label={t("profile.trustScore")}
           value={user.trustScore}
-          hint={snapshot ? new Date(snapshot.createdAt).toLocaleDateString("en-IN") : undefined}
+          hint={snapshot ? formatDate(snapshot.createdAt, locale) : undefined}
         />
         <Stat label={t("profile.sustainabilityScore")} value={user.sustainability} />
         <Stat label={t("profile.greenPoints")} value={user.greenPoints} />

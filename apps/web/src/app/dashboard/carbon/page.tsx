@@ -12,7 +12,7 @@ import {
   villageLeaderboard,
 } from "@/lib/sustainability";
 import { factorTable } from "@/lib/carbon";
-import { formatCo2e, formatMoney } from "@/lib/i18n";
+import { formatCo2e, formatMoney, formatNumber } from "@/lib/i18n";
 import { CategoryChart } from "./CategoryChart";
 import { CarbonTrendChart } from "./CarbonTrendChart";
 import { OffsetForm } from "./OffsetForm";
@@ -82,7 +82,7 @@ export default async function CarbonPage() {
         />
         <Stat
           label={t("carbon.paperless")}
-          value={paperless.sheets.toLocaleString("en-IN")}
+          value={formatNumber(paperless.sheets, locale)}
           hint={t("carbon.paperlessHelp")}
           icon={<Trees className="h-4 w-4" />}
         />

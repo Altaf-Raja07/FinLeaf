@@ -131,6 +131,11 @@ export function formatCompactMoney(amount: number): string {
   }).format(amount);
 }
 
+/** Plain count, for the numbers that are not money and not carbon. */
+export function formatNumber(value: number, locale: Locale = DEFAULT_LOCALE): string {
+  return new Intl.NumberFormat(locale === "en" ? "en-IN" : locale).format(value);
+}
+
 /** Short date. */
 export function formatDate(value: Date | string, locale: Locale = DEFAULT_LOCALE): string {
   const date = typeof value === "string" ? new Date(value) : value;

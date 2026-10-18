@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Target } from "lucide-react";
 import { EmptyState, PageHeader, Card, CardHeader, ProgressBar, Alert, Stat, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
@@ -63,7 +64,7 @@ export default async function SavingsPage() {
           <EmptyState
             title={t("savings.empty")}
             body={t("savings.emptyHelp")}
-            icon={<span className="text-3xl" aria-hidden="true">🎯</span>}
+            icon={<Target className="h-8 w-8" />}
           />
         ) : (
           goals.map((goal) => (

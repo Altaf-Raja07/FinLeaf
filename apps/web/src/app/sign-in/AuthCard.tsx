@@ -18,7 +18,7 @@ export function AuthCard({ locale }: { locale: string }) {
         <button
           type="button"
           onClick={() => setActiveTab("signin")}
-          className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 text-sm font-bold rounded-xl cursor-pointer transition-[background-color,color,box-shadow,border-color] duration-150 ${
             activeTab === "signin"
               ? "bg-surface-raised text-ink shadow-sm border border-rule/50"
               : "text-ink-soft hover:text-ink"
@@ -29,7 +29,7 @@ export function AuthCard({ locale }: { locale: string }) {
         <button
           type="button"
           onClick={() => setActiveTab("signup")}
-          className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 text-sm font-bold rounded-xl cursor-pointer transition-[background-color,color,box-shadow,border-color] duration-150 ${
             activeTab === "signup"
               ? "bg-surface-raised text-ink shadow-sm border border-rule/50"
               : "text-ink-soft hover:text-ink"

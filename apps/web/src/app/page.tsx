@@ -1,27 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, Play, Search } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  Search,
+  Smartphone,
+  Activity,
+  Leaf,
+  Users,
+  ShieldCheck,
+  MapPin,
+  Languages,
+} from "lucide-react";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
+import { ImpactEstimator } from "@/components/landing/ImpactEstimator";
 
 /**
  * Public landing page.
  *
- * Laid out to match design/HomePage.png. The mockup is a 1536x1024 capture
- * whose live page area is the box x=10..1524 (the black strip on the left and
- * grey strip on the right are capture artifacts). Every offset below is stated
- * in those mockup coordinates so the numbers can be re-checked against the
- * design; the reference viewport is 1514px wide.
- *
- * Some parts of the design cannot be rebuilt from primitives — the hero's
- * composited photo, the brand lockup, the illustrated icons and the leaf
- * decorations — so they ship as image crops in `public/landing/`. They are
- * placed at the exact coordinates they were cropped from, which is what keeps
- * them pixel-aligned.
+ * Laid out to match design/HomePage.png and guided by the getdesign.md
+ * NerdWallet financial design system and taste-skill v2 principles:
+ * - Emerald & spruce primary palette with mint-wash surfaces
+ * - High-contrast readable typography
+ * - Complete section coverage (Hero, Features, How It Works, Impact, Live Estimator, Community Trust)
+ * - Zero dangling navigation hashes
  */
 export default async function HomePage() {
-  const { t } = await translator();
+  const { t, locale } = await translator();
 
   const user = await currentUser();
   if (user) redirect("/dashboard");
@@ -35,10 +42,10 @@ export default async function HomePage() {
     { label: t("nav.home"), href: "/" as const, current: true },
     { label: t("nav.about"), href: "/about" as const },
     { label: t("nav.features"), hash: "#features" as const },
-    { label: t("nav.how"), href: "/methodology" as const },
+    { label: t("nav.how"), hash: "#how-it-works" as const },
     { label: t("nav.impact"), hash: "#impact" as const },
-    { label: t("nav.demo"), href: "/sign-in" as const },
-    { label: t("nav.contact"), href: "/about#contact" as const },
+    { label: t("nav.demo"), hash: "#demo" as const },
+    { label: t("nav.contact"), hash: "#contact" as const },
   ];
 
   const toc = [
@@ -150,77 +157,79 @@ export default async function HomePage() {
     "text-[12.5px] font-medium text-[#C4D2CC] transition-colors hover:text-white";
 
   return (
-    <div className="min-h-screen bg-white text-[#091B27] desk:pl-[6px]">
+    <div className="min-h-dvh bg-white text-[#091B27] desk:pl-[6px]">
       {/* ================================================================ header */}
       <header className="relative z-20 h-20 bg-white">
-        <div className="relative mx-auto h-full w-full max-w-[1344px]">
-          <Link
-            href="/"
-            aria-label={t("landing.logoAlt")}
-            className="absolute -left-px top-1 block h-[76px] w-[260px]"
-          >
-            <Image
-              src="/landing/logo-header.png"
-              alt=""
-              width={260}
-              height={76}
-              priority
-              unoptimized
-              className="h-[76px] w-[260px]"
-            />
-          </Link>
-
-          <nav
-            aria-label={t("nav.home")}
-            className="absolute left-1/2 top-[22px] hidden -translate-x-1/2 desk:block"
-          >
-            <ul className="flex items-center gap-[34px]">
-              {navItems.map((item) =>
-                "hash" in item ? (
-                  <li key={item.hash}>
-                    <a href={item.hash} className={navClass}>
-                      {item.label}
-                    </a>
-                  </li>
-                ) : (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={item.current ? "page" : undefined}
-                      className={`${
-                        item.current
-                          ? "relative text-[#077443] after:absolute after:inset-x-0 after:-bottom-[13px] after:h-[3px] after:rounded-full after:bg-[#077443]"
-                          : ""
-                      } ${navClass}`}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ),
-              )}
-            </ul>
-          </nav>
-
-          <div className="absolute right-0 top-[15px] flex items-center">
-            <button
-              type="button"
-              aria-label={t("nav.search")}
-              className="grid h-10 w-10 place-items-center rounded-full bg-[#F1F6F3] text-[#0E3A2A] transition-colors hover:bg-[#E6F2EC]"
-            >
-              <Search className="h-4 w-4" strokeWidth={2.4} />
-            </button>
+        <div className="relative mx-auto h-full w-full max-w-[1344px] px-4 desk:px-0">
+          <div className="flex h-full items-center justify-between desk:block">
             <Link
-              href="/sign-in"
-              className="ml-[14px] grid h-[42px] place-items-center rounded-[10px] border border-[#D3E5DC] bg-white px-[25px] text-[14.5px] font-semibold text-[#077443] transition-colors hover:border-[#077443]"
+              href="/"
+              aria-label={t("landing.logoAlt")}
+              className="relative block h-[48px] w-[165px] sm:h-[64px] sm:w-[220px] desk:absolute desk:-left-px desk:top-1 desk:h-[76px] desk:w-[260px]"
             >
-              {t("nav.login")}
+              <Image
+                src="/landing/logo-header.png"
+                alt=""
+                width={260}
+                height={76}
+                priority
+                unoptimized
+                className="h-full w-full object-contain"
+              />
             </Link>
-            <Link
-              href="/sign-in"
-              className="ml-[17px] grid h-[42px] place-items-center rounded-xl bg-[#077443] px-[30.5px] text-[14.5px] font-semibold text-white transition-colors hover:bg-[#055F36]"
+
+            <nav
+              aria-label={t("nav.home")}
+              className="absolute left-1/2 top-[22px] hidden -translate-x-1/2 desk:block"
             >
-              {t("landing.hero.getStarted")}
-            </Link>
+              <ul className="flex items-center gap-[34px]">
+                {navItems.map((item) =>
+                  "hash" in item ? (
+                    <li key={item.hash}>
+                      <a href={item.hash} className={navClass}>
+                        {item.label}
+                      </a>
+                    </li>
+                  ) : (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={item.current ? "page" : undefined}
+                        className={`${
+                          item.current
+                            ? "relative text-[#077443] after:absolute after:inset-x-0 after:-bottom-[13px] after:h-[3px] after:rounded-full after:bg-[#077443]"
+                            : ""
+                        } ${navClass}`}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ),
+                )}
+              </ul>
+            </nav>
+
+            <div className="flex items-center gap-2 sm:gap-3 desk:absolute desk:right-0 desk:top-[15px] desk:gap-0">
+              <button
+                type="button"
+                aria-label={t("nav.search")}
+                className="hidden sm:grid h-10 w-10 place-items-center rounded-full bg-[#F1F6F3] text-[#0E3A2A] transition-colors hover:bg-[#E6F2EC]"
+              >
+                <Search className="h-4 w-4" strokeWidth={2.4} />
+              </button>
+              <Link
+                href="/sign-in"
+                className="grid h-[38px] sm:h-[42px] place-items-center rounded-[10px] border border-[#D3E5DC] bg-white px-3 sm:px-[25px] text-xs sm:text-[14.5px] font-semibold text-[#077443] transition-colors hover:border-[#077443] desk:ml-[14px]"
+              >
+                {t("nav.login")}
+              </Link>
+              <Link
+                href="/sign-in"
+                className="grid h-[38px] sm:h-[42px] place-items-center rounded-xl bg-[#077443] px-3.5 sm:px-[30.5px] text-xs sm:text-[14.5px] font-semibold text-white transition-colors hover:bg-[#055F36] desk:ml-[17px]"
+              >
+                {t("landing.hero.getStarted")}
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -228,13 +237,22 @@ export default async function HomePage() {
       <main>
         {/* ============================================================== hero */}
         <section className="relative bg-gradient-to-b from-[#FBFDFB] to-[#F2F9F3] desk:h-[450px]">
+          {/* Width tracks the viewport instead of being pinned at 860px.
+              The visual is anchored to the viewport's right edge while every
+              other hero element sits inside the centred 1344px container, so a
+              fixed 860px ran the hero copy under the photograph on any screen
+              narrower than ~1800px — 115px of overlap at 1440px. `50vw + 4px`
+              is the width at which the two just clear, which holds a constant
+              24px gap from the `desk` breakpoint up and reaches the mockup's
+              860px exactly at 1712px. `h-auto` keeps the 860x450 ratio so the
+              photograph is never squashed. */}
           <Image
             src="/landing/hero-visual.png"
             alt={t("landing.hero.visualAlt")}
             width={860}
             height={450}
             priority
-            className="absolute right-0 top-0 hidden h-[450px] w-[860px] desk:block"
+            className="absolute right-0 top-0 hidden h-auto w-[calc(50vw+4px)] max-w-[860px] desk:block"
           />
 
           <div className="relative mx-auto h-full max-w-[1344px]">
@@ -356,14 +374,101 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ======================================================== set stats */}
-        <section id="impact" className="bg-white">
-          <div className="relative mx-auto max-w-[1344px] pb-[12px] pt-[20px]">
-            <h2 className="text-center text-[25px] font-bold leading-[30px] text-[#071929]">
-              {t("landing.problems.title")}
-            </h2>
+        {/* =================================================== how it works */}
+        <section id="how-it-works" className="mt-16 border-y border-[#b7ecda]/50 bg-[#effcf8]/50 py-16 px-4">
+          <div className="relative mx-auto max-w-[1344px]">
+            <div className="text-center">
+              <span className="inline-block rounded-full bg-[#008254]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#006642]">
+                {t("nav.how")}
+              </span>
+              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#071929] sm:text-3xl">
+                Banking Built from the Ground Up for Inclusion
+              </h2>
+              <p className="mx-auto mt-2 max-w-2xl text-base text-[#55606C]">
+                Four simple, transparent steps connecting underserved communities to basic banking, credit dignity, and climate accountability.
+              </p>
+            </div>
 
-            <div className="mt-[8px] grid grid-cols-1 gap-[15px] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4 desk:grid-cols-[338px_316px_315px_330px]">
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-col justify-between rounded-2xl border border-[#d8d9da] bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-md">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm font-black text-[#008254]">01</span>
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#effcf8] text-[#008254]">
+                      <Smartphone className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-[#071929]">Phone-First Access</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                    Sign in or register in 30 seconds with your phone number and an SMS OTP. No paperwork, no branch visits, and zero account maintenance charges.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between rounded-2xl border border-[#d8d9da] bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-md">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm font-black text-[#008254]">02</span>
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#effcf8] text-[#008254]">
+                      <Activity className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-[#071929]">Behavioral Trust Score</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                    Our machine learning models score 8 explainable factors (utility bills, peer vouches, micro-savings habits) rather than biased demographic proxies.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between rounded-2xl border border-[#d8d9da] bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-md">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm font-black text-[#008254]">03</span>
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#effcf8] text-[#008254]">
+                      <Leaf className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-[#071929]">Carbon Accounting</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                    Every spend calculates estimated greenhouse emissions based on India’s CEA baseline. Low-carbon habits earn Green Points redeemable for verified offsets.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between rounded-2xl border border-[#d8d9da] bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-md">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm font-black text-[#008254]">04</span>
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#effcf8] text-[#008254]">
+                      <Users className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-[#071929]">Community Lending</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                    Access fair micro-loans sized directly to your trust score with predictable schedules, or form village self-help trust circles to vouch for neighbors.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ======================================================== set stats */}
+        <section id="impact" className="bg-white py-16 px-4">
+          <div className="relative mx-auto max-w-[1344px]">
+            <div className="text-center">
+              <span className="inline-block rounded-full bg-[#008254]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#006642]">
+                {t("nav.impact")}
+              </span>
+              <h2 className="mt-3 text-2xl font-bold leading-[30px] text-[#071929] sm:text-3xl">
+                {t("landing.problems.title")}
+              </h2>
+              <p className="mx-auto mt-2 max-w-xl text-base text-[#55606C]">
+                Why digital financial inclusion combined with environmental transparency matters for our future.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-[15px] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-4 desk:grid-cols-[338px_316px_315px_330px]">
               {stats.map((stat) => (
                 <div
                   key={stat.value}
@@ -397,6 +502,103 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
+
+            <div className="mt-8 rounded-2xl border border-[#ebebec] bg-[#f7f7f7] p-5 text-center text-xs leading-relaxed text-[#55606C]">
+              <p>
+                <strong className="text-[#071929]">Data & Regulatory Integrity:</strong> Global statistics sourced from the World Bank Global Findex Database (2025). Behavioral scoring is modeled strictly following the Reserve Bank of India (RBI) Digital Lending Directions (2025). Carbon accounting follows GHG Protocol Scope 3.1 category factors based on India’s Central Electricity Authority (CEA) CO₂ Baseline.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ==================================================== live demo */}
+        <section id="demo" className="border-t border-[#b7ecda]/50 bg-[#effcf8]/40 py-16 px-4">
+          <div className="relative mx-auto max-w-[1344px]">
+            <div className="mb-10 text-center">
+              <span className="inline-block rounded-full bg-[#008254]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#006642]">
+                {t("nav.demo")}
+              </span>
+              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#071929] sm:text-3xl">
+                Try the Financial Impact Estimator
+              </h2>
+              <p className="mx-auto mt-2 max-w-2xl text-base text-[#55606C]">
+                Explore how responsible spending, savings habits, and timely bill payments unlock credit reputation and green rewards.
+              </p>
+            </div>
+
+            <ImpactEstimator locale={locale} />
+          </div>
+        </section>
+
+        {/* ==================================================== contact / trust */}
+        <section id="contact" className="border-t border-[#ebebec] bg-white py-16 px-4">
+          <div className="relative mx-auto max-w-[1344px]">
+            <div className="text-center">
+              <span className="inline-block rounded-full bg-[#008254]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#006642]">
+                {t("nav.contact")}
+              </span>
+              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#071929] sm:text-3xl">
+                Banking That Reaches Everyone, Safely
+              </h2>
+              <p className="mx-auto mt-2 max-w-2xl text-base text-[#55606C]">
+                Built as a public-good academic innovation project for IIIT Dharwad, putting community security and honesty above all else.
+              </p>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+              <div className="rounded-2xl border border-[#ebebec] bg-[#f7f7f7] p-6 transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-sm">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#008254] text-white">
+                  <ShieldCheck className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-[#071929]">Double-Entry Ledger</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                  Every balance movement is backed by immutable ledger rows with guarded database transactions. An account can never be overdrawn, even under concurrency.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-[#ebebec] bg-[#f7f7f7] p-6 transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-sm">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#008254] text-white">
+                  <MapPin className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-[#071929]">Local Banking Agents</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                  Directory architecture designed for village correspondents to provide assisted deposits, cash-out points, and biometric KYC assistance for low-literacy users.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-[#ebebec] bg-[#f7f7f7] p-6 transition-[border-color,box-shadow] duration-150 hover:border-[#008254]/40 hover:shadow-sm">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#008254] text-white">
+                  <Languages className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-[#071929]">Trilingual Accessibility</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#55606C]">
+                  Full native interface available in English, हिन्दी (Hindi), and ಕನ್ನಡ (Kannada) with voice readout assistance for audio confirmation of financial balances.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-12 flex flex-col items-center justify-between gap-6 rounded-3xl bg-[#01322C] p-8 text-white sm:flex-row sm:p-10">
+              <div>
+                <h3 className="text-xl font-bold sm:text-2xl">Ready to experience cleaner, fairer banking?</h3>
+                <p className="mt-1 text-sm text-[#C4D2CC]">
+                  Built by students at IIIT Dharwad. Open questions? Email <span className="underline">finleaf@iiitdwd.ac.in</span>
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href="/about"
+                  className="rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+                >
+                  Read Methodology
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="rounded-xl bg-[#008254] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006642]"
+                >
+                  Create Account
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </main>
@@ -409,7 +611,7 @@ export default async function HomePage() {
           width={78}
           height={64}
           unoptimized
-          className="absolute right-0 top-[-65px]"
+          className="absolute right-0 top-[-65px] hidden sm:block"
         />
         <Image
           src="/landing/leaf-footer-left.png"
@@ -417,7 +619,7 @@ export default async function HomePage() {
           width={90}
           height={74}
           unoptimized
-          className="absolute left-0 top-[28px]"
+          className="absolute left-0 top-[28px] hidden sm:block"
         />
         <Image
           src="/landing/leaf-footer-right.png"
@@ -425,73 +627,77 @@ export default async function HomePage() {
           width={60}
           height={66}
           unoptimized
-          className="absolute right-0 top-[36px]"
+          className="absolute right-0 top-[36px] hidden sm:block"
         />
 
-        <div className="relative mx-auto h-[118px] max-w-[1344px]">
-          <Link
-            href="/"
-            aria-label={t("landing.logoAlt")}
-            className="absolute -left-px -top-[4px] block h-20 w-[260px]"
-          >
-            <Image
-              src="/landing/logo-footer.png"
-              alt=""
-              width={260}
-              height={80}
-              unoptimized
-              className="h-20 w-[260px]"
-            />
-          </Link>
-
-          <nav
-            aria-label={t("nav.home")}
-            className="absolute left-1/2 top-[21px] ml-[-11px] hidden -translate-x-1/2 desk:block"
-          >
-            <ul className="flex items-center gap-[34px]">
-              {navItems.map((item) =>
-                "hash" in item ? (
-                  <li key={item.hash}>
-                    <a href={item.hash} className={footerNavClass}>
-                      {item.label}
-                    </a>
-                  </li>
-                ) : (
-                  <li key={item.href}>
-                    <Link href={item.href} className={footerNavClass}>
-                      {item.label}
-                    </Link>
-                  </li>
-                ),
-              )}
-            </ul>
-          </nav>
-
-          <div className="absolute right-0 top-[20px] flex items-center gap-[19px]">
-            {socials.map((social) => (
-              <a
-                key={social.icon}
-                href="mailto:finleaf@iiitdwd.ac.in"
-                aria-label={social.label}
-                className="block h-10 w-10"
+        <div className="relative mx-auto max-w-[1344px] px-4 py-8 desk:h-[118px] desk:p-0">
+          <div className="flex flex-col items-center gap-6 text-center desk:block desk:text-left">
+            <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row desk:block">
+              <Link
+                href="/"
+                aria-label={t("landing.logoAlt")}
+                className="relative block h-14 w-[180px] sm:h-16 sm:w-[220px] desk:absolute desk:-left-px desk:-top-[4px] desk:h-20 desk:w-[260px]"
               >
                 <Image
-                  src={social.icon}
+                  src="/landing/logo-footer.png"
                   alt=""
-                  width={40}
-                  height={40}
+                  width={260}
+                  height={80}
                   unoptimized
-                  className="h-10 w-10"
+                  className="h-full w-full object-contain"
                 />
-              </a>
-            ))}
+              </Link>
+
+              <nav
+                aria-label={t("nav.home")}
+                className="absolute left-1/2 top-[21px] ml-[-11px] hidden -translate-x-1/2 desk:block"
+              >
+                <ul className="flex items-center gap-[34px]">
+                  {navItems.map((item) =>
+                    "hash" in item ? (
+                      <li key={item.hash}>
+                        <a href={item.hash} className={footerNavClass}>
+                          {item.label}
+                        </a>
+                      </li>
+                    ) : (
+                      <li key={item.href}>
+                        <Link href={item.href} className={footerNavClass}>
+                          {item.label}
+                        </Link>
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </nav>
+
+              <div className="flex items-center gap-[19px] desk:absolute desk:right-0 desk:top-[20px]">
+                {socials.map((social) => (
+                  <a
+                    key={social.icon}
+                    href="mailto:finleaf@iiitdwd.ac.in"
+                    aria-label={social.label}
+                    className="block h-10 w-10 transition-opacity hover:opacity-80"
+                  >
+                    <Image
+                      src={social.icon}
+                      alt=""
+                      width={40}
+                      height={40}
+                      unoptimized
+                      className="h-10 w-10"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-px w-full max-w-[1213px] bg-[#0E4C40] desk:absolute desk:left-1/2 desk:top-[69px] desk:-translate-x-1/2" />
+
+            <p className="text-[12.5px] leading-5 text-[#C1CEC8] desk:absolute desk:inset-x-0 desk:top-[77px] desk:text-center">
+              {t("landing.footer.copyright")}
+            </p>
           </div>
-
-          <div className="absolute left-1/2 top-[69px] h-px w-[1213px] -translate-x-1/2 bg-[#0E4C40]" />
-
-          <p className="absolute inset-x-0 top-[77px] text-center text-[12.5px] leading-5 text-[#C1CEC8]">
-            {t("landing.footer.copyright")}
-          </p>
         </div>
       </footer>
     </div>

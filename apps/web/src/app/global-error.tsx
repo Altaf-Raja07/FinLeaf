@@ -29,7 +29,7 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col items-center justify-center gap-5 bg-surface px-4 text-center">
+      <body className="flex min-h-dvh flex-col items-center justify-center gap-5 bg-surface px-4 text-center">
         <LeafMark className="h-12 w-12 text-leaf-700" />
 
         <h1 className="text-2xl font-bold tracking-tight">Something went wrong</h1>

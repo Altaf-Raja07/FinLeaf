@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Home } from "lucide-react";
 import { PageHeader, Card, CardHeader, EmptyState, Alert, Field, Button, Pill } from "@/components/ui";
 import { translator } from "@/lib/server-utils";
+import { formatDate } from "@/lib/i18n";
 import { currentUser } from "@/lib/auth/session";
 import { listMyFamilyGroups } from "@/lib/groups";
 import { createFamilyAction, leaveGroupAction, removeMemberAction, setSpendPermissionAction } from "./family-actions";
@@ -94,7 +95,7 @@ export default async function FamilyPage() {
               <ul className="mt-1 flex flex-col gap-1">
                 {group.pendingInvites.map((invite) => (
                   <li key={invite.id} className="field-help">
-                    {invite.phone} — {t("family.expiresOn", { date: invite.expiresAt.toLocaleDateString("en-IN") })}
+                    {invite.phone} — {t("family.expiresOn", { date: formatDate(invite.expiresAt, locale) })}
                   </li>
                 ))}
               </ul>

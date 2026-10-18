@@ -18,7 +18,7 @@ export default async function SignInPage() {
   if (user) redirect("/dashboard");
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12">
+    <main className="relative min-h-dvh flex flex-col items-center justify-center px-4 py-12">
       {/* Ambient background decoration */}
       <div className="absolute inset-0 -z-10 flex items-center justify-center overflow-hidden pointer-events-none">
         <div className="h-[28rem] w-[28rem] rounded-full bg-gradient-to-tr from-leaf-400/15 to-emerald-300/10 blur-3xl" />

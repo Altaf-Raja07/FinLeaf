@@ -140,7 +140,7 @@ export function NavBar({
                     href={item.href}
                     aria-current={isActive(item.href) ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold no-underline transition-all",
+                      "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold no-underline transition-[background-color,color] duration-150",
                       isActive(item.href)
                         ? "bg-leaf-100/70 text-leaf-950 font-bold shadow-xs"
                         : "text-ink-soft hover:bg-surface-sunken hover:text-ink",
@@ -159,7 +159,7 @@ export function NavBar({
                   onClick={() => setMoreOpen((v) => !v)}
                   aria-expanded={moreOpen}
                   className={cn(
-                    "flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all",
+                    "flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-[background-color,color] duration-150",
                     isMoreActive || moreOpen
                       ? "bg-leaf-100/70 text-leaf-950 font-bold"
                       : "text-ink-soft hover:bg-surface-sunken hover:text-ink",

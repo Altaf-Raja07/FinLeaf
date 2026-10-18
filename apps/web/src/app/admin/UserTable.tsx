@@ -3,6 +3,8 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
+import { formatDate } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 import { updateUserAction } from "./admin-actions";
 
 /**
@@ -17,6 +19,7 @@ import { updateUserAction } from "./admin-actions";
 export function UserTable({
   users,
   adminId,
+  locale,
 }: {
   users: Array<{
     id: string;
@@ -30,6 +33,7 @@ export function UserTable({
     createdAt: string;
   }>;
   adminId: string;
+  locale: Locale;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -56,7 +60,7 @@ export function UserTable({
             <th scope="row" className="font-semibold">
               {user.name}
               <span className="block field-help font-normal">
-                {new Date(user.createdAt).toLocaleDateString("en-IN")}
+                {formatDate(user.createdAt, locale)}
               </span>
             </th>
             <td className="tnum">{user.phone}</td>
