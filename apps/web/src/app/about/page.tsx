@@ -33,9 +33,19 @@ export default async function AboutPage() {
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12">
-      <div className="flex items-center gap-2.5">
-        <LeafMark className="h-9 w-9 text-leaf-700" />
-        <span className="text-lg font-bold tracking-tight">FinLeaf</span>
+      <div className="flex items-center justify-between pb-6 border-b border-rule">
+        <Link href="/" className="flex items-center gap-2.5 no-underline">
+          <LeafMark className="h-8 w-8 text-leaf-700" />
+          <span className="text-xl font-bold tracking-tight text-ink">FinLeaf</span>
+        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-sm font-semibold text-ink-soft hover:text-ink transition-colors no-underline">
+            {t("nav.home")}
+          </Link>
+          <Link href="/sign-in" className="btn btn-primary btn-sm no-underline">
+            {t("nav.login")}
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">

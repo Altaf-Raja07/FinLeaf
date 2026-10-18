@@ -254,7 +254,7 @@ export function Alert({
 }) {
   const tones: Record<string, string> = {
     info: "border-rule bg-surface-sunken text-ink",
-    success: "border-leaf-200 bg-leaf-50 text-leaf-900",
+    success: "border-mint-200 bg-mint-50 text-forest",
     warning: "border-amber-base bg-amber-soft text-amber-strong",
     danger: "border-risk-high/40 bg-surface-sunken text-risk-crit",
   };
@@ -302,15 +302,17 @@ export function Stat({
   className?: string;
 }) {
   return (
-    <div className={cn("card flex flex-col gap-2", className)}>
+    <div className={cn("card flex flex-col justify-between gap-3", className)}>
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-bold uppercase tracking-wider text-ink-faint">
           {label}
         </p>
-        {icon ? <span className="text-ink-faint">{icon}</span> : null}
+        {icon ? <span className="text-spruce shrink-0">{icon}</span> : null}
       </div>
-      <p className="text-2xl font-bold tracking-tight tnum leading-none">{value}</p>
-      {hint ? <p className="field-help">{hint}</p> : null}
+      <div>
+        <p className="text-2xl font-extrabold tracking-tight tnum leading-tight text-ink">{value}</p>
+        {hint ? <p className="field-help mt-1.5 text-xs">{hint}</p> : null}
+      </div>
     </div>
   );
 }
@@ -407,7 +409,7 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="text-xs font-bold uppercase tracking-wider text-leaf-700 mb-1">
+          <p className="text-xs font-bold uppercase tracking-wider text-spruce mb-1">
             {eyebrow}
           </p>
         ) : null}

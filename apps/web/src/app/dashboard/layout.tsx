@@ -34,12 +34,12 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
         unread={unread}
       />
 
-      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:py-8">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         {children}
       </main>
 
       <footer className="mt-auto border-t border-rule py-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 text-sm text-ink-faint sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 text-sm text-ink-faint sm:px-6 sm:flex-row sm:items-center sm:justify-between">
           <p>{t("home.footer.project")}</p>
           <Link href="/methodology" className="hover:text-ink-soft">
             {t("carbon.methodology")}

@@ -31,7 +31,7 @@ export default async function SignInPage() {
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink transition-colors no-underline"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>{t("nav.badgeHome")}</span>
+          <span>{t("nav.home")}</span>
         </Link>
         <LanguageSwitcher
           activeLocale={locale}

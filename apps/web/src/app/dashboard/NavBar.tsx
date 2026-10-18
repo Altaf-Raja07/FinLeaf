@@ -170,7 +170,7 @@ export function NavBar({
                 </button>
 
                 {moreOpen && (
-                  <div className="absolute left-0 mt-2 w-64 rounded-2xl border border-rule bg-surface p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                  <div className="absolute left-0 mt-2 w-64 rounded-2xl border border-rule bg-surface p-2 shadow-xl ring-1 ring-black/5 animate-menu-in z-50">
                     <p className="px-3 py-1.5 text-[11px] font-bold tracking-wider uppercase text-ink-faint">
                       Financial Services
                     </p>
@@ -276,7 +276,7 @@ export function NavBar({
             </button>
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-rule bg-surface p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+              <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-rule bg-surface p-2 shadow-xl ring-1 ring-black/5 animate-menu-in z-50">
                 <div className="px-3 py-2 border-b border-rule">
                   <p className="text-xs font-bold text-ink truncate">{name}</p>
                   <p className="text-[11px] text-ink-faint capitalize">{role.toLowerCase()}</p>
