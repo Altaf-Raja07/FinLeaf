@@ -1,242 +1,177 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Alert, Button, Field } from "@/components/ui";
-import { requestOtp } from "./otp-actions";
+import { SpeakButton } from "@/components/SpeakButton";
 import { registerUser } from "./register-actions";
+import { translate, type Locale } from "@/lib/i18n";
+import { User, Phone, MapPin, Lock, Globe } from "lucide-react";
 
 /**
- * Registration.
- *
- * Two deliberate constraints:
- *
- *  1. The phone number must be proven by OTP before an account exists, so the
- *     user cannot be locked out of an account they did not create.
- *  2. Only four fields are asked for — name, phone, village, password. The
- *     target user is often first-time and low-literacy, and every extra field
- *     is a reason to abandon the form. No government ID, no address pincode,
- *     no date of birth: the platform collects nothing it does not need.
+ * Modern, OTP-free instant registration form.
+ * Directly creates the account and logs the user in.
  */
+export function SignUpForm({
+  locale,
+  onSwitchToSignIn,
+}: {
+  locale: string;
+  onSwitchToSignIn?: () => void;
+}) {
+  const [state, formAction, pending] = useActionState(registerUser, {});
 
-type Stage = "details" | "code";
-
-interface State {
-  error?: string;
-  fieldErrors?: Record<string, string>;
-  pendingStage?: Stage;
-}
-
-const initialState: State = {};
-
-export function SignUpForm({ locale }: { locale: string }) {
-  const [state, formAction, pending] = useActionState(registerUser, initialState);
-  const [stage, setStage] = useState<Stage>("details");
-  const [phone, setPhone] = useState("");
-  const [codeError, setCodeError] = useState<string | null>(null);
-  const [codeNotice, setCodeNotice] = useState<string | null>(null);
-  const [codePending, setCodePending] = useState(false);
-  const [resendIn, setResendIn] = useState(0);
-
-  async function onRequestCode() {
-    setCodeError(null);
-    setCodeNotice(null);
-    setCodePending(true);
-    const result = await requestOtp(phone, "REGISTRATION", locale);
-
-    if (result.ok) {
-      setStage("code");
-      startResendCountdown();
-    } else {
-      setCodeError(result.message);
-    }
-
-    setCodePending(false);
-  }
-
-  function startResendCountdown() {
-    setResendIn(30);
-    const timer = setInterval(() => {
-      setResendIn((n) => {
-        if (n <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return n - 1;
-      });
-    }, 1000);
-  }
+  const loc = (locale as Locale) || "en";
+  const t = (key: string, vars?: Record<string, string | number>) =>
+    translate(loc, key, vars);
 
   const errors = state?.fieldErrors ?? {};
+
+  const voiceGuidance = `${t("auth.enterName")}. ${t("auth.enterPhone")}. ${t("auth.enterVillage")}. ${t("auth.enterPassword")}.`;
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <input type="hidden" name="locale" value={locale} />
-      {stage === "code" ? (
-        <>
-          <Alert tone="info" title={`We sent a 6-digit code to ${phone}`}>
-            The code expires in 10 minutes and works once.
-          </Alert>
 
-          <Field
-            label="Verification code"
-            htmlFor="signup-code"
-            error={codeError ?? undefined}
-          >
-            <input
-              id="signup-code"
-              name="otpCode"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="[0-9]{6}"
-              maxLength={6}
-              className="input"
-              aria-invalid={codeError ? "true" : undefined}
-              required
-            />
-          </Field>
+      <div className="flex items-center justify-between rounded-xl bg-leaf-50/80 px-3 py-2 border border-leaf-200/60">
+        <span className="text-xs font-medium text-leaf-800">{t("auth.voiceHelp")}</span>
+        <SpeakButton locale={loc} text={voiceGuidance} variant="secondary" />
+      </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <Button type="submit" loading={pending}>
-              Create account
-            </Button>
-            {resendIn > 0 ? (
-              <span className="field-help">Send the code again in {resendIn}s</span>
-            ) : (
-              <button
-                type="button"
-                onClick={onRequestCode}
-                className="text-sm font-semibold text-leaf-700 underline"
-              >
-                Send the code again
-              </button>
-            )}
-          </div>
+      <Field
+        label={t("auth.name")}
+        htmlFor="signup-name"
+        error={errors.name}
+      >
+        <div className="relative">
+          <input
+            id="signup-name"
+            name="name"
+            type="text"
+            autoComplete="name"
+            placeholder="Aarav Sharma"
+            className="input pl-10"
+            aria-invalid={errors.name ? "true" : undefined}
+            required
+            minLength={2}
+          />
+          <User className="absolute left-3.5 top-3.5 h-4 w-4 text-ink-faint pointer-events-none" />
+        </div>
+      </Field>
 
-          <button
-            type="button"
-            onClick={() => setStage("details")}
-            className="self-start text-sm font-semibold text-ink-soft underline"
-          >
-            Change the number
-          </button>
-        </>
-      ) : (
-        <>
-          <Field
-            label="Your name"
-            htmlFor="signup-name"
-            error={errors.name}
-          >
-            <input
-              id="signup-name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              className="input"
-              aria-invalid={errors.name ? "true" : undefined}
-              required
-              minLength={2}
-            />
-          </Field>
+      <Field
+        label={t("auth.phone")}
+        htmlFor="signup-phone"
+        help={t("auth.phoneHelp")}
+        error={errors.phone}
+      >
+        <div className="relative">
+          <input
+            id="signup-phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="+919876543210"
+            className="input pl-10"
+            aria-invalid={errors.phone ? "true" : undefined}
+            required
+          />
+          <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-ink-faint pointer-events-none" />
+        </div>
+      </Field>
 
-          <Field
-            label="Phone number"
-            htmlFor="signup-phone"
-            help="Include the country code, e.g. +919876543210"
-            error={errors.phone}
-          >
-            <input
-              id="signup-phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder="+919876543210"
-              className="input"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              aria-invalid={errors.phone ? "true" : undefined}
-              required
-            />
-          </Field>
+      <Field
+        label={t("auth.village")}
+        htmlFor="signup-village"
+        help={t("auth.villageHelp")}
+        error={errors.village}
+      >
+        <div className="relative">
+          <input
+            id="signup-village"
+            name="village"
+            type="text"
+            autoComplete="address-level2"
+            placeholder="Dharwad"
+            className="input pl-10"
+            aria-invalid={errors.village ? "true" : undefined}
+            required
+            minLength={2}
+          />
+          <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-ink-faint pointer-events-none" />
+        </div>
+      </Field>
 
-          <Field
-            label="Village or town"
-            htmlFor="signup-village"
-            help="Used for your local agent list and leaderboard"
-            error={errors.village}
-          >
-            <input
-              id="signup-village"
-              name="village"
-              type="text"
-              autoComplete="address-level2"
-              className="input"
-              aria-invalid={errors.village ? "true" : undefined}
-              required
-              minLength={2}
-            />
-          </Field>
+      <Field
+        label={t("auth.password")}
+        htmlFor="signup-password"
+        help={t("auth.passwordHelp")}
+        error={errors.password}
+      >
+        <div className="relative">
+          <input
+            id="signup-password"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            placeholder="••••••••••••"
+            className="input pl-10"
+            aria-invalid={errors.password ? "true" : undefined}
+            required
+            minLength={10}
+          />
+          <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-ink-faint pointer-events-none" />
+        </div>
+      </Field>
 
-          <Field
-            label="Password"
-            htmlFor="signup-password"
-            help="At least 10 characters, with a lowercase and an uppercase or number"
-            error={errors.password}
+      <Field
+        label={t("auth.preferredLanguage")}
+        htmlFor="signup-lang"
+        error={errors.preferredLang}
+      >
+        <div className="relative">
+          <select
+            id="signup-lang"
+            name="preferredLang"
+            className="input pl-10 appearance-none bg-surface-raised cursor-pointer"
+            defaultValue={locale}
           >
-            <input
-              id="signup-password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              className="input"
-              aria-invalid={errors.password ? "true" : undefined}
-              required
-              minLength={10}
-            />
-          </Field>
+            <option value="en">English (India)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          </select>
+          <Globe className="absolute left-3.5 top-3.5 h-4 w-4 text-ink-faint pointer-events-none" />
+        </div>
+      </Field>
 
-          <Field
-            label="Preferred language"
-            htmlFor="signup-lang"
-            error={errors.preferredLang}
-          >
-            <select
-              id="signup-lang"
-              name="preferredLang"
-              className="input"
-              defaultValue={locale}
+      {state?.error && !Object.keys(errors).length ? (
+        <Alert tone="danger" title={t("auth.signUpFailed")}>
+          {state.error}
+        </Alert>
+      ) : null}
+
+      <Button
+        type="submit"
+        loading={pending}
+        className="w-full py-3 text-base font-semibold shadow-md mt-1"
+      >
+        {pending ? t("auth.processing") : t("auth.createAccount")}
+      </Button>
+
+      {onSwitchToSignIn ? (
+        <div className="text-center pt-2">
+          <p className="text-sm text-ink-soft">
+            {t("auth.haveAccount")}{" "}
+            <button
+              type="button"
+              onClick={onSwitchToSignIn}
+              className="font-bold text-leaf-700 hover:text-leaf-800 underline transition-colors cursor-pointer"
             >
-              <option value="en">English</option>
-              <option value="hi">हिन्दी</option>
-              <option value="kn">ಕನ್ನಡ</option>
-            </select>
-          </Field>
-
-          {state?.error && !Object.keys(errors).length ? (
-            <Alert tone="danger" title="Could not create the account">
-              {state.error}
-            </Alert>
-          ) : null}
-
-          <Button
-            type="button"
-            onClick={onRequestCode}
-            loading={codePending}
-            disabled={phone.length < 8}
-          >
-            Send code
-          </Button>
-
-          <p className="field-help">
-            FinLeaf will never ask for your one-time code, your PIN or your
-            password. Anyone who does is attempting fraud.
+              {t("auth.welcome")}
+            </button>
           </p>
-        </>
-      )}
-
-      {codeNotice ? <Alert tone="info">{codeNotice}</Alert> : null}
+        </div>
+      ) : null}
     </form>
   );
 }

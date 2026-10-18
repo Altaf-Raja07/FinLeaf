@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { currentUser } from "@/lib/auth/session";
+import { RATE_LIMITS, clientIp, rateLimit } from "@/lib/rate-limit";
 import { applyForLoan } from "@/lib/banking/loans";
 import { fieldErrors, loanApplySchema } from "@/lib/validation";
 import { log } from "@/lib/env";
@@ -27,6 +29,19 @@ export async function applyForLoanAction(
 ): Promise<LoanActionState> {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+  // Loan origination moves up to the policy ceiling into the account, so it
+  // sits behind the same per-user and per-IP limiter as a transfer. Without it
+  // a caller could script unlimited applications against a score that is a pure
+  // function of their own activity.
+  const ip = clientIp(await headers());
+  const [userLimited, ipLimited] = await Promise.all([
+    rateLimit(`loan:apply:user:${user.id}`, RATE_LIMITS.transfer),
+    rateLimit(`loan:apply:ip:${ip}`, RATE_LIMITS.transfer),
+  ]);
+  if (!userLimited.allowed || !ipLimited.allowed) {
+    return { error: "Too many loan applications in a short time. Please wait a moment." };
+  }
+
 
   const parsed = loanApplySchema.safeParse({
     amount: String(formData.get("amount") ?? ""),

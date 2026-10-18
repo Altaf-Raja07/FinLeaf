@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { Route } from "next";
 import { useTransition } from "react";
 import { Button, Field } from "@/components/ui";
+import { translate, type Locale } from "@/lib/i18n";
 
 /**
  * History filters.
@@ -15,22 +16,23 @@ import { Button, Field } from "@/components/ui";
  */
 
 const CATEGORIES = [
-  { value: "", label: "All categories" },
-  { value: "GROCERIES", label: "Groceries" },
-  { value: "FUEL", label: "Fuel" },
-  { value: "ELECTRICITY", label: "Electricity" },
-  { value: "BILL_PAYMENT", label: "Bill payment" },
-  { value: "RECHARGE", label: "Recharge" },
-  { value: "TRAVEL_PUBLIC", label: "Public transport" },
-  { value: "TRAVEL_PRIVATE", label: "Private travel" },
-  { value: "DINING", label: "Dining out" },
-  { value: "EDUCATION", label: "Education" },
-  { value: "HEALTHCARE", label: "Healthcare" },
-  { value: "TRANSFER", label: "Transfer" },
-];
+  "GROCERIES",
+  "FUEL",
+  "ELECTRICITY",
+  "BILL_PAYMENT",
+  "RECHARGE",
+  "TRAVEL_PUBLIC",
+  "TRAVEL_PRIVATE",
+  "DINING",
+  "EDUCATION",
+  "HEALTHCARE",
+  "TRANSFER",
+] as const;
 
 export function HistoryFilters({
   initial,
+  locale,
+  flagged = false,
 }: {
   initial: {
     q: string;
@@ -40,7 +42,11 @@ export function HistoryFilters({
     min?: string;
     max?: string;
   };
+  locale: Locale;
+  /** Keeps the "unusual transactions" view applied when a filter is changed. */
+  flagged?: boolean;
 }) {
+  const t = (key: string) => translate(locale, key);
   const router = useRouter();
   const params = useSearchParams();
   const [pending, startTransition] = useTransition();
@@ -56,6 +62,7 @@ export function HistoryFilters({
     // Any filter change returns to the first page; staying on page 7 of a new
     // filtered result is a dead end.
     search.delete("page");
+    if (!flagged) search.delete("flagged");
 
     startTransition(() => {
       // Typed routes verify the path, and this is the history page; the query
@@ -70,33 +77,34 @@ export function HistoryFilters({
 
   return (
     <form action={apply} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Field label="Search notes" htmlFor="filter-q" className="lg:col-span-2">
+      <Field label={t("history.search")} htmlFor="filter-q" className="lg:col-span-2">
         <input
           id="filter-q"
           name="q"
           type="search"
           defaultValue={initial.q}
-          placeholder="Shopkeeper, fees…"
+          placeholder={t("history.searchPlaceholder")}
           className="input"
         />
       </Field>
 
-      <Field label="Category" htmlFor="filter-category">
+      <Field label={t("history.category")} htmlFor="filter-category">
         <select
           id="filter-category"
           name="category"
           className="input"
           defaultValue={initial.category}
         >
+          <option value="">{t("history.categoryAll")}</option>
           {CATEGORIES.map((category) => (
-            <option key={category.value} value={category.value}>
-              {category.label}
+            <option key={category} value={category}>
+              {translate(locale, `txCategory.${category}`)}
             </option>
           ))}
         </select>
       </Field>
 
-      <Field label="From" htmlFor="filter-from">
+      <Field label={t("history.from")} htmlFor="filter-from">
         <input
           id="filter-from"
           name="from"
@@ -106,7 +114,7 @@ export function HistoryFilters({
         />
       </Field>
 
-      <Field label="To" htmlFor="filter-to">
+      <Field label={t("history.to")} htmlFor="filter-to">
         <input
           id="filter-to"
           name="to"
@@ -116,7 +124,7 @@ export function HistoryFilters({
         />
       </Field>
 
-      <Field label="Minimum amount" htmlFor="filter-min">
+      <Field label={t("history.minAmount")} htmlFor="filter-min">
         <input
           id="filter-min"
           name="min"
@@ -128,7 +136,7 @@ export function HistoryFilters({
         />
       </Field>
 
-      <Field label="Maximum amount" htmlFor="filter-max">
+      <Field label={t("history.maxAmount")} htmlFor="filter-max">
         <input
           id="filter-max"
           name="max"
@@ -142,10 +150,10 @@ export function HistoryFilters({
 
       <div className="flex items-end gap-2 sm:col-span-2">
         <Button type="submit" loading={pending}>
-          Apply filters
+          {t("history.applyFilters")}
         </Button>
         <Button type="button" variant="ghost" onClick={reset} loading={pending}>
-          Reset
+          {t("history.resetFilters")}
         </Button>
       </div>
     </form>

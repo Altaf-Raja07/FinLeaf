@@ -98,6 +98,13 @@ export async function executeTransfer(
     revalidatePath("/dashboard", "page");
     revalidatePath("/dashboard/history", "page");
 
+    const { refreshTrustScore } = await import("@/lib/trust");
+    const { refreshSustainabilityScore } = await import("@/lib/sustainability");
+    await Promise.all([
+      refreshTrustScore(user.id),
+      refreshSustainabilityScore(user.id),
+    ]);
+
     return {
       flagged: result.flagged,
       co2eKg: result.co2eKg.toFixed(2),

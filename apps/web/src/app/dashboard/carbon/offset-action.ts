@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { currentUser } from "@/lib/auth/session";
+import { headers } from "next/headers";
+import { RATE_LIMITS, clientIp, rateLimit } from "@/lib/rate-limit";
 import { generateReference } from "@/lib/crypto/hash";
 import { fieldErrors, offsetContributeSchema } from "@/lib/validation";
-import { postTransaction } from "@/lib/banking/ledger";
 import { createNotification } from "@/lib/notify";
+import { recordAudit } from "@/lib/audit";
 import { log } from "@/lib/env";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -15,10 +17,13 @@ import path from "node:path";
 /**
  * Fund a carbon offset project.
  *
- * The green points, the ledger entry and the contribution row are written in one
- * database transaction, so a failure in any of them leaves all of them
- * untouched. A user must never be charged points for a contribution that did not
- * record, or have a contribution whose points were not charged.
+ * The green points and the contribution row are written in one database
+ * transaction, so a failure in either leaves both untouched. A user must never
+ * be charged points for a contribution that did not record, or have a
+ * contribution whose points were not charged.
+ *
+ * This moves no money, so it posts nothing to the ledger. See the note at the
+ * end of this file for why that is deliberate rather than an omission.
  */
 
 export interface OffsetActionState {
@@ -48,6 +53,15 @@ export async function contributeToProjectAction(
 ): Promise<OffsetActionState> {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+  const ip = clientIp(await headers());
+  const [userLimited, ipLimited] = await Promise.all([
+    rateLimit(`offset:fund:user:${user.id}`, RATE_LIMITS.offsetContribute),
+    rateLimit(`offset:fund:ip:${ip}`, RATE_LIMITS.offsetContribute),
+  ]);
+  if (!userLimited.allowed || !ipLimited.allowed) {
+    return { error: "Too many requests in a short time. Please wait a moment." };
+  }
+
 
   const reference =
     String(formData.get("reference") ?? "").trim() ||
@@ -126,20 +140,16 @@ export async function contributeToProjectAction(
     return { error: "We could not record that contribution." };
   }
 
-  await postTransaction({
-    reference,
-    type: "GREEN_OFFSET",
-    category: "OFFSET",
-    amount: "0.01",
-    note: `Offset: ${project.slug} × ${parsed.data.units}`,
-    toAccountId: (await prisma.account.findFirst({
-      where: { userId: user.id },
-      select: { id: true },
-    }))!.id,
-    toUserId: user.id,
-    co2eKg: -co2e,
-    co2eSource: "static-table",
-  });
+  // No ledger entry is written here, deliberately.
+  //
+  // Funding an offset spends green points. It does not move money: points are
+  // not currency, they have no cash value and no redemption partner. This call
+  // used to post a ₹0.01 one-sided CREDIT into the user's own account, which
+  // created a balance from nothing (no matching DEBIT existed anywhere, so the
+  // ledger could not reconcile) and — because it ran *after* the points had
+  // already been debited — destroyed the user's points whenever the posting
+  // threw. `OffsetContribution` is the durable record of the event, and the
+  // rewards and carbon pages both read it.
 
   await createNotification({
     userId: user.id,
@@ -149,7 +159,19 @@ export async function contributeToProjectAction(
     href: "/dashboard/carbon",
   });
 
+  await recordAudit({
+    userId: user.id,
+    action: "OFFSET_FUNDED",
+    detail: {
+      project: project.slug,
+      units: parsed.data.units,
+      pointsSpent: pointsNeeded,
+      co2eKg: co2e.toString(),
+    },
+  });
+
   revalidatePath("/dashboard/carbon", "page");
+  revalidatePath("/dashboard/rewards", "page");
 
   return {
     message: `Funded ${parsed.data.units} × ${project.slug} and offset about ${co2e.toFixed(1)} kg CO₂e.`,

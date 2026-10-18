@@ -9,6 +9,8 @@ import {
 } from "@/lib/auth/otp";
 import { signInWithPassword, signInWithOtp } from "@/lib/auth/service";
 import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { parseLocale, translate, type Locale } from "@/lib/i18n";
+import { requestLocale } from "@/lib/locale";
 
 /**
  * Server Actions for the auth forms.
@@ -17,6 +19,11 @@ import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
  * do not re-check a session: sign-in and registration are the endpoints that run
  * *before* there is a session. Every one of them is rate limited, because they
  * are the endpoints an attacker would target.
+ *
+ * The failure messages are assembled here rather than inside `lib/auth`, which
+ * returns machine-readable codes and stays locale-agnostic. The action owns
+ * wording, the library owns behaviour, and a new failure code is a compile
+ * error until it has words in every locale below.
  */
 
 /** Action state the forms render. */
@@ -26,8 +33,33 @@ export interface AuthActionState {
   ok?: boolean;
 }
 
-const RATE_LIMIT_MESSAGE =
-  "Too many attempts. Wait a minute and try again.";
+function signInFailureMessage(
+  locale: Locale,
+  code: "bad_credentials" | "inactive" | "unverified_phone",
+): string {
+  switch (code) {
+    case "bad_credentials":
+      return translate(locale, "auth.noSuchAccount");
+    case "inactive":
+      return translate(locale, "auth.accountLocked");
+    case "unverified_phone":
+      return translate(locale, "auth.verifyPhone");
+  }
+}
+
+function otpFailureMessage(
+  locale: Locale,
+  code: "expired" | "wrong_code" | "inactive",
+): string {
+  switch (code) {
+    case "expired":
+      return translate(locale, "auth.codeExpired");
+    case "wrong_code":
+      return translate(locale, "auth.wrongCodeSimple");
+    case "inactive":
+      return translate(locale, "auth.accountLocked");
+  }
+}
 
 async function requestClientIp(): Promise<string> {
   const h = await headers();
@@ -44,8 +76,17 @@ export async function requestOtp(
   const ip = await requestClientIp();
   const limited = await rateLimit(`signin:ip:${ip}`, RATE_LIMITS.signIn);
 
+  // The caller's locale drives both the SMS language and the message shown,
+  // so the number and the words come from the same preference.
+  const lang = parseLocale(locale);
+
   if (!limited.allowed) {
-    return { ok: false, message: RATE_LIMIT_MESSAGE };
+    return {
+      ok: false,
+      message: translate(lang, "error.rateLimitedSignIn", {
+        seconds: limited.retryAfterSeconds,
+      }),
+    };
   }
 
   const result = await issueOtp({ phone, purpose, locale });
@@ -55,8 +96,10 @@ export async function requestOtp(
       ok: false,
       message:
         result.reason === "cooldown"
-          ? `Wait ${result.retryAfterSeconds}s before asking for another code.`
-          : "We could not send a code just now. Please try again.",
+          ? translate(lang, "auth.cooldown", {
+              seconds: result.retryAfterSeconds ?? 30,
+            })
+          : translate(lang, "auth.couldNotSend"),
     };
   }
 
@@ -69,6 +112,7 @@ export async function verifyOtpCode(
   code: string,
   locale: string,
 ): Promise<{ ok: true } | { ok: false; message: string }> {
+  const lang = parseLocale(locale);
   const result = await redeemOtp({ phone, purpose, code });
 
   if (!result.ok) {
@@ -76,16 +120,16 @@ export async function verifyOtpCode(
       ok: false,
       message:
         result.reason === "locked"
-          ? "Too many attempts on that code. Request a new one."
-          : result.reason === "invalid"
-            ? "That code is not right."
-            : "That code expired. Request a new one.",
+          ? translate(lang, "auth.codeLocked")
+          : translate(lang, "auth.wrongCodeSimple"),
     };
   }
 
   if (purpose === "LOGIN") {
     const signedIn = await signInWithOtp({ phone, otpCode: code, locale });
-    if (!signedIn.ok) return { ok: false, message: signedIn.message };
+    if (!signedIn.ok) {
+      return { ok: false, message: otpFailureMessage(lang, signedIn.code) };
+    }
     revalidatePath("/dashboard", "layout");
     redirect("/dashboard");
   }
@@ -98,23 +142,28 @@ export async function passwordLogin(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const locale = await requestLocale();
   const phone = String(formData.get("phone") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
   if (!phone || !password) {
-    return { error: "Enter your phone number and password." };
+    return { error: translate(locale, "auth.enterPhonePassword") };
   }
 
   const ip = await requestClientIp();
   const limited = await rateLimit(`signin:ip:${ip}`, RATE_LIMITS.signIn);
   if (!limited.allowed) {
-    return { error: RATE_LIMIT_MESSAGE };
+    return {
+      error: translate(locale, "error.rateLimitedSignIn", {
+        seconds: limited.retryAfterSeconds,
+      }),
+    };
   }
 
   const result = await signInWithPassword({ phone, password });
 
   if (!result.ok) {
-    return { error: result.message };
+    return { error: signInFailureMessage(locale, result.code) };
   }
 
   revalidatePath("/dashboard", "layout");
@@ -126,24 +175,30 @@ export async function otpLogin(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  // The active UI locale owns both the SMS language and the wording shown
+  // here, so a failure message is never more English than the screen.
+  const locale = await requestLocale();
   const phone = String(formData.get("phone") ?? "").trim();
   const otpCode = String(formData.get("otpCode") ?? "").trim();
-  const locale = String(formData.get("locale") ?? "en");
 
   if (!phone || !otpCode) {
-    return { error: "Enter your phone number and the 6-digit code." };
+    return { error: translate(locale, "auth.enterPhoneAndCode") };
   }
 
   const ip = await requestClientIp();
   const limited = await rateLimit(`signin:ip:${ip}`, RATE_LIMITS.signIn);
   if (!limited.allowed) {
-    return { error: RATE_LIMIT_MESSAGE };
+    return {
+      error: translate(locale, "error.rateLimitedSignIn", {
+        seconds: limited.retryAfterSeconds,
+      }),
+    };
   }
 
   const result = await signInWithOtp({ phone, otpCode, locale });
 
   if (!result.ok) {
-    return { error: result.message };
+    return { error: otpFailureMessage(locale, result.code) };
   }
 
   revalidatePath("/dashboard", "layout");

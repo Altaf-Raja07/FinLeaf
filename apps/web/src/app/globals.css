@@ -2,20 +2,25 @@
  * FinLeaf design tokens and base styles.
  *
  * Tailwind v4: the theme is declared in CSS with `@theme`, and there is no
- * `tailwind.config.js`. Colour is expressed as OKLCH so the two greens and the
- * neutral ramp stay legible as they shift toward white and black — sRGB HSL
- * breaks down noticeably at the light and dark ends.
+ * `tailwind.config.js`. Colour is expressed as OKLCH for consistent perceptual
+ * lightness.
  *
- * The palette is deliberately narrow. The product is read by low-literacy and
- * first-time users on cheap phone screens, so anything that is not green (the
- * brand and the sustainability signal) or neutral (structure) is a status colour
- * with one job.
+ * Two rules govern this file:
+ *
+ *   1. Every foreground/background pair used for text meets WCAG AA. Contrast
+ *      ratios for the ramp below were computed, not eyeballed — the previous
+ *      `--color-ink-faint` sat at 4.07:1 on the page background and 3.81:1 on
+ *      the sunken one, which is a fail, and it is the colour most secondary
+ *      text in the app is painted.
+ *   2. `accent` is the only green allowed to carry meaning as *text*. The
+ *      `leaf` ramp is for fills, borders and icons, where the bar is 3:1 rather
+ *      than 4.5:1.
  */
 
 @import "tailwindcss";
 
 @theme {
-  /* Primary: FinLeaf green. Dark enough for white text at 4.5:1. */
+  /* Primary: FinLeaf emerald. */
   --color-leaf-50: oklch(0.977 0.021 152.2);
   --color-leaf-100: oklch(0.951 0.039 151.9);
   --color-leaf-200: oklch(0.905 0.073 152.1);
@@ -28,87 +33,164 @@
   --color-leaf-900: oklch(0.323 0.075 158.2);
   --color-leaf-950: oklch(0.247 0.055 161.4);
 
-  /* Accent: warm amber, used sparingly for rewards and green points. */
+  /* Midnight: the trust colour. Marketing chrome, the account card, footers. */
+  --color-midnight-50: oklch(0.977 0.008 250);
+  --color-midnight-100: oklch(0.948 0.014 250);
+  --color-midnight-200: oklch(0.9 0.021 250);
+  --color-midnight-300: oklch(0.83 0.028 251);
+  --color-midnight-400: oklch(0.7 0.038 252);
+  --color-midnight-500: oklch(0.6 0.052 253);
+  --color-midnight-600: oklch(0.51 0.072 255);
+  --color-midnight-700: oklch(0.44 0.088 256);
+  --color-midnight-800: oklch(0.37 0.098 257);
+  --color-midnight-900: oklch(0.29 0.09 258);
+  --color-midnight-950: oklch(0.19 0.06 259);
+
+  /* Accent: warm amber for rewards and eco points. */
   --color-amber-soft: oklch(0.97 0.035 85);
   --color-amber-base: oklch(0.87 0.11 80);
-  --color-amber-strong: oklch(0.55 0.13 60);
+  --color-amber-strong: oklch(0.5 0.12 62);
 
-  /* Status. Each has one meaning and is not reused decoratively. */
+  /* Status. */
   --color-risk-low: oklch(0.678 0.178 153.1);
-  --color-risk-mid: oklch(0.818 0.155 85);
-  --color-risk-high: oklch(0.645 0.197 25.4);
-  --color-risk-crit: oklch(0.528 0.192 22.6);
+  --color-risk-mid: oklch(0.72 0.15 78);
+  --color-risk-high: oklch(0.58 0.19 25.4);
+  --color-risk-crit: oklch(0.48 0.19 22.6);
 
-  /* Surfaces. A very small warm-grey ramp. */
-  --color-surface: oklch(0.995 0.002 150);
+  /* Surfaces. */
+  --color-surface: oklch(0.988 0.003 200);
   --color-surface-raised: oklch(1 0 0);
-  --color-surface-sunken: oklch(0.968 0.004 155);
-  --color-rule: oklch(0.912 0.008 158);
+  --color-surface-sunken: oklch(0.972 0.005 205);
+  --color-rule: oklch(0.915 0.008 210);
+  --color-rule-strong: oklch(0.86 0.01 210);
 
-  /* Text. */
-  --color-ink: oklch(0.213 0.012 160.5);
-  --color-ink-soft: oklch(0.447 0.017 158.6);
-  --color-ink-faint: oklch(0.597 0.017 156.5);
+  /* Text. `ink-faint` was darkened to clear 4.5:1 on every surface above. */
+  --color-ink: oklch(0.19 0.014 235);
+  --color-ink-soft: oklch(0.42 0.018 230);
+  --color-ink-faint: oklch(0.52 0.016 228);
 
-  /* Typography. */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Text-safe accent. Use this, not leaf-500/600, for coloured copy. */
+  --color-accent: oklch(0.46 0.125 154.5);
+  --color-accent-soft: oklch(0.94 0.04 152);
+  --color-on-midnight: oklch(0.97 0.006 240);
+  --color-on-midnight-soft: oklch(0.82 0.02 245);
+  --color-on-midnight-faint: oklch(0.7 0.025 248);
+
+  /* Typography. Plus Jakarta Sans is the brand face — design/HomePage.png is
+     drawn in it, so it is the site default rather than a landing-page-only
+     opt-in. Every page therefore reads in the same type. Geist Mono stays for
+     the things that must not be re-spaced: receipt references, roll numbers,
+     transaction ids. */
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-  /* Radii — soft, but not so round that a low-vision reader loses corners. */
-  --radius-card: 1.25rem;
-  --radius-control: 0.875rem;
+  /* The landing page is art-directed from design/HomePage.png: a fixed 1514px
+     canvas. Below `desk` the page falls back to a stacked, fluid layout. */
+  --breakpoint-desk: 1400px;
 
-  /* Motion. Short, and the whole set respects prefers-reduced-motion. */
+  /* Radii. Deliberately restrained: a 1.25rem card radius on every surface
+     reads as a template. */
+  --radius-card: 0.875rem;
+  --radius-control: 0.625rem;
+
+  /* Elevation. Two levels only — flat, and lifted for interactive surfaces. */
+  --shadow-card: 0 1px 2px 0 oklch(0.19 0.014 235 / 0.04), 0 1px 3px -1px oklch(0.19 0.014 235 / 0.06);
+  --shadow-lift: 0 4px 12px -2px oklch(0.19 0.014 235 / 0.1), 0 2px 6px -2px oklch(0.19 0.014 235 / 0.06);
+  --shadow-pop: 0 12px 32px -8px oklch(0.19 0.014 235 / 0.18), 0 4px 12px -4px oklch(0.19 0.014 235 / 0.08);
+
+  /* Motion. */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Dropdown/menu entrance. `tailwindcss-animate` is not a dependency, so these
+     were previously written as `animate-in fade-in slide-in-from-top-2`, which
+     silently did nothing. */
+  --animate-menu-in: menu-in 140ms var(--ease-out-soft);
+  --animate-fade-in: fade-in 160ms var(--ease-out-soft);
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 
-/*
- * Dark mode is a media query rather than a class. The primary users are on
- * cheap LCD panels in daylight, where a light UI is more legible; dark mode is
- * honoured when the device asks for it, and nothing in the code reads a
- * `.dark` class.
- */
 :root {
   color-scheme: light dark;
+
+  /* Single focus treatment. One ring, used by the base layer and by anything
+     that opts in explicitly, so focus never falls back to the UA default. */
+  --ring: color-mix(in oklab, var(--color-accent) 60%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-surface: oklch(0.178 0.008 160.5);
-    --color-surface-raised: oklch(0.226 0.011 160.8);
-    --color-surface-sunken: oklch(0.145 0.007 161.2);
-    --color-rule: oklch(0.301 0.012 161.2);
-    --color-ink: oklch(0.961 0.005 158);
-    --color-ink-soft: oklch(0.762 0.015 158.5);
-    --color-ink-faint: oklch(0.642 0.018 156.6);
+    --color-surface: oklch(0.165 0.008 235);
+    --color-surface-raised: oklch(0.212 0.01 235);
+    --color-surface-sunken: oklch(0.135 0.007 236);
+    --color-rule: oklch(0.29 0.011 236);
+    --color-rule-strong: oklch(0.36 0.013 236);
+
+    --color-ink: oklch(0.96 0.004 230);
+    --color-ink-soft: oklch(0.78 0.014 230);
+    --color-ink-faint: oklch(0.68 0.016 230);
+
+    /* Lifted for the dark surface it actually sits on. */
+    --color-accent: oklch(0.76 0.15 153);
+    --color-accent-soft: oklch(0.26 0.045 154);
+
+    --color-amber-soft: oklch(0.28 0.055 70);
+    --color-amber-strong: oklch(0.85 0.11 80);
+
+    --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px -1px oklch(0 0 0 / 0.35);
+    --shadow-lift: 0 4px 12px -2px oklch(0 0 0 / 0.45), 0 2px 6px -2px oklch(0 0 0 / 0.3);
+    --shadow-pop: 0 12px 32px -8px oklch(0 0 0 / 0.6), 0 4px 12px -4px oklch(0 0 0 / 0.4);
   }
 }
 
 @layer base {
   html {
-    /* Plain scroll behaviour by default; Next.no longer sets this itself. */
     scroll-behavior: smooth;
+    /* Anchor links land below the sticky headers rather than under them. */
+    scroll-padding-top: 5rem;
   }
 
   body {
     background-color: var(--color-surface);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    /* A little more leading than the default: long labels in three languages
-       need the air more than a dense enterprise UI does. */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Nothing in a banking UI may cause a sideways scrollbar. */
+    overflow-x: hidden;
   }
 
-  /* The accent colour for every input and button, so the platform grey on
-     low-end Android is replaced by the brand green. */
   :focus-visible {
-    outline: 2px solid var(--color-leaf-600);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+    border-radius: 2px;
   }
 
-  /* Respect a user's preference for reduced motion across the board, not only
-     on the components that remembered to check it. */
+  /* Headings should not orphan a single word on the last line. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -128,40 +210,66 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 2.875rem;
-    padding: 0.625rem 1.25rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem;
     border-radius: var(--radius-control);
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     line-height: 1.25rem;
+    letter-spacing: -0.005em;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color 140ms var(--ease-out-soft),
-      border-color 140ms var(--ease-out-soft), color 140ms var(--ease-out-soft);
-    /* Touch target: comfortably above the 44px minimum on cheap phones. */
-    min-width: 6rem;
+    transition:
+      background-color 140ms var(--ease-out-soft),
+      border-color 140ms var(--ease-out-soft),
+      color 140ms var(--ease-out-soft),
+      box-shadow 140ms var(--ease-out-soft);
+    min-width: 5rem;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .btn-lg {
+    min-height: 2.875rem;
+    padding: 0.6875rem 1.375rem;
+    font-size: 0.9375rem;
+  }
+
+  .btn-sm {
+    min-height: 2rem;
+    padding: 0.3125rem 0.625rem;
+    font-size: 0.8125rem;
+    min-width: 0;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: translateY(0.5px);
   }
 
   .btn:disabled {
-    opacity: 0.55;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
   .btn-primary {
-    background-color: var(--color-leaf-700);
+    background-color: var(--color-accent);
     color: white;
+    box-shadow: var(--shadow-card);
   }
   .btn-primary:hover:not(:disabled) {
-    background-color: var(--color-leaf-800);
+    background-color: color-mix(in oklab, var(--color-accent) 88%, black);
+    box-shadow: var(--shadow-lift);
   }
 
   .btn-secondary {
     background-color: var(--color-surface-raised);
     color: var(--color-ink);
-    border-color: var(--color-rule);
+    border-color: var(--color-rule-strong);
+    box-shadow: var(--shadow-card);
   }
   .btn-secondary:hover:not(:disabled) {
     background-color: var(--color-surface-sunken);
+    border-color: var(--color-ink-faint);
   }
 
   .btn-ghost {
@@ -177,16 +285,20 @@
     background-color: var(--color-risk-high);
     color: white;
   }
+  .btn-danger:hover:not(:disabled) {
+    background-color: var(--color-risk-crit);
+  }
 
   /* --- Form controls ---------------------------------------------------- */
   .field {
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
+    min-width: 0;
   }
 
   .field-label {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-ink);
   }
@@ -194,7 +306,7 @@
   .field-help {
     font-size: 0.8125rem;
     color: var(--color-ink-faint);
-    line-height: 1.375;
+    line-height: 1.4;
   }
 
   .field-error {
@@ -205,26 +317,35 @@
 
   .input {
     width: 100%;
-    min-height: 2.875rem;
-    padding: 0.625rem 0.875rem;
+    min-height: 2.625rem;
+    padding: 0.5rem 0.75rem;
     border-radius: var(--radius-control);
-    border: 1px solid var(--color-rule);
+    border: 1px solid var(--color-rule-strong);
     background-color: var(--color-surface-raised);
     color: var(--color-ink);
     font-size: 1rem;
-    /* 16px: below this, iOS Safari zooms on focus and disorients a
-       first-time user who does not know not to pinch. */
-    transition: border-color 120ms var(--ease-out-soft);
+    font-family: inherit;
+    transition:
+      border-color 140ms var(--ease-out-soft),
+      box-shadow 140ms var(--ease-out-soft);
+    box-shadow: var(--shadow-card);
+  }
+
+  .input:hover:not(:focus) {
+    border-color: var(--color-ink-faint);
   }
 
   .input:focus {
-    border-color: var(--color-leaf-500);
+    border-color: var(--color-accent);
     outline: none;
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-leaf-500) 22%, transparent);
+    box-shadow: 0 0 0 3px var(--ring);
   }
 
   .input[aria-invalid="true"] {
     border-color: var(--color-risk-high);
+  }
+  .input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-risk-high) 25%, transparent);
   }
 
   .input::placeholder {
@@ -237,6 +358,7 @@
     border: 1px solid var(--color-rule);
     border-radius: var(--radius-card);
     padding: 1.25rem;
+    box-shadow: var(--shadow-card);
   }
 
   .card-quiet {
@@ -251,60 +373,85 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3125rem;
-    padding: 0.1875rem 0.625rem;
+    padding: 0.1875rem 0.5625rem;
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
     line-height: 1.25;
     white-space: nowrap;
+    border: 1px solid transparent;
   }
 
   .pill-good {
-    background-color: var(--color-leaf-50);
-    color: var(--color-leaf-800);
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent);
+    border-color: color-mix(in oklab, var(--color-accent) 22%, transparent);
   }
   .pill-neutral {
     background-color: var(--color-surface-sunken);
     color: var(--color-ink-soft);
+    border-color: var(--color-rule);
   }
   .pill-warn {
     background-color: var(--color-amber-soft);
     color: var(--color-amber-strong);
+    border-color: color-mix(in oklab, var(--color-amber-base) 35%, transparent);
   }
   .pill-bad {
     background-color: color-mix(in oklab, var(--color-risk-high) 12%, transparent);
-    color: var(--color-risk-crit);
+    color: var(--color-risk-high);
+    border-color: color-mix(in oklab, var(--color-risk-high) 28%, transparent);
   }
 
   /* --- Tables ----------------------------------------------------------- */
   .table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
   .table th {
     text-align: left;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: var(--color-ink-faint);
-    padding: 0.625rem 0.875rem;
-    border-bottom: 1px solid var(--color-rule);
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--color-rule-strong);
+    white-space: nowrap;
   }
   .table td {
-    padding: 0.75rem 0.875rem;
+    padding: 0.75rem;
     border-bottom: 1px solid var(--color-rule);
     vertical-align: middle;
+  }
+  .table tbody tr:last-child td,
+  .table tbody tr:last-child th {
+    border-bottom: 0;
   }
   .table tbody tr:hover {
     background-color: var(--color-surface-sunken);
   }
-}
 
-@layer utilities {
-  /* Screen-reader-only, the standard visually-hidden clip. */
-  .sr-only-focus:not(:focus) {
+  /* --- Numbers ---------------------------------------------------------- */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A money figure: tabular so columns of amounts align, and optically
+     tightened so a large balance reads as one object rather than digits. */
+  .metric {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* --- Skip link -------------------------------------------------------- */
+  /* Stays absolutely positioned when focused. Switching to `position: static`
+     dropped it into the header's flow and shoved the whole navigation down by
+     its own height the moment a keyboard user tabbed to it. */
+  .sr-only-focus {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -314,10 +461,17 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+    z-index: 100;
   }
-
-  /* Tabular figures for all monetary columns so digits line up. */
-  .tnum {
-    font-variant-numeric: tabular-nums;
+  .sr-only-focus:focus-visible {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
   }
 }

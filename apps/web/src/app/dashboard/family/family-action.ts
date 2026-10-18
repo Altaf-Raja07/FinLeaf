@@ -110,8 +110,17 @@ export interface FamilyInviteView {
  * The owner is not stored as a member row — they *are* the account holder — so
  * the member list is the owner plus the invitation-derived rows, and a
  * membership is only ever a join, never a self-join.
+ *
+ * The subject is read from the session rather than taken as an argument. Every
+ * export of a `"use server"` module is a remotely callable endpoint, so a
+ * `userId` parameter here would let anyone POST this action with someone else's
+ * id and read their household, including members' phone numbers.
  */
-export async function listFamilyGroups(userId: string): Promise<FamilyGroupView[]> {
+export async function listFamilyGroups(): Promise<FamilyGroupView[]> {
+  const actor = await currentUser();
+  if (!actor) return [];
+  const userId = actor.id;
+
   const rows = await prisma.familyGroup.findMany({
     where: { OR: [{ ownerId: userId }, { members: { some: { userId } } }] },
     orderBy: { createdAt: "asc" },

@@ -15,6 +15,7 @@ export {
   digest,
   generateOtpCode,
   generateReference,
+  generateSecret,
   generateSessionToken,
   hashPassword,
   maskPhone,

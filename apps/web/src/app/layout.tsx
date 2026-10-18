@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { requestLocale } from "@/lib/locale";
 
@@ -11,14 +11,20 @@ import { requestLocale } from "@/lib/locale";
  * hard-coded `en` would mislead both.
  */
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+/**
+ * Plus Jakarta Sans is the site default (see `--font-sans` in `globals.css`):
+ * the landing page is designed in it, and every other page is set in it too so
+ * the app reads as one thing. It is initialised here, at the root, because
+ * `next/font` must be called in a module Next can statically analyse.
+ */
+const jakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
   display: "swap",
 });
@@ -75,7 +81,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistMono.variable} ${jakartaSans.variable} h-full antialiased`}
     >
       <body className="bg-surface text-ink flex min-h-full flex-col">
         {children}

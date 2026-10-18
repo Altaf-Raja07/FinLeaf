@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { currentUser } from "@/lib/auth/session";
+import { RATE_LIMITS, clientIp, rateLimit } from "@/lib/rate-limit";
 import { repayLoan } from "@/lib/banking/loans";
 import { generateReference } from "@/lib/crypto/hash";
 import { fieldErrors, loanRepaySchema } from "@/lib/validation";
@@ -27,6 +29,15 @@ export async function repayLoanAction(
 ): Promise<RepayActionState> {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+  const ip = clientIp(await headers());
+  const [userLimited, ipLimited] = await Promise.all([
+    rateLimit(`loan:repay:user:${user.id}`, RATE_LIMITS.transfer),
+    rateLimit(`loan:repay:ip:${ip}`, RATE_LIMITS.transfer),
+  ]);
+  if (!userLimited.allowed || !ipLimited.allowed) {
+    return { error: "Too many repayments in a short time. Please wait a moment." };
+  }
+
 
   const reference =
     String(formData.get("reference") ?? "").trim() ||

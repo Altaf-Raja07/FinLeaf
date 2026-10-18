@@ -89,7 +89,8 @@ export default async function AboutPage() {
         </div>
       </Card>
 
-      <Card>
+      {/* `id` is the anchor the landing page's Contact link points at. */}
+      <Card id="contact">
         <CardHeader title={t("about.contact.title")} />
         <p className="leading-relaxed text-ink-soft text-pretty">
           {t("about.contact.body")}

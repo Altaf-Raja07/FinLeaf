@@ -3,10 +3,10 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { verifyOtp } from "@/lib/auth/otp";
 import { registerWithOtp, issueSession } from "@/lib/auth/service";
 import { rateLimit, RATE_LIMITS, clientIp } from "@/lib/rate-limit";
 import { fieldErrors, registerSchema } from "@/lib/validation";
+import { parseLocale, translate } from "@/lib/i18n";
 
 /**
  * Registration Server Action.
@@ -35,6 +35,11 @@ export async function registerUser(
     ),
   );
 
+  // The hidden locale field the form carries doubles as the language the
+  // failure messages are shown in; `lib/auth` returns codes and stays
+  // locale-agnostic.
+  const locale = parseLocale(String(formData.get("locale") ?? "en"));
+
   const parsed = registerSchema.safeParse({
     ...raw,
     locale: String(formData.get("locale") ?? "en"),
@@ -42,29 +47,20 @@ export async function registerUser(
 
   if (!parsed.success) {
     return {
-      error: "Check the highlighted fields.",
+      error: translate(locale, "auth.checkFields"),
       fieldErrors: fieldErrors(parsed.error),
     };
   }
 
-  const { name, phone, village, password, preferredLang, otpCode } = parsed.data;
+  const { name, phone, village, password, preferredLang } = parsed.data;
 
   const ip = clientIp(await headers());
   const limited = await rateLimit(`signup:ip:${ip}`, RATE_LIMITS.signUp);
   if (!limited.allowed) {
-    return { error: "Too many attempts. Wait a while and try again." };
-  }
-
-  // The phone number is proven before an account is created, so an unverified
-  // account can never exist.
-  const verified = await verifyOtp({ phone, purpose: "REGISTRATION", code: otpCode });
-
-  if (!verified.ok) {
     return {
-      error:
-        verified.reason === "locked"
-          ? "Too many attempts on that code. Request a new one."
-          : "That code is not right or has expired.",
+      error: translate(locale, "error.rateLimited", {
+        seconds: limited.retryAfterSeconds,
+      }),
     };
   }
 
@@ -77,7 +73,12 @@ export async function registerUser(
   });
 
   if (!created.ok) {
-    return { error: created.message };
+    return {
+      error:
+        created.code === "phone_taken"
+          ? translate(locale, "auth.registrationFailed")
+          : translate(locale, "error.generic"),
+    };
   }
 
   await issueSession(created.userId);

@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { Prisma, type TxCategory } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { currentUser } from "@/lib/auth/session";
+import { headers } from "next/headers";
+import { RATE_LIMITS, clientIp, rateLimit } from "@/lib/rate-limit";
 import { requireAccount } from "@/lib/auth/guard";
 import { postTransaction } from "@/lib/banking/ledger";
 import { findBiller } from "@/lib/banking/bills";
@@ -39,6 +41,15 @@ export async function payBill(
 ): Promise<BillState> {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+  const ip = clientIp(await headers());
+  const [userLimited, ipLimited] = await Promise.all([
+    rateLimit(`bill:pay:user:${user.id}`, RATE_LIMITS.transfer),
+    rateLimit(`bill:pay:ip:${ip}`, RATE_LIMITS.transfer),
+  ]);
+  if (!userLimited.allowed || !ipLimited.allowed) {
+    return { error: "Too many requests in a short time. Please wait a moment." };
+  }
+
 
   const account = await requireAccount(user.id);
 

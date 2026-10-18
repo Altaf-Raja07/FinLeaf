@@ -80,7 +80,12 @@ export async function signInWithPassword(input: {
   phone: string;
   password: string;
 }): Promise<
-  { ok: true; userId: string; status: UserStatus } | { ok: false; message: string }
+  | { ok: true; userId: string; status: UserStatus }
+  | {
+      ok: false;
+      code: "bad_credentials" | "inactive" | "unverified_phone";
+      message: string;
+    }
 > {
   const user = await prisma.user.findUnique({
     where: { phone: input.phone },
@@ -96,12 +101,13 @@ export async function signInWithPassword(input: {
   if (!user || !valid) {
     return {
       ok: false,
+      code: "bad_credentials",
       message: "We could not sign you in with those details.",
     };
   }
 
   if (user.status === "SUSPENDED" || user.status === "CLOSED") {
-    return { ok: false, message: "This account is not active." };
+    return { ok: false, code: "inactive", message: "This account is not active." };
   }
 
   // A user who has never verified their phone cannot sign in with a password;
@@ -109,6 +115,7 @@ export async function signInWithPassword(input: {
   if (user.status === "PENDING_VERIFICATION") {
     return {
       ok: false,
+      code: "unverified_phone",
       message: "Verify your phone number before signing in.",
     };
   }
@@ -143,7 +150,10 @@ export async function signInWithOtp(input: {
   phone: string;
   otpCode: string;
   locale: string;
-}): Promise<{ ok: true; userId: string; created: boolean } | { ok: false; message: string }> {
+}): Promise<
+  | { ok: true; userId: string; created: boolean }
+  | { ok: false; code: "expired" | "wrong_code" | "inactive"; message: string }
+> {
   const record = await prisma.otp.findFirst({
     where: { phone: input.phone, purpose: "LOGIN", consumedAt: null },
     orderBy: { createdAt: "desc" },
@@ -151,7 +161,11 @@ export async function signInWithOtp(input: {
   });
 
   if (!record || record.expiresAt <= new Date()) {
-    return { ok: false, message: "That code has expired. Request a new one." };
+    return {
+      ok: false,
+      code: "expired",
+      message: "That code has expired. Request a new one.",
+    };
   }
 
   const { safeEqual } = await import("@/lib/crypto/hash");
@@ -160,7 +174,7 @@ export async function signInWithOtp(input: {
       where: { id: record.id },
       data: { attempts: { increment: 1 } },
     });
-    return { ok: false, message: "That code is not right." };
+    return { ok: false, code: "wrong_code", message: "That code is not right." };
   }
 
   await prisma.otp.update({
@@ -177,9 +191,8 @@ export async function signInWithOtp(input: {
     // First sign-in on this number. An account is created with no password:
     // it is reachable only by OTP until the user sets one, which is the right
     // posture for someone who has never had a password before.
-    const { generateOtpCode } = await import("@/lib/crypto/hash");
-    const randomPassword = generateOtpCode(24);
-    const passwordHash = await hashPassword(randomPassword);
+    const { generateSecret } = await import("@/lib/crypto/hash");
+    const passwordHash = await hashPassword(generateSecret());
 
     const created = await prisma.user.create({
       data: {
@@ -203,7 +216,7 @@ export async function signInWithOtp(input: {
   }
 
   if (user.status !== "ACTIVE") {
-    return { ok: false, message: "This account is not active." };
+    return { ok: false, code: "inactive", message: "This account is not active." };
   }
 
   await issueSession(user.id);
@@ -222,21 +235,38 @@ export async function changePassword(input: {
   userId: string;
   currentPassword: string;
   newPassword: string;
-}): Promise<{ ok: true } | { ok: false; message: string }> {
+}): Promise<
+  | { ok: true }
+  | {
+      ok: false;
+      code: "not_found" | "wrong_password" | "same_password";
+      message: string;
+    }
+> {
   const user = await prisma.user.findUnique({
     where: { id: input.userId },
     select: { passwordHash: true },
   });
 
-  if (!user) return { ok: false, message: "We could not find that account." };
+  if (!user) {
+    return { ok: false, code: "not_found", message: "We could not find that account." };
+  }
 
   const valid = await verifyPassword(input.currentPassword, user.passwordHash);
   if (!valid) {
-    return { ok: false, message: "Your current password is not right." };
+    return {
+      ok: false,
+      code: "wrong_password",
+      message: "Your current password is not right.",
+    };
   }
 
   if (input.currentPassword === input.newPassword) {
-    return { ok: false, message: "Your new password has to be different." };
+    return {
+      ok: false,
+      code: "same_password",
+      message: "Your new password has to be different.",
+    };
   }
 
   await prisma.user.update({
@@ -265,7 +295,10 @@ export async function resetPasswordWithOtp(input: {
   phone: string;
   otpCode: string;
   newPassword: string;
-}): Promise<{ ok: true; userId: string } | { ok: false; message: string }> {
+}): Promise<
+  | { ok: true; userId: string }
+  | { ok: false; code: "expired" | "wrong_code" | "no_account"; message: string }
+> {
   const record = await prisma.otp.findFirst({
     where: { phone: input.phone, purpose: "PASSWORD_RESET", consumedAt: null },
     orderBy: { createdAt: "desc" },
@@ -273,12 +306,16 @@ export async function resetPasswordWithOtp(input: {
   });
 
   if (!record || record.expiresAt <= new Date()) {
-    return { ok: false, message: "That code has expired. Request a new one." };
+    return {
+      ok: false,
+      code: "expired",
+      message: "That code has expired. Request a new one.",
+    };
   }
 
   const { safeEqual } = await import("@/lib/crypto/hash");
   if (!safeEqual(record.codeHash, hashOtpCode(input.otpCode))) {
-    return { ok: false, message: "That code is not right." };
+    return { ok: false, code: "wrong_code", message: "That code is not right." };
   }
 
   await prisma.otp.update({
@@ -292,7 +329,11 @@ export async function resetPasswordWithOtp(input: {
   });
 
   if (!user) {
-    return { ok: false, message: "We could not find an account with that number." };
+    return {
+      ok: false,
+      code: "no_account",
+      message: "We could not find an account with that number.",
+    };
   }
 
   await prisma.user.update({

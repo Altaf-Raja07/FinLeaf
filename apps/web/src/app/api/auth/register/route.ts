@@ -36,6 +36,10 @@ export const POST = handleRoute(async (request: Request) => {
 
   const { name, phone, village, password, preferredLang, otpCode } = parsed.data;
 
+  // The phone number is proven before the account exists. Without this, anyone
+  // can register an arbitrary number and receive every transfer sent to it —
+  // transfers are addressed by phone number, and registration also permanently
+  // blocks the real owner from signing up.
   const verified = await verifyOtp({ phone, purpose: "REGISTRATION", code: otpCode });
   if (!verified.ok) {
     return ok(
@@ -53,7 +57,11 @@ export const POST = handleRoute(async (request: Request) => {
   });
 
   if (!created.ok) {
-    return ok({ ok: false, reason: created.code, message: created.message }, { status: 409 });
+    // `phone_taken` is deliberately not echoed back. A machine-readable reason
+    // plus a distinct status code is exactly as good as telling an attacker the
+    // number is registered, which turns this endpoint into an enumeration oracle
+    // over every phone number in the country.
+    return ok({ ok: false, reason: "registration_failed" }, { status: 400 });
   }
 
   await issueSession(created.userId);

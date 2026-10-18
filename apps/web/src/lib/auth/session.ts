@@ -112,6 +112,24 @@ export const currentUserId = cache(async (): Promise<string | null> => {
   return session.userId;
 });
 
+/** The signed-in session id, or null. Used to mark "this device" in the UI. */
+export const currentSessionId = cache(async (): Promise<string | null> => {
+  const store = await cookies();
+  const token = store.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+
+  const session = await prisma.session.findUnique({
+    where: { tokenHash: hashSessionToken(token) },
+    select: { id: true, expiresAt: true, revokedAt: true },
+  });
+
+  if (!session || session.revokedAt || session.expiresAt <= new Date()) {
+    return null;
+  }
+
+  return session.id;
+});
+
 /**
  * Slides the session expiry forward once it is within a day of lapsing, so an
  * active user is never signed out mid-task while an abandoned session still

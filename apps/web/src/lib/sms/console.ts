@@ -1,5 +1,6 @@
 import "server-only";
 import { isProduction, log } from "@/lib/env";
+import { maskPhone } from "@/lib/crypto";
 import {
   otpMessage,
   SmsDeliveryError,
@@ -13,6 +14,11 @@ import {
  * This is the only place a live OTP is ever printed, and it refuses to run in
  * production. `env()` rejects `SMS_PROVIDER=console` when NODE_ENV=production,
  * and this guard catches the case where the provider is flipped at runtime.
+ *
+ * The destination is masked. Development logs are routinely shipped to shared
+ * aggregators, and an operator with log access could otherwise complete any OTP
+ * sign-in against any number — the guard above keeps this out of production, not
+ * out of someone else's log viewer.
  */
 export class ConsoleTransport implements SmsTransport {
   readonly name = "console";
@@ -26,7 +32,7 @@ export class ConsoleTransport implements SmsTransport {
     }
 
     log("info", "otp delivery (console transport)", {
-      to: input.phone,
+      to: maskPhone(input.phone),
       purpose: input.purpose,
       ttlMinutes: input.ttlMinutes,
       message: otpMessage(

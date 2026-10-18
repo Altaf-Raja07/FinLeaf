@@ -21,7 +21,7 @@ export default async function AssistantPage() {
   const { t, locale } = await translator();
 
   const [messages, suggested] = await Promise.all([
-    listConversation(user.id),
+    listConversation(),
     Promise.resolve(SUGGESTED_QUESTIONS[locale]),
   ]);
 

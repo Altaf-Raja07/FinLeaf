@@ -133,11 +133,20 @@ export interface SessionView {
   isCurrent: boolean;
 }
 
-export async function listSessions(userId: string): Promise<SessionView[]> {
-  const { currentUser, currentUserId } = await import("@/lib/auth/session");
+/**
+ * Live sessions for the signed-in user.
+ *
+ * The subject comes from the session, never from an argument: every export of a
+ * `"use server"` module is a remotely callable endpoint, and this returns the IP
+ * address and user agent of every live session.
+ */
+export async function listSessions(): Promise<SessionView[]> {
+  const { currentSessionId, currentUserId } = await import("@/lib/auth/session");
 
-  const current = await currentUserId();
-  void currentUser;
+  const userId = await currentUserId();
+  if (!userId) return [];
+
+  const current = await currentSessionId();
 
   const sessions = await prisma.session.findMany({
     where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },

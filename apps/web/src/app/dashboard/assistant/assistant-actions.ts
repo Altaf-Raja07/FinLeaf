@@ -87,10 +87,17 @@ export async function clearConversation(): Promise<void> {
  *
  * Capped at 40 messages: the scroll position matters more than completeness, and
  * a user who wants their full history has the statements export.
+ *
+ * The subject comes from the session, never from an argument: every export of a
+ * `"use server"` module is a remotely callable endpoint, so a `userId` parameter
+ * here would let anyone read another user's conversation.
  */
-export async function listConversation(userId: string) {
+export async function listConversation() {
+  const user = await currentUser();
+  if (!user) return [];
+
   const messages = await prisma.chatMessage.findMany({
-    where: { userId },
+    where: { userId: user.id },
     orderBy: { createdAt: "desc" },
     take: 40,
     select: { id: true, role: true, text: true, createdAt: true },

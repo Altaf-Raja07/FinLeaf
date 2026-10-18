@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { Prisma } from "@/generated/prisma/client";
-import { postTransaction } from "@/lib/banking/ledger";
+import { postTransaction, InsufficientFundsError, DuplicateReferenceError } from "@/lib/banking/ledger";
+import { generateReference } from "@/lib/crypto";
 import { requireAccount } from "@/lib/auth/guard";
 import { refreshTrustScore, loanEligibility } from "@/lib/trust";
 import { recordAudit } from "@/lib/audit";
@@ -97,22 +98,35 @@ export async function applyForLoan(
     select: { id: true },
   });
 
-  let loanId: string;
+  // Simple interest on the principal, not compounding. Charged as one figure so
+  // the schedule is something a user can actually read.
+  const interest = amount.times(eligibility.interestRate);
+  const totalDue = amount.plus(interest);
+
+  let loanId = "";
 
   try {
-    // Simple interest on the principal, not compounding. Charged as one figure
-    // so the schedule is something a user can actually read.
-    const interest = amount.times(eligibility.interestRate);
-    const totalDue = amount.plus(interest);
-    const outstanding = totalDue;
-
-    loanId = (
-      await prisma.$transaction(async (tx) => {
+    // The loan row and its schedule are written from `afterCreate`, which runs
+    // inside the posting engine's transaction. They used to commit in their own
+    // transaction *before* the disbursement, so a posting failure left an ACTIVE
+    // loan and a full repayment schedule against money the user never received.
+    // Composing them into the posting makes the whole disbursement atomic.
+    await postTransaction({
+      reference: generateReference("loan"),
+      type: "LOAN_DISBURSEMENT",
+      category: "LOAN",
+      amount,
+      note: "Micro-loan disbursement",
+      toAccountId: account.id,
+      toUserId: input.userId,
+      co2eKg: 0,
+      co2eSource: "static-table",
+      afterCreate: async (tx, transaction) => {
         const loan = await tx.loan.create({
           data: {
             userId: input.userId,
             principal: amount,
-            outstanding,
+            outstanding: totalDue,
             interestRate: eligibility.interestRate,
             termMonths,
             status: "ACTIVE",
@@ -127,7 +141,9 @@ export async function applyForLoan(
         // One instalment per month of the term. Rounded to paise, with the
         // remainder added to the last instalment rather than dropped, so the
         // instalments always sum to the total due.
-        const instalment = totalDue.dividedBy(termMonths).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
+        const instalment = totalDue
+          .dividedBy(termMonths)
+          .toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
 
         let allocated = new Prisma.Decimal(0);
         for (let i = 1; i <= termMonths; i += 1) {
@@ -145,7 +161,7 @@ export async function applyForLoan(
                 .dividedBy(termMonths)
                 .toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP),
               status: "PENDING",
-              reference: `instal-${Date.now()}-${i}`,
+              reference: `${transaction.reference}-instal-${i}`,
               dueDate: new Date(
                 Date.now() + i * LOAN_TERM_DAYS * 86_400_000,
               ),
@@ -153,9 +169,9 @@ export async function applyForLoan(
           });
         }
 
-        return loan.id;
-      })
-    );
+        loanId = loan.id;
+      },
+    });
   } catch (error) {
     log("error", "loan creation failed", {
       userId: input.userId,
@@ -164,17 +180,11 @@ export async function applyForLoan(
     return { ok: false, code: "creation_failed", message: "We could not create that loan." };
   }
 
-  await postTransaction({
-    reference: `loan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    type: "LOAN_DISBURSEMENT",
-    category: "LOAN",
-    amount,
-    note: "Micro-loan disbursement",
-    toAccountId: account.id,
-    toUserId: input.userId,
-    co2eKg: 0,
-    co2eSource: "static-table",
-  });
+  // `afterCreate` assigns this; it is only empty if the callback did not run,
+  // which cannot happen without the post itself having thrown above.
+  if (!loanId) {
+    return { ok: false, code: "creation_failed", message: "We could not create that loan." };
+  }
 
   await recordAudit({
     userId: input.userId,
@@ -244,79 +254,105 @@ export async function repayLoan(input: {
   }
 
   const account = await requireAccount(input.userId);
-  const newOutstanding = loan.outstanding.minus(amount);
-  const isFullyRepaid = newOutstanding.lte(0);
 
-  const oldestInstalment = await prisma.loanRepayment.findFirst({
-    where: { loanId: loan.id, status: "PENDING" },
-    orderBy: { dueDate: "asc" },
-    select: { id: true, amount: true },
-  });
-
+  // The debit and the settlement of the schedule are one transaction. They used
+  // to be two, with the schedule committed first and the debit outside any
+  // try/catch — so a repayment against an empty balance reduced the debt and
+  // stamped the instalments paid, then threw. The user ended up forgiven for
+  // money that was never taken. `afterCreate` is the hook that makes the whole
+  // repayment atomic; "a posting failure leaves the schedule untouched" is now
+  // a property of the rollback rather than of the call order.
   try {
-    await prisma.$transaction(async (tx) => {
-      // Mark instalments paid until the repayment is exhausted, so a partial
-      // payment settles the oldest instalment first and the schedule stays
-      // readable rather than becoming a mystery remainder.
-      let remaining = amount;
-      let oldest = oldestInstalment;
+    await postTransaction({
+      reference: input.reference,
+      type: "LOAN_REPAYMENT",
+      category: "LOAN",
+      amount,
+      note: "Loan repayment",
+      fromAccountId: account.id,
+      fromUserId: input.userId,
+      afterCreate: async (tx) => {
+        // Mark instalments paid oldest-first until the repayment is exhausted,
+        // so a partial payment settles the earliest one and the schedule stays
+        // readable rather than becoming a mystery remainder.
+        let remaining = amount;
 
-      while (remaining.gt(0) && oldest) {
-        const applies = remaining.gte(oldest.amount)
-          ? oldest.amount
-          : remaining;
+        for (;;) {
+          const oldest = await tx.loanRepayment.findFirst({
+            where: { loanId: loan.id, status: "PENDING" },
+            orderBy: { dueDate: "asc" },
+            select: { id: true, amount: true },
+          });
 
-        await tx.loanRepayment.update({
-          where: { id: oldest.id },
-          data: {
-            status: "COMPLETED",
-            paidAt: new Date(),
-            amount: applies,
-          },
+          if (!oldest || remaining.lte(0)) break;
+
+          const applies = remaining.gte(oldest.amount)
+            ? oldest.amount
+            : remaining;
+
+          await tx.loanRepayment.update({
+            where: { id: oldest.id },
+            data: {
+              status: "COMPLETED",
+              paidAt: new Date(),
+              amount: applies,
+            },
+          });
+
+          remaining = remaining.minus(applies);
+        }
+
+        // Guarded decrement rather than a write of `loan.outstanding - amount`
+        // computed from the pre-transaction read: two simultaneous repayments
+        // would both write the same stale total, and the borrower would keep
+        // owing money they had already paid.
+        const settled = await tx.loan.updateMany({
+          where: { id: loan.id, outstanding: { gte: amount } },
+          data: { outstanding: { decrement: amount } },
         });
 
-        remaining = remaining.minus(applies);
+        if (settled.count === 0) {
+          throw new Error("outstanding_changed");
+        }
 
-        oldest = await tx.loanRepayment.findFirst({
-          where: {
-            loanId: loan.id,
-            status: "PENDING",
-            id: { not: oldest.id },
-          },
-          orderBy: { dueDate: "asc" },
-          select: { id: true, amount: true },
+        const current = await tx.loan.findUniqueOrThrow({
+          where: { id: loan.id },
+          select: { outstanding: true },
         });
-      }
 
-      await tx.loan.update({
-        where: { id: loan.id },
-        data: {
-          outstanding: newOutstanding,
-          status: isFullyRepaid ? "REPAID" : loan.status,
-          repaidAt: isFullyRepaid ? new Date() : null,
-        },
-      });
+        if (current.outstanding.lte(0)) {
+          await tx.loan.update({
+            where: { id: loan.id },
+            data: { status: "REPAID", repaidAt: new Date() },
+          });
+        }
+      },
     });
   } catch (error) {
-    log("error", "loan repayment transaction failed", {
+    log("error", "loan repayment failed", {
       loanId: loan.id,
       reason: error instanceof Error ? error.message : String(error),
     });
+
+    if (error instanceof InsufficientFundsError) {
+      return {
+        ok: false,
+        message: `That is more than your balance. You owe ${error.requested} and have ${error.available}.`,
+      };
+    }
+    if (error instanceof DuplicateReferenceError) {
+      return { ok: false, message: "That repayment has already been recorded." };
+    }
     return { ok: false, message: "We could not record that repayment." };
   }
 
-  // Debit the account. Done outside the schedule transaction so a posting
-  // failure (for instance insufficient funds) leaves the schedule untouched and
-  // can be reported cleanly.
-  await postTransaction({
-    reference: input.reference,
-    type: "LOAN_REPAYMENT",
-    category: "LOAN",
-    amount,
-    note: "Loan repayment",
-    fromAccountId: account.id,
-    fromUserId: input.userId,
+  const settled = await prisma.loan.findUniqueOrThrow({
+    where: { id: loan.id },
+    select: { outstanding: true, status: true },
   });
+
+  const remainingDue = settled.outstanding;
+  const fullyRepaid = remainingDue.lte(0);
 
   await recordAudit({
     userId: input.userId,
@@ -324,8 +360,8 @@ export async function repayLoan(input: {
     detail: {
       loanId: loan.id,
       amount: amount.toString(),
-      outstandingRemaining: newOutstanding.toString(),
-      fullyRepaid: isFullyRepaid,
+      outstandingRemaining: remainingDue.toString(),
+      fullyRepaid,
     },
   });
 
@@ -334,11 +370,11 @@ export async function repayLoan(input: {
 
   return {
     ok: true,
-    message: isFullyRepaid
+    message: fullyRepaid
       ? "Your loan is fully repaid."
-      : `Repayment recorded. You now owe ₹${newOutstanding.toFixed(2)}.`,
-    outstanding: Number(newOutstanding),
-    status: isFullyRepaid ? "REPAID" : loan.status,
+      : `Repayment recorded. You now owe ${remainingDue.toFixed(2)}.`,
+    outstanding: Number(remainingDue),
+    status: settled.status,
   };
 }
 

@@ -32,13 +32,6 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
         name={user.name}
         role={user.role}
         unread={unread}
-        labels={{
-          signOut: t("nav.signOut"),
-          language: t("nav.language"),
-          menu: t("nav.menu"),
-          close: t("nav.close"),
-          skip: t("nav.skipToContent"),
-        }}
       />
 
       <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:py-8">

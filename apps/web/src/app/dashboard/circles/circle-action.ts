@@ -79,11 +79,17 @@ export interface CirclesOverview {
  * The member list and the vouch rows are read in the same pass as the memberships,
  * because "who is in this circle" and "have I vouched for them" are one question
  * to a reader.
+ *
+ * The subject is read from the session rather than taken as an argument: every
+ * export of a `"use server"` module is a remotely callable endpoint, so a
+ * `userId` parameter here would let any signed-in user read any other user's
+ * circles and member list.
  */
-export async function listCircles(
-  userId: string,
-  village: string,
-): Promise<CirclesOverview> {
+export async function listCircles(village: string): Promise<CirclesOverview> {
+  const actor = await currentUser();
+  if (!actor) redirect("/sign-in");
+  const userId = actor.id;
+
   const memberships = await prisma.circleMember.findMany({
     where: { userId },
     orderBy: { joinedAt: "asc" },

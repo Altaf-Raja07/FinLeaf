@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Alert, Card, CardHeader, EmptyState, PageHeader, Pill } from "@/components/ui";
+import { SpeakButton } from "@/components/SpeakButton";
 import { translator } from "@/lib/server-utils";
 import { currentUser } from "@/lib/auth/session";
 import { getLessonDetail } from "../curriculum";
@@ -68,6 +69,9 @@ export default async function LessonPage({
       />
 
       <Card className="flex flex-col gap-4">
+        <div className="flex justify-end">
+          <SpeakButton locale={locale} text={lesson.body.join(" ")} />
+        </div>
         {lesson.body.map((paragraph, index) => (
           <p key={index} className="text-lg leading-relaxed text-pretty">
             {paragraph}

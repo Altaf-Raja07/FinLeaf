@@ -29,7 +29,7 @@ export default async function ProfilePage() {
   const { t, locale } = await translator();
 
   const [sessions, snapshot, accounts, counts] = await Promise.all([
-    listSessions(user.id),
+    listSessions(),
     prisma.trustScoreSnapshot.findFirst({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },

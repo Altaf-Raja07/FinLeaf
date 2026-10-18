@@ -168,7 +168,7 @@ export async function transfer(input: TransferInput): Promise<TransferResult> {
       })
     : null;
 
-  await Promise.all([
+  const postPromises = [
     createNotification({
       userId: recipient.userId,
       type: "TRANSACTION",
@@ -185,7 +185,21 @@ export async function transfer(input: TransferInput): Promise<TransferResult> {
         flagged: anomaly.isAnomalous,
       },
     }),
-  ]);
+  ];
+
+  if (anomaly.isAnomalous) {
+    postPromises.push(
+      createNotification({
+        userId: input.fromUserId,
+        type: "ANOMALY",
+        title: "Unusual activity detected",
+        body: `A transfer was flagged for review (${anomaly.reasons.join(", ")}). Check your history to confirm.`,
+        href: "/dashboard/history?flagged=true",
+      }),
+    );
+  }
+
+  await Promise.all(postPromises);
 
   return {
     transaction: posted,

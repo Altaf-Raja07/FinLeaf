@@ -94,7 +94,27 @@ export async function contributeToGoal(input: {
       fromAccountId: account.id,
       fromUserId: input.userId,
       afterCreate: async (tx, transaction) => {
-        const updatedSaved = goal.saved.plus(amount);
+        // Guarded increment rather than writing `goal.saved + amount` computed
+        // from the read above: that read happens outside this transaction, so
+        // two simultaneous contributions both saw the same starting total and
+        // both wrote the same new total — the account balance and the
+        // contribution rows were right, but `saved` under-reported forever.
+        await tx.savingsGoal.update({
+          where: { id: goal.id },
+          data: { saved: { increment: amount } },
+        });
+
+        // The ceiling is re-checked against the live row, so two partial
+        // contributions cannot together overfund the goal. Throwing here rolls
+        // the increment — and the debit — back with everything else.
+        const fresh = await tx.savingsGoal.findUniqueOrThrow({
+          where: { id: goal.id },
+          select: { saved: true, target: true },
+        });
+
+        if (fresh.saved.gt(fresh.target)) {
+          throw new Error("goal_overfunded");
+        }
 
         await tx.savingsContribution.create({
           data: {
@@ -103,11 +123,6 @@ export async function contributeToGoal(input: {
             amount,
             reference: input.reference,
           },
-        });
-
-        await tx.savingsGoal.update({
-          where: { id: goal.id },
-          data: { saved: updatedSaved },
         });
 
         await tx.user.update({
@@ -131,6 +146,13 @@ export async function contributeToGoal(input: {
 
     void posted;
   } catch (error) {
+    if (error instanceof Error && error.message === "goal_overfunded") {
+      return {
+        ok: false,
+        message: "That is more than this goal still needs. Enter a smaller amount.",
+      };
+    }
+
     log("error", "savings contribution failed", {
       userId: input.userId,
       goalId: goal.id,

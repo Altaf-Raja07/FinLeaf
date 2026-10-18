@@ -53,9 +53,26 @@ export async function verifyPassword(
  * entirely bypassable, since the next code is derivable from the last one.
  */
 export function generateOtpCode(digits = 6): string {
+  // `randomInt` requires a safe-integer range, so anything past 15 digits would
+  // throw ERR_OUT_OF_RANGE rather than produce a weak code.
+  if (digits > 15) {
+    throw new Error("generateOtpCode supports at most 15 digits");
+  }
   const min = 10 ** (digits - 1);
   const max = 10 ** digits;
   return String(randomInt(min, max));
+}
+
+/**
+ * A high-entropy opaque secret: the placeholder password an account is created
+ * with when its owner signs in by OTP and has never chosen a password.
+ *
+ * This is deliberately not `generateOtpCode(n)` for large `n` — beyond 15 digits
+ * the arithmetic leaves the safe-integer range and `randomInt` throws. It is a
+ * base64url CSPRNG draw, which is what a secret wants to be anyway.
+ */
+export function generateSecret(bytes = 32): string {
+  return randomBytes(bytes).toString("base64url");
 }
 
 /** 256 bits of CSPRNG entropy, URL-safe. Raw session token. */
