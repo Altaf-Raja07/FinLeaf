@@ -44,3 +44,6 @@ docker-compose.override.yml
 
 # os/editor metadata from this workspace
 .husky/
+.playwright-mcp/
+.taste-skill/
+

@@ -237,16 +237,16 @@ export default async function HomePage() {
 
       <main>
         {/* ============================================================== hero */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-[#FBFDFB] to-[#F2F9F3] py-8 lg:py-12 desk:h-[500px] desk:py-0">
-          <div className="relative mx-auto h-full max-w-[1344px] px-4 desk:px-0">
-            <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-8 desk:block h-full">
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#FBFDFB] to-[#F2F9F3] py-8 lg:py-12 xl:py-14">
+          <div className="relative mx-auto max-w-[1380px] px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10 xl:gap-12">
               {/* Left Column: Text & Primary CTAs */}
-              <div className="lg:col-span-7 desk:absolute desk:left-1 desk:top-0 desk:w-[640px] desk:p-0">
-                <p className="mt-2 text-[15px] sm:text-[16px] font-bold uppercase leading-6 tracking-[0.017em] text-[#085A2F] desk:mt-[25px]">
+              <div className="w-full lg:w-[500px] xl:w-[570px] 2xl:w-[600px] shrink-0">
+                <p className="text-[13.5px] sm:text-[14.5px] xl:text-[15px] font-bold uppercase leading-6 tracking-[0.02em] text-[#085A2F]">
                   {t("home.eyebrow")}
                 </p>
 
-                <h1 className="mt-[4px] text-[34px] sm:text-[42px] font-extrabold leading-[38px] sm:leading-[46px] tracking-[-0.01em] text-[#071929] desk:text-[50px] desk:leading-[52px]">
+                <h1 className="mt-2 text-[28px] xs:text-[32px] sm:text-[40px] xl:text-[45px] 2xl:text-[48px] font-extrabold leading-[34px] xs:leading-[38px] sm:leading-[46px] xl:leading-[50px] 2xl:leading-[54px] tracking-[-0.015em] text-[#071929]">
                   <span className="block">{t("landing.hero.titleL1")}</span>
                   <span className="block">
                     {t("landing.hero.titleL2")}{" "}
@@ -254,7 +254,7 @@ export default async function HomePage() {
                       {t("landing.hero.titleL2h")}
                     </span>
                   </span>
-                  <span className="block">
+                  <span className="block sm:whitespace-nowrap">
                     {t("landing.hero.titleL3")}{" "}
                     <span className="text-[#077744]">
                       {t("landing.hero.titleL3h")}
@@ -262,45 +262,45 @@ export default async function HomePage() {
                   </span>
                 </h1>
 
-                <p className="mt-[9px] max-w-[620px] text-[16px] sm:text-[17px] leading-[26px] sm:leading-[27px] text-[#242B35]">
+                <p className="mt-3 max-w-[520px] text-[15px] sm:text-[16px] leading-[24px] sm:leading-[26px] text-[#242B35]">
                   {t("home.subtitle")}
                 </p>
 
-                <div className="mt-[20px] flex flex-wrap items-center gap-[15px] sm:gap-[19px]">
+                <div className="mt-6 flex flex-wrap items-center gap-3.5 sm:gap-4">
                   <Link
                     href="/sign-in"
-                    className="inline-flex h-[52px] sm:h-[56px] w-[210px] sm:w-[225px] items-center justify-center gap-[10px] rounded-[14px] bg-[#077443] text-[16px] sm:text-[17px] font-semibold text-white transition-colors hover:bg-[#055F36]"
+                    className="inline-flex h-[52px] sm:h-[56px] w-[190px] sm:w-[210px] items-center justify-center gap-2 rounded-[14px] bg-[#077443] text-[15px] sm:text-[16px] font-semibold text-white shadow-lg shadow-[#077443]/20 transition-all hover:bg-[#055F36] hover:shadow-xl hover:shadow-[#077443]/25"
                   >
                     {t("landing.hero.getStarted")}
                     <ArrowRight className="h-[18px] w-[18px]" strokeWidth={2.2} />
                   </Link>
                   <a
                     href="#demo"
-                    className="inline-flex h-[52px] sm:h-[56px] w-[185px] sm:w-[197px] items-center rounded-[14px] border border-[#DCE9E1] bg-white text-[14px] sm:text-[15px] font-medium text-[#0F1B27] transition-colors hover:border-[#077443]"
+                    className="inline-flex h-[52px] sm:h-[56px] w-[170px] sm:w-[185px] items-center rounded-[14px] border border-[#DCE9E1] bg-white text-[14px] sm:text-[15px] font-medium text-[#0F1B27] shadow-xs transition-colors hover:border-[#077443] hover:text-[#077443]"
                   >
-                    <span className="ml-[25px] sm:ml-[33px] grid h-7 w-7 place-items-center rounded-full bg-[#077443]">
+                    <span className="ml-5 sm:ml-6 grid h-7 w-7 place-items-center rounded-full bg-[#077443]">
                       <Play className="h-3 w-3 fill-white text-white" />
                     </span>
-                    <span className="ml-[10px]">
+                    <span className="ml-2.5">
                       {t("landing.hero.watchDemo")}
                     </span>
                   </a>
                 </div>
 
-                {/* Trust strip tags for tablet & mobile */}
-                <div className="mt-8 flex flex-wrap gap-2.5 desk:hidden">
+                {/* Trust strip tags */}
+                <div className="mt-7 flex flex-wrap gap-2 sm:gap-2.5">
                   {toc.map((item) => (
                     <div
                       key={item.icon}
-                      className="flex items-center gap-2 rounded-xl border border-[#b7ecda]/70 bg-white/90 px-3 py-1.5 text-xs font-medium text-[#3D4751] shadow-2xs"
+                      className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-[#b7ecda]/80 bg-white/95 px-2.5 sm:px-3 py-1.5 text-[11.5px] sm:text-xs font-medium text-[#3D4751] shadow-2xs backdrop-blur-xs transition-all hover:border-[#077443]/40 hover:bg-white"
                     >
                       <Image
                         src={item.icon}
                         alt=""
-                        width={20}
-                        height={20}
+                        width={18}
+                        height={18}
                         unoptimized
-                        className="h-5 w-5 shrink-0"
+                        className="h-4 w-4 sm:h-[18px] sm:w-[18px] shrink-0"
                       />
                       <span className="whitespace-nowrap">{item.label.replace("\n", " ")}</span>
                     </div>
@@ -308,49 +308,27 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              {/* Right Column: Hero Visual — Visible across ALL screen sizes! */}
-              <div className="lg:col-span-5 desk:absolute desk:right-0 desk:top-2 desk:w-[680px]">
-                <div className="relative overflow-hidden rounded-3xl border border-[#b7ecda] bg-white shadow-xl transition-transform duration-200 hover:scale-[1.01]">
+              {/* Right Column: Hero Visual — Large, prominent, and beautifully framed */}
+              <div className="relative w-full flex-1 min-w-0 max-w-[840px]">
+                {/* Ambient glow behind card */}
+                <div className="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-[#077443]/20 via-[#10B981]/15 to-transparent blur-2xl opacity-75 -z-10" />
+
+                <div className="group relative aspect-[16/10] overflow-hidden rounded-[26px] sm:rounded-3xl border border-[#b7ecda] bg-white shadow-2xl shadow-[#077443]/12 transition-all duration-300 hover:shadow-3xl hover:shadow-[#077443]/18">
                   <Image
                     src="/landing/hero-eco-card.webp"
                     alt="FinLeaf sustainable translucent emerald green debit card with golden leaf circuitry, floating live balance of ₹12,430, 28.5 kg CO₂ offset, and 720 trust score"
-                    width={860}
-                    height={484}
+                    width={1672}
+                    height={941}
                     priority
-                    className="h-auto w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
                   />
-                  <div className="absolute bottom-3 right-3 rounded-lg bg-black/60 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
-                    🌿 FinLeaf Eco-Card & Live Metrics
+                  <div className="absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 flex items-center gap-1.5 rounded-full border border-white/20 bg-[#071929]/75 px-3 py-1 text-[11px] font-medium text-white shadow-lg backdrop-blur-md">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                    <span>FinLeaf Eco-Card &amp; Live Metrics</span>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Desktop fixed trust strip in exact coordinates */}
-            <ul className="absolute left-0 top-[408px] hidden w-[820px] desk:block">
-              {toc.map((item) => (
-                <li
-                  key={item.icon}
-                  className="absolute flex items-start gap-[15px]"
-                  style={{ left: item.x, top: item.y }}
-                >
-                  <Image
-                    src={item.icon}
-                    alt=""
-                    width={40}
-                    height={40}
-                    unoptimized
-                    className="h-10 w-10 shrink-0"
-                  />
-                  <span
-                    className="whitespace-pre text-[12.5px] font-medium leading-[19px] text-[#3D4751]"
-                    style={{ paddingTop: 3 + item.labelY }}
-                  >
-                    {item.label}
-                  </span>
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
 
